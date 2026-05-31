@@ -3,6 +3,7 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
+
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -10,4 +11,144 @@ generator client {
 
 datasource db {
   provider = "mysql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum EstadoCita {
+  PENDIENTE
+  PAGADA
+  REALIZADA
+  CANCELADA
+}
+
+enum Modalidad {
+  VIRTUAL
+  PRESENCIAL
+  MIXTA
+}
+
+model Usuario {
+  id              Int @id @default(autoincrement())
+  nombre          String? @db.VarChar(120)
+  apellidos       String? @db.VarChar(170)
+  email		  String @unique @db.VarChar(150)
+  password        String @db.VarChar(255)
+  telefono        String @db.VarChar(20)
+  activo          Boolean @default(true)
+
+  role     Role    @default(USER)  
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt 
+}
+
+model PerfilTutor {
+  id                  Int @id @default(autoincrement())
+  usuarioId           Int
+  tituloProfesional   String @db.VarChar(300)
+  descripcion         String? @db.VarChar(255)
+  aniosExperiencia    Int @default(0)
+  modalidad           String @db.VarChar(100)
+  ubicacion           String @db.VarChar(255)
+  tarifaBase          Decimal @default(0.00) @db.Decimal(10, 2)
+  disponible          Boolean @default(true)
+  imagenPerfil        String @default("image-not-found.jpg") @db.VarChar(255)
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+}
+
+model Categoria {
+  id            Int @id @default(autoincrement())
+  nombre        String  @unique @db.VarChar(100)
+  descripcion   String? @db.VarChar(255)
+  activo        Boolean @default(true)
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+}
+
+model Especialidad {
+  id            Int @id @default(autoincrement())
+  nombre        String  @unique @db.VarChar(100)
+  descripcion   String? @db.VarChar(255)
+  activo        Boolean @default(true)
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+
+}
+
+model Servicio {
+  id            Int @id @default(autoincrement())
+  nombre        String  @unique @db.VarChar(150)
+  descripcion   String? @db.VarChar(255)
+  precio        Decimal @default(0.00) @db.Decimal(10, 2)
+  duracion      Int @default(0)
+  modalidad     Modalidad  @default(PRESENCIAL)
+  activo        Boolean @default(true)
+
+  //tutorId       Int
+  //categoriaId   Int
+
+  
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+
+}
+ 
+/*
+model TutorEspecialidad {
+  id              Int @id @default(autoincrement())
+  //tutorId         Int
+  //especialidadId  Int
+}
+
+model ServicioEspecialidad {
+  id              Int @id @default(autoincrement())
+  //servicioId      Int
+  //especialidadId  Int
+}
+*/
+model Cita {
+  id                  Int @id @default(autoincrement())
+  fechaCita           DateTime 
+  horaInicio          String @db.VarChar(50)
+  horaFin             String @db.VarChar(50)
+
+  modalidad           Modalidad  @default(PRESENCIAL)
+  estado 	      EstadoCita @default(PENDIENTE)
+
+  comentarioCliente   String @db.VarChar(200)
+  comentarioTutor     String? @db.VarChar(255)
+
+  montoEstimado       Decimal @default(0.00) @db.Decimal(10, 2)
+
+
+  //clienteId           Int
+  //tutorId             Int
+  //servicioId          Int
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+
+  }
+
+model Resena {
+  id              Int @id @default(autoincrement())
+  puntuacion      Int @default(0)
+  comentario      String @db.VarChar(355)
+
+  //citaId          Int
+  //clienteId       Int
+  //tutorId         Int
+
+
+  createAt DateTime @default(now())
+  updateAt DateTime @default(now()) @updatedAt
+  
 }
