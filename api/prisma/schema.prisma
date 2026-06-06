@@ -57,7 +57,7 @@ model PerfilTutor {
   tituloProfesional   String @db.VarChar(300)
   descripcion         String? @db.VarChar(255)
   aniosExperiencia    Int @default(0)
-  modalidad           String @db.VarChar(100)
+  modalidad           Modalidad @default(MIXTA)
   ubicacion           String @db.VarChar(255)
   tarifaBase          Decimal @default(0.00) @db.Decimal(10, 2)
   disponible          Boolean @default(true)
