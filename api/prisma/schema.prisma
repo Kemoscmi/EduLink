@@ -16,6 +16,7 @@ datasource db {
 enum Role {
   USER
   ADMIN
+  TUTOR
 }
 
 enum EstadoCita {
@@ -39,11 +40,15 @@ model Usuario {
   password        String @db.VarChar(255)
   telefono        String @db.VarChar(20)
   activo          Boolean @default(true)
-
   role     Role    @default(USER)  
+
+  perfilTutores PerfilTutor[]
+  citas Cita[]
+  resenas Resena[]
 
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt 
+
 }
 
 model PerfilTutor {
@@ -52,14 +57,24 @@ model PerfilTutor {
   tituloProfesional   String @db.VarChar(300)
   descripcion         String? @db.VarChar(255)
   aniosExperiencia    Int @default(0)
-  modalidad           String @db.VarChar(100)
+  modalidad           Modalidad @default(MIXTA)
   ubicacion           String @db.VarChar(255)
   tarifaBase          Decimal @default(0.00) @db.Decimal(10, 2)
   disponible          Boolean @default(true)
   imagenPerfil        String @default("image-not-found.jpg") @db.VarChar(255)
 
+  usuario Usuario @relation(fields: [usuarioId], references: [id])
+
+  servicios Servicio[]
+  tutorEspecialidads TutorEspecialidad[]
+  citas Cita[]
+  resenas Resena[]
+
+
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
+
+
 }
 
 model Categoria {
@@ -68,15 +83,23 @@ model Categoria {
   descripcion   String? @db.VarChar(255)
   activo        Boolean @default(true)
 
+  servicios Servicio[]
+
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
+
 }
+
 
 model Especialidad {
   id            Int @id @default(autoincrement())
   nombre        String  @unique @db.VarChar(100)
   descripcion   String? @db.VarChar(255)
   activo        Boolean @default(true)
+
+  tutorEspecialidades TutorEspecialidad[]
+  servicioEspecialidades ServicioEspecialidad[]
+
 
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
@@ -85,6 +108,8 @@ model Especialidad {
 
 model Servicio {
   id            Int @id @default(autoincrement())
+  tutorId       Int
+  categoriaId   Int
   nombre        String  @unique @db.VarChar(150)
   descripcion   String? @db.VarChar(255)
   precio        Decimal @default(0.00) @db.Decimal(10, 2)
@@ -92,60 +117,78 @@ model Servicio {
   modalidad     Modalidad  @default(PRESENCIAL)
   activo        Boolean @default(true)
 
-  //tutorId       Int
-  //categoriaId   Int
-
+  tutor PerfilTutor @relation(fields: [tutorId], references:[id])
+  categoria Categoria @relation(fields: [categoriaId], references:[id])
   
+  servicioEspecialidades ServicioEspecialidad[]
+  citas Cita[]
+
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
+}
 
-}
- 
-/*
+
 model TutorEspecialidad {
-  id              Int @id @default(autoincrement())
-  //tutorId         Int
-  //especialidadId  Int
+  tutorId         Int
+  especialidadId  Int
+
+  tutor PerfilTutor @relation(fields: [tutorId], references:[id])
+  especialidad Especialidad @relation(fields:[especialidadId], references:[id])
+
+
+  @@id ([tutorId, especialidadId])
+  @@map ("tutor_especialidad")  
 }
+
 
 model ServicioEspecialidad {
-  id              Int @id @default(autoincrement())
-  //servicioId      Int
-  //especialidadId  Int
+  servicioId      Int
+  especialidadId  Int
+
+  servicio Servicio @relation(fields:[servicioId], references:[id])
+  especialidad Especialidad @relation(fields:[especialidadId], references:[id])
+
+  @@id ([servicioId, especialidadId])
+  @@map ("servicio_especialidad")  
+
 }
-*/
+
 model Cita {
   id                  Int @id @default(autoincrement())
+  clienteId           Int
+  tutorId             Int
+  servicioId          Int
   fechaCita           DateTime 
   horaInicio          String @db.VarChar(50)
   horaFin             String @db.VarChar(50)
-
   modalidad           Modalidad  @default(PRESENCIAL)
   estado 	      EstadoCita @default(PENDIENTE)
-
   comentarioCliente   String @db.VarChar(200)
   comentarioTutor     String? @db.VarChar(255)
-
   montoEstimado       Decimal @default(0.00) @db.Decimal(10, 2)
 
+  resenas Resena[]
 
-  //clienteId           Int
-  //tutorId             Int
-  //servicioId          Int
+  cliente Usuario @relation(fields:[clienteId], references:[id])
+  tutor PerfilTutor @relation(fields:[tutorId], references:[id])
+  servicio Servicio @relation(fields:[servicioId], references:[id])
 
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
 
-  }
+}
 
 model Resena {
   id              Int @id @default(autoincrement())
+  citaId          Int
+  clienteId       Int
+  tutorId         Int
   puntuacion      Int @default(0)
   comentario      String @db.VarChar(355)
 
-  //citaId          Int
-  //clienteId       Int
-  //tutorId         Int
+  cita Cita @relation(fields:[citaId], references:[id])
+  cliente Usuario @relation(fields:[clienteId], references:[id])
+  tutor PerfilTutor @relation(fields:[tutorId], references:[id])
 
 
   createAt DateTime @default(now())
