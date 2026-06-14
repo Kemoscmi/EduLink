@@ -5,11 +5,11 @@ import { perfilTutorService } from '../services/perfilTutor.service';
 export class PerfilTutorController { 
     listar = async (request: Request, response: Response, next: NextFunction) => { 
         try { 
-            const videojuegos = await perfilTutorService.listar(); 
+            const perfilesTutor = await perfilTutorService.listar();
 
             return response.status(StatusCodes.OK).json({ 
                 success: true, 
-                data: videojuegos, 
+                data: perfilesTutor, 
             }); 
         } catch (error) { 
             console.error(error); 
