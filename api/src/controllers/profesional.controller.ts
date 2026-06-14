@@ -37,7 +37,7 @@ export class ProfesionalController {
             next(error);
         }
     };
-    obtenerPorId = async (request: Request,response: Response,next: NextFunction) => {
+    obtenerPorId = async (request: Request, response: Response, next: NextFunction) => {
         try {
 
             const id = Number(request.params.id);
@@ -53,6 +53,26 @@ export class ProfesionalController {
             }
 
             return response.status(StatusCodes.OK).json({
+                success: true,
+                data: profesional
+            });
+
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
+    crear = async (request: Request,response: Response,next: NextFunction) => {
+        try {
+
+            const profesional =
+                await profesionalService.crear(
+                    request.body
+                );
+
+            return response.status(
+                StatusCodes.CREATED
+            ).json({
                 success: true,
                 data: profesional
             });

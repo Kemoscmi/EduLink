@@ -1,5 +1,6 @@
-import { EstadoCita, Modalidad } from "../../generated/prisma/enums";
+import { EstadoCita, Modalidad, Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+import { CreateProfesionalDto } from "../dtos/profesional.dto";
 
 export const profesionalService = {
     //LISTADO DE PROFESIONALES Mostrar: Nombre completo, Título profesional, Modalidad, Tarifa base, Disponibilidad. 
@@ -106,5 +107,62 @@ export const profesionalService = {
             }
         });
 
+    },
+    async crear(data: CreateProfesionalDto) {
+
+        await this.validateEmail(data.email);
+
+        return prisma.perfilTutor.create({
+            data: {
+
+                usuario: {
+                    create: {
+                        nombre: data.nombre,
+                        apellidos: data.apellidos,
+                        email: data.email,
+
+                        // temporal
+                        password: "hash_password",
+                        telefono: data.telefono,
+                        role: Role.TUTOR
+                    }
+                },
+
+                tituloProfesional: data.tituloProfesional,
+
+                descripcion: data.descripcion,
+
+                aniosExperiencia: data.aniosExperiencia,
+
+                modalidad: data.modalidad,
+
+                ubicacion: data.ubicacion,
+
+                tarifaBase: data.tarifaBase,
+
+                disponible: data.disponible,
+
+                imagenPerfil:
+                    data.imagenPerfil ??
+                    "image-not-found.jpg"
+            },
+
+            include: {
+                usuario: true
+            }
+        });
+    },
+    async validateEmail(email: string) {
+
+        const usuario =
+            await prisma.usuario.findUnique({
+                where: { email }
+            });
+
+        if (usuario) {
+            throw new Error(
+                "Ya existe un usuario con ese correo"
+            );
+        }
     }
 }
