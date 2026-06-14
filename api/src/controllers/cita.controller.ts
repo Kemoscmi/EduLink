@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { citaService } from "../services/cita.service";
 import { EstadoCita } from "../../generated/prisma/enums";
 import { sendSuccess } from "../utils/http-response";
+import { profesionalService } from "../services/profesional.service";
 
 export class CitaController {
 
@@ -65,12 +66,15 @@ export class CitaController {
     };
     crear = async (request: Request, response: Response, next: NextFunction) => {
 
-        const cita = await citaService.crear(request.body);
+        const profesional =
+            await profesionalService.crear(
+                request.body
+            );
 
         return sendSuccess(
             response,
-            cita,
-            "Cita creada correctamente",
+            profesional,
+            "Profesional creado correctamente",
             StatusCodes.CREATED
         );
     };
