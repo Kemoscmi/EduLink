@@ -1,5 +1,6 @@
 import { EstadoCita } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
+import { CreateCitaDto } from "../dtos/cita.dto";
 
 export const citaService = {
     //El listado deberá mostrar como mínimo: Cliente, Profesional, Servicio, Fecha, Hora, Estado. 
@@ -146,6 +147,74 @@ export const citaService = {
                 }
             }
         });
+    },
+    async crear(data: CreateCitaDto) {
+
+        await this.validateCliente(data.clienteId);
+
+        await this.validateTutor(data.tutorId);
+
+        await this.validateServicio(data.servicioId);
+
+        return prisma.cita.create({
+            data: {
+                clienteId: data.clienteId,
+                tutorId: data.tutorId,
+                servicioId: data.servicioId,
+
+                fechaCita: data.fechaCita,
+                horaInicio: data.horaInicio,
+                horaFin: data.horaFin,
+
+                modalidad: data.modalidad,
+
+                comentarioCliente: data.comentarioCliente,
+
+                // Regla del negocio
+                estado: EstadoCita.PENDIENTE
+            },
+
+            include: {
+                cliente: true,
+
+                tutor: {
+                    include: {
+                        usuario: true
+                    }
+                },
+
+                servicio: true
+            }
+        });
+    },
+
+    async validateCliente(clienteId: number) {
+        const cliente = await prisma.usuario.findUnique({
+            where: { id: clienteId }
+        });
+
+        if (!cliente) {
+            throw new Error("El cliente no existe");
+        }
+    },
+
+    async validateTutor(tutorId: number) {
+        const tutor = await prisma.perfilTutor.findUnique({
+            where: { id: tutorId }
+        });
+
+        if (!tutor) {
+            throw new Error("El profesional no existe");
+        }
+    },
+    async validateServicio(servicioId: number) {
+        const servicio = await prisma.servicio.findUnique({
+            where: { id: servicioId }
+        });
+
+        if (!servicio) {
+            throw new Error("El servicio no existe");
+        }
     }
 
 

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { citaService } from "../services/cita.service";
 import { EstadoCita } from "../../generated/prisma/enums";
+import { sendSuccess } from "../utils/http-response";
 
 export class CitaController {
 
@@ -61,6 +62,17 @@ export class CitaController {
             console.error(error);
             next(error);
         }
+    };
+    crear = async (request: Request, response: Response, next: NextFunction) => {
+
+        const cita = await citaService.crear(request.body);
+
+        return sendSuccess(
+            response,
+            cita,
+            "Cita creada correctamente",
+            StatusCodes.CREATED
+        );
     };
 
 }
