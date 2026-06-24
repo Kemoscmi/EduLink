@@ -1,0 +1,60 @@
+<section class="hero glass-card">
+  <div class="hero-content">
+
+    <span class="eyebrow">
+      Angular + API REST
+    </span>
+
+    <h1>EduLink</h1>
+
+    <p>
+      Plataforma para gestionar servicios educativos,
+      usuarios y categorías de forma sencilla.
+    </p>
+
+    <div class="hero-actions">
+
+      <button mat-flat-button class="secondary-button">
+        Ver servicios
+      </button>
+
+      <button mat-flat-button class="tertiary-button">
+        Ver usuarios
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="hero-visual">
+    <mat-icon>school</mat-icon>
+  </div>
+</section>
+
+<section class="summary-grid">
+
+  @for (card of cards(); track card.title) {
+
+  <mat-card class="dashboard-card glass-card">
+
+    <mat-card-header>
+
+      <div class="card-icon">
+        <mat-icon>{{ card.icon }}</mat-icon>
+      </div>
+
+      <h2>{{ card.title }}</h2>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <p>{{ card.description }}</p>
+
+    </mat-card-content>
+
+  </mat-card>
+
+  }
+
+</section>

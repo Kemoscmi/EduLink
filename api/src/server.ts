@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import morgan from "morgan";
 import { AppRoutes } from "./routes/routes";
+import path from "path";
 
 const app = express();
 // Acceder a la configuracion del archivo .env
@@ -21,15 +22,17 @@ app.use(
     })
 );
 app.get("/", (req, res) => {
-    res.json({
-        message: "API de videojuegos funcionando correctamente",
-    });
+  res.json({
+    message: "API de EduLink funcionando correctamente",
+  });
 });
 //---- Definir rutas ----
 app.use(AppRoutes.routes) 
 // Handle errors middleware
 
 //Acceso a las imágenes
+app.use("/images",express.static(
+path.join(path.resolve(),"assets/uploads")))
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`);
