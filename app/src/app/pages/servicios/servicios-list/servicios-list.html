@@ -1,0 +1,61 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Catálogo</span>
+    <h1>Servicios educativos</h1>
+    <p>Listado de servicios disponibles en EduLink.</p>
+  </div>
+
+  <button mat-flat-button color="primary" (click)="clearFilters()">
+    Limpiar filtros
+  </button>
+</section>
+
+@if (loading()) {
+  <div class="state-box">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando servicios...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="state-box error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+@if (!loading() && !error()) {
+  <p class="counter">Servicios encontrados: {{ totalServicios() }}</p>
+
+  <section class="summary-grid">
+    @for (servicio of serviciosFiltrados(); track servicio.id) {
+      <mat-card class="dashboard-card glass-card">
+        <mat-card-header>
+          <div class="card-icon">
+            <mat-icon>school</mat-icon>
+          </div>
+          <h2>{{ servicio.nombre }}</h2>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p>{{ servicio.descripcion }}</p>
+          <p><strong>Categoría:</strong> {{ servicio.categoria?.nombre || 'Sin categoría' }}</p>
+          <p><strong>Precio:</strong> ₡{{ servicio.precio }}</p>
+          <p><strong>Duración:</strong> {{ servicio.duracion }} minutos</p>
+          <p><strong>Modalidad:</strong> {{ servicio.modalidad }}</p>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-stroked-button color="primary">
+            Ver detalle
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    } @empty {
+      <div class="state-box">
+        <mat-icon>search_off</mat-icon>
+        <p>No hay servicios registrados.</p>
+      </div>
+    }
+  </section>
+}

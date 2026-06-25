@@ -1,0 +1,20 @@
+<div class="app-shell">
+  <app-header
+    [publicMenu]="publicMenu()"
+    [adminMaintenanceMenu]="adminMaintenanceMenu()"
+    [adminManagementMenu]="adminManagementMenu()"
+    [currentUser]="currentUser()"
+    [cartCount]="0"
+    [isAdmin]="isAdmin()"
+    [canShowItem]="canShowItem.bind(this)"
+    (loginClient)="loginAsClient()"
+    (loginAdmin)="loginAsAdmin()"
+    (logoutUser)="logout()"
+  />
+
+  <main class="content">
+    <router-outlet />
+  </main>
+
+  <app-footer />
+</div>
