@@ -62,7 +62,7 @@ export class ProfesionalController {
             next(error);
         }
     };
-    crear = async (request: Request,response: Response,next: NextFunction) => {
+    crear = async (request: Request, response: Response, next: NextFunction) => {
         try {
 
             const profesional =
@@ -79,6 +79,38 @@ export class ProfesionalController {
 
         } catch (error) {
             console.error(error);
+            next(error);
+        }
+    };
+    actualizar = async (request: Request, response: Response, next: NextFunction) => {
+
+        const profesional =
+            await profesionalService.actualizar(
+                Number(request.params.id),
+                request.body
+            );
+
+        return sendSuccess(
+            response,
+            profesional,
+            "Profesional actualizado correctamente",
+            StatusCodes.OK
+        );
+    };
+    cambiarDisponibilidad = async (request: Request, response: Response, next: NextFunction) => {
+
+        try {
+            const profesional = await profesionalService.cambiarDisponibilidad(
+                Number(request.params.id)
+            );
+
+            return sendSuccess(
+                response,
+                profesional,
+                "Disponibilidad actualizada correctamente",
+                StatusCodes.OK
+            );
+        } catch (error) {
             next(error);
         }
     };

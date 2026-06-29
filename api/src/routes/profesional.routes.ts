@@ -18,6 +18,16 @@ export class ProfesionalRoutes {
             "/",
             controller.crear
         );
+        //Actualizar un profesional
+        router.put(
+            "/:id",
+            controller.actualizar);
+
+        //Cambiar disponibilidad
+        router.patch(
+        "/:id/disponibilidad",
+        controller.cambiarDisponibilidad);
+            
         return router
     }
 } 

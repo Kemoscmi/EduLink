@@ -1,6 +1,6 @@
 import { EstadoCita, Modalidad, Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
-import { CreateProfesionalDto } from "../dtos/profesional.dto";
+import { CreateProfesionalDto, UpdateProfesionalDto } from "../dtos/profesional.dto";
 
 export const profesionalService = {
     //LISTADO DE PROFESIONALES Mostrar: Nombre completo, Título profesional, Modalidad, Tarifa base, Disponibilidad. 
@@ -164,5 +164,67 @@ export const profesionalService = {
                 "Ya existe un usuario con ese correo"
             );
         }
+    },
+    async actualizar(
+        id: number,
+        data: UpdateProfesionalDto
+    ) {
+
+        const profesional = await prisma.perfilTutor.findUnique({
+            where: { id }
+        });
+
+        if (!profesional) {
+            throw new Error("Profesional no encontrado");
+        }
+
+        await prisma.usuario.update({
+            where: {
+                id: profesional.usuarioId
+            },
+            data: {
+                nombre: data.nombre,
+                apellidos: data.apellidos,
+                email: data.email,
+                telefono: data.telefono
+            }
+        });
+
+        return prisma.perfilTutor.update({
+            where: { id },
+            data: {
+                tituloProfesional: data.tituloProfesional,
+                descripcion: data.descripcion,
+                aniosExperiencia: data.aniosExperiencia,
+                modalidad: data.modalidad,
+                ubicacion: data.ubicacion,
+                tarifaBase: data.tarifaBase,
+                disponible: data.disponible,
+                imagenPerfil: data.imagenPerfil
+            },
+            include: {
+                usuario: true
+            }
+        });
+    },
+    async cambiarDisponibilidad(
+        id: number
+    ) {
+
+        const profesional =
+            await prisma.perfilTutor.findUnique({
+                where: { id }
+            });
+
+        if (!profesional) {
+            throw new Error("Profesional no encontrado");
+        }
+
+        return prisma.perfilTutor.update({
+            where: { id },
+            data: {
+                disponible: !profesional.disponible
+            }
+        });
     }
 }
