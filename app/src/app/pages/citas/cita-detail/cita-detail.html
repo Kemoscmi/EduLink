@@ -1,0 +1,204 @@
+<section class="detail-header">
+    <button mat-stroked-button (click)="volver()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon> Volver al listado
+    </button>
+    <div class="header-title">
+        <span class="badge-id">Cita #{{ cita()?.id }}</span>
+        <h1>Detalles del Registro</h1>
+    </div>
+</section>
+
+@if (loading()) {
+    <div class="state loading-state">
+        <mat-spinner diameter="50" />
+        <p>Cargando información de la cita...</p>
+    </div>
+} @else if (error()) {
+    <div class="state error-state">
+        <mat-icon class="error-icon">error</mat-icon>
+        <h2>Error al cargar</h2>
+        <p>{{ error() }}</p>
+        <button mat-flat-button color="primary" (click)="volver()">Regresar</button>
+    </div>
+} @else if (cita(); as c) {
+    <div class="detail-grid">
+        <!-- 💡 FICHA PRINCIPAL DE LA CITA -->
+        <mat-card class="detail-card main-info-card">
+            <div class="card-status-bar" [class]="c.estado.toLowerCase()"></div>
+            <mat-card-header>
+                <div mat-card-avatar class="detail-avatar" [class]="c.estado.toLowerCase()">
+                    <mat-icon>event_note</mat-icon>
+                </div>
+                <mat-card-title>{{ c.servicio?.nombre }}</mat-card-title>
+                <mat-card-subtitle>Detalles de la reserva de clase</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+                <div class="quick-details-grid">
+                    <div class="detail-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <div class="item-content">
+                            <span class="item-label">Fecha de la Cita</span>
+                            <span class="item-value">{{ c.fechaCita | date:'fullDate':'UTC' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>schedule</mat-icon>
+                        <div class="item-content">
+                            <span class="item-label">Horario</span>
+                            <span class="item-value">{{ c.horaInicio }} - {{ c.horaFin || '--:--' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>laptop_mac</mat-icon>
+                        <div class="item-content">
+                            <span class="item-label">Modalidad</span>
+                            <span class="item-value badge-modalidad" [class]="c.modalidad.toLowerCase()">
+                                {{ c.modalidad }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <mat-icon>payments</mat-icon>
+                        <div class="item-content">
+                            <span class="item-label">Monto Estimado</span>
+                            <span class="item-value price-tag">₡{{ c.montoEstimado | number:'1.0-0' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+                <div class="status-wrapper">
+                    <span class="status-title">Estado actual:</span>
+                    <span class="status-badge" [class]="c.estado.toLowerCase()">{{ c.estado }}</span>
+                </div>
+            </mat-card-actions>
+        </mat-card>
+
+        <!--  CLIENTE Y PROFESIONAL -->
+        <div class="participants-container">
+            <!-- CLIENTE -->
+            <mat-card class="detail-card participant-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="avatar-circle">
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <mat-card-title>Estudiante (Cliente)</mat-card-title>
+                    <mat-card-subtitle>Información del solicitante</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <mat-icon>face</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Nombre Completo</span>
+                                <span class="contact-value">{{ c.cliente?.nombre }} {{ c.cliente?.apellidos }}</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <mat-icon>mail</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Correo Electrónico</span>
+                                <span class="contact-value"><a href="mailto:{{ c.cliente?.email }}">{{ c.cliente?.email }}</a></span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <mat-icon>phone</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Teléfono de Contacto</span>
+                                <span class="contact-value">{{ c.cliente?.telefono || 'No registrado' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- PROFESIONAL -->
+            <mat-card class="detail-card participant-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="avatar-circle tutor">
+                        <mat-icon>school</mat-icon>
+                    </div>
+                    <mat-card-title>Tutor (Profesional)</mat-card-title>
+                    <mat-card-subtitle>{{ c.tutor?.tituloProfesional || 'Tutor Calificado' }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="contact-list">
+                        <div class="contact-item">
+                            <mat-icon>badge</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Nombre Completo</span>
+                                <span class="contact-value">{{ c.tutor?.usuario?.nombre }} {{ c.tutor?.usuario?.apellidos }}</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <mat-icon>mail</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Correo Electrónico</span>
+                                <span class="contact-value"><a href="mailto:{{ c.tutor?.usuario?.email }}">{{ c.tutor?.usuario?.email }}</a></span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <mat-icon>phone</mat-icon>
+                            <div class="contact-info">
+                                <span class="contact-label">Teléfono de Contacto</span>
+                                <span class="contact-value">{{ c.tutor?.usuario?.telefono || 'No registrado' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- DESCRIPCIÓN Y COMENTARIOS -->
+        <mat-card class="detail-card comments-card">
+            <mat-card-header>
+                <div mat-card-avatar class="avatar-circle comments">
+                    <mat-icon>description</mat-icon>
+                </div>
+                <mat-card-title>Descripción & Comentarios</mat-card-title>
+                <mat-card-subtitle>Notas adicionales sobre esta sesión de tutoría</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="comments-grid">
+                    <!-- Descripción del Servicio -->
+                    <div class="comment-block">
+                        <div class="block-header">
+                            <mat-icon>info</mat-icon>
+                            <h4>Descripción del Servicio</h4>
+                        </div>
+                        <div class="block-content">
+                            <p>{{ c.servicio?.descripcion || 'No se cuenta con una descripción detallada del servicio.' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Comentario Cliente -->
+                    <div class="comment-block">
+                        <div class="block-header client">
+                            <mat-icon>chat_bubble_outline</mat-icon>
+                            <h4>Comentario del Estudiante</h4>
+                        </div>
+                        <div class="block-content bubble">
+                            <p class="quote">"{{ c.comentarioCliente || 'El estudiante no ha proporcionado notas adicionales para esta cita.' }}"</p>
+                        </div>
+                    </div>
+
+                    <!-- Comentario Tutor -->
+                    <div class="comment-block">
+                        <div class="block-header tutor">
+                            <mat-icon>rate_review</mat-icon>
+                            <h4>Nota del Profesional</h4>
+                        </div>
+                        <div class="block-content bubble tutor">
+                            <p class="quote">"{{ c.comentarioTutor || 'No se han registrado observaciones por el tutor.' }}"</p>
+                        </div>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+}

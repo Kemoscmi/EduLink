@@ -1,1 +1,156 @@
-<p>citas-list works!</p>
+<section class="page-header">
+    <div class="header-overlay"></div>
+    <h1>Citas Disponibles</h1>
+    <p>Listado de citas</p>
+</section>
+
+<div class="result-summary-container">
+    <div class="result-summary">
+        <mat-icon>assessment</mat-icon>
+        <span>Se encontraron <strong>{{totalCitas()}}</strong> citas en total</span>
+    </div>
+</div>
+
+<div class="citas-layout">
+    <!-- PANEL PARA FILTROS -->
+    <aside class="filters-sidebar">
+        <h2><mat-icon>filter_list</mat-icon> Filtros de Búsqueda</h2>
+        
+        <!-- Búsqueda General
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Búsqueda general</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [value]="search()" (input)="search.set($any($event.target).value)" placeholder="Cliente, profesional o servicio..." />
+        </mat-form-field>
+        -->
+
+        <!-- Estado -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Estado de Cita</mat-label>
+            <mat-icon matPrefix>rule</mat-icon>
+            <mat-select [value]="estado()" (selectionChange)="estado.set($event.value)">
+                <mat-option [value]="null">Todos los estados</mat-option>
+                <mat-option value="PENDIENTE">PENDIENTE</mat-option>
+                <mat-option value="PAGADA">PAGADA</mat-option>
+                <mat-option value="REALIZADA">REALIZADA</mat-option>
+                <mat-option value="CANCELADA">CANCELADA</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Profesional -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Profesional (Tutor)</mat-label>
+            <mat-icon matPrefix>badge</mat-icon>
+            <mat-select [value]="profesionalId()" (selectionChange)="profesionalId.set($event.value)">
+                <mat-option [value]="null">Todos los profesionales</mat-option>
+                @for (p of profesionales(); track p.id) {
+                <mat-option [value]="p.id">
+                    {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}
+                </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Rango de Fechas -->
+        <div class="date-group">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de inicio</mat-label>
+                <input matInput type="date" [value]="fechaInicio()" (input)="fechaInicio.set($any($event.target).value)" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de fin</mat-label>
+                <input matInput type="date" [value]="fechaFin()" (input)="fechaFin.set($any($event.target).value)" />
+            </mat-form-field>
+        </div>
+
+        <!-- Botón Limpiar -->
+        <button mat-flat-button class="clear-btn" (click)="clearFilters()">
+            <mat-icon>filter_alt_off</mat-icon>
+            Limpiar filtros
+        </button>
+    </aside>
+
+    <!--  LISTADO DE CITAS -->
+    <main class="citas-content">
+        @if (loading()) {
+            <div class="state loading-state">
+                <mat-spinner diameter="50" />
+                <p>Cargando citas del servidor...</p>
+            </div>
+        } @else if (error()) {
+            <div class="state error-state">
+                <mat-icon class="error-icon">error</mat-icon>
+                <p>{{ error() }}</p>
+                <button mat-stroked-button (click)="loadCitas()">Reintentar</button>
+            </div>
+        } @else if (citasFiltradas().length === 0) {
+            <div class="state empty-state">
+                <mat-icon class="empty-icon">search_off</mat-icon>
+                <h3>Sin resultados</h3>
+                <p>No se encontraron citas que coincidan con los filtros seleccionados.</p>
+                <button mat-button color="primary" (click)="clearFilters()">Ver todas las citas</button>
+            </div>
+        } @else {
+            <div class="citas-grid">
+                @for (cita of citasFiltradas(); track cita.id) {
+                    <mat-card class="cita-card" [class]="cita.estado.toLowerCase()">
+                        <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
+                        <mat-card-header>
+                            <div mat-card-avatar class="cita-avatar" [class]="cita.estado.toLowerCase()">
+                                <mat-icon>event_available</mat-icon>
+                            </div>
+                            <mat-card-title>{{ cita.servicio?.nombre || 'Servicio General' }}</mat-card-title>
+                            <mat-card-subtitle>ID de Cita: #{{ cita.id }}</mat-card-subtitle>
+                        </mat-card-header>
+
+                        <mat-card-content>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <mat-icon>person</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Cliente</span>
+                                        <span class="info-value">{{ cita.cliente?.nombre }} {{ cita.cliente?.apellidos }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <mat-icon>badge</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Profesional</span>
+                                        <span class="info-value">{{ cita.tutor?.usuario?.nombre }} {{ cita.tutor?.usuario?.apellidos }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <mat-icon>calendar_today</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Fecha</span>
+                                        <span class="info-value">{{ cita.fechaCita | date:'dd/MM/yyyy':'UTC' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <mat-icon>schedule</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Horario</span>
+                                        <span class="info-value">{{ cita.horaInicio }} - {{ cita.horaFin || '--:--' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+
+                        <mat-card-actions>
+                            <span class="status-badge" [class]="cita.estado.toLowerCase()">
+                                {{ cita.estado }}
+                            </span>
+                            <a mat-button color="primary" [routerLink]="['/admin/citas', cita.id]" class="detail-btn">
+                                <mat-icon>visibility</mat-icon> Detalle
+                            </a>
+                        </mat-card-actions>
+                    </mat-card>
+                }
+            </div>
+        }
+    </main>
+</div>

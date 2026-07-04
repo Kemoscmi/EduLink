@@ -2,6 +2,8 @@ import { Component, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
+
 
 interface ContentCard {
   title: string;
@@ -11,7 +13,7 @@ interface ContentCard {
 
 @Component({
   selector: 'app-home',
-  imports: [MatCardModule, MatIconModule, MatButtonModule],
+  imports: [MatCardModule, MatIconModule, MatButtonModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

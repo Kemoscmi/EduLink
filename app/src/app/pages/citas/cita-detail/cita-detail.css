@@ -1,0 +1,517 @@
+/* ==========================================
+   Detail Header & Navigation
+   ========================================== */
+.detail-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+}
+
+.back-btn {
+    align-self: flex-start;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 500 !important;
+    color: var(--mat-sys-primary, #673ab7) !important;
+    border-color: rgba(103, 58, 183, 0.25) !important;
+    background-color: transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+.back-btn:hover {
+    background-color: rgba(103, 58, 183, 0.05) !important;
+    border-color: var(--mat-sys-primary, #673ab7) !important;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (max-width: 600px) {
+    .header-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+.badge-id {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: rgba(103, 58, 183, 0.1);
+    color: var(--mat-sys-primary, #673ab7);
+    border-radius: 30px;
+    letter-spacing: 0.5px;
+}
+
+.header-title h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mat-sys-on-surface, #212121);
+    letter-spacing: -0.5px;
+}
+
+/* ==========================================
+   States (Loading, Error)
+   ========================================== */
+.state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--mat-sys-surface-container-low, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+    animation: fadeIn 0.4s ease;
+}
+
+.state p {
+    margin-top: 1rem;
+    color: var(--mat-sys-on-surface-variant, #666666);
+    font-size: 1rem;
+}
+
+.error-state {
+    border-color: rgba(211, 47, 47, 0.2);
+}
+
+.error-state h2 {
+    color: #d32f2f;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 1.35rem;
+}
+
+.error-icon {
+    font-size: 3.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #d32f2f;
+}
+
+/* ==========================================
+   Detail Grid & Cards Base
+   ========================================== */
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.detail-card {
+    position: relative;
+    border-radius: 16px !important;
+    overflow: hidden;
+    background: var(--mat-sys-surface, #ffffff) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.06)) !important;
+}
+
+.card-status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+}
+
+.detail-card mat-card-header {
+    padding: 1.5rem 1.75rem 1.25rem !important;
+}
+
+.detail-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    width: 44px;
+    height: 44px;
+}
+
+.detail-avatar mat-icon {
+    font-size: 1.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.detail-card mat-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--mat-sys-on-surface, #212121);
+}
+
+.detail-card mat-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--mat-sys-on-surface-variant, #757575);
+    margin-top: 3px;
+}
+
+.detail-card mat-card-content {
+    padding: 1.5rem 1.75rem !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================
+   Main Info Card - Quick Details Grid
+   ========================================== */
+.quick-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.detail-item mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--mat-sys-primary, #673ab7);
+    margin-top: 2px;
+}
+
+.item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--mat-sys-on-surface-variant, #999999);
+}
+
+.item-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface, #333333);
+    display: inline-block;
+}
+
+.item-value::first-letter {
+    text-transform: uppercase;
+}
+
+.price-tag {
+    font-size: 1.25rem;
+    color: #2e7d32;
+}
+
+.badge-modalidad {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+}
+
+.badge-modalidad.virtual {
+    background: #e0f7fa;
+    color: #00838f;
+}
+
+.badge-modalidad.presencial {
+    background: #ede7f6;
+    color: #5e35b1;
+}
+
+.badge-modalidad.mixta {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.main-info-card mat-card-actions {
+    padding: 1.25rem 1.75rem 1.5rem !important;
+    background: var(--mat-sys-surface-container-lowest, rgba(0, 0, 0, 0.02));
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.status-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant, #666666);
+}
+
+/* ==========================================
+   Participants Container
+   ========================================== */
+.participants-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .participants-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.avatar-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(103, 58, 183, 0.08);
+    color: var(--mat-sys-primary, #673ab7);
+}
+
+.avatar-circle.tutor {
+    background-color: rgba(0, 188, 212, 0.08);
+    color: #00acc1;
+}
+
+.contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.contact-item mat-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--mat-sys-on-surface-variant, #888888);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.contact-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--mat-sys-on-surface-variant, #999999);
+}
+
+.contact-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface, #333333);
+}
+
+.contact-value a {
+    color: var(--mat-sys-primary, #673ab7);
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+
+.contact-value a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   Comments & Descriptions Card
+   ========================================== */
+.avatar-circle.comments {
+    background-color: rgba(233, 30, 99, 0.08);
+    color: #e91e63;
+}
+
+.comments-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+}
+
+.comment-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.block-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--mat-sys-on-surface, #424242);
+}
+
+.block-header mat-icon {
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--mat-sys-primary, #673ab7);
+}
+
+.block-header.client mat-icon {
+    color: #0288d1;
+}
+
+.block-header.tutor mat-icon {
+    color: #00897b;
+}
+
+.block-header h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.block-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--mat-sys-on-surface-variant, #555555);
+}
+
+/* Quote bubble bubble styling */
+.block-content.bubble {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: #f4f6f9;
+    border-left: 4px solid #0288d1;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.block-content.bubble.tutor {
+    border-left-color: #00897b;
+    background: #f0f7f6;
+}
+
+.block-content.bubble p.quote {
+    font-style: italic;
+    color: #333333;
+}
+
+/* Dark Mode Color Contrast Fixes */
+@media (prefers-color-scheme: dark) {
+    .block-content.bubble {
+        background: #2b2b2b;
+    }
+    .block-content.bubble.tutor {
+        background: #232e2c;
+    }
+    .block-content.bubble p.quote {
+        color: #e0e0e0;
+    }
+}
+
+body.dark-mode .block-content.bubble {
+    background: #2b2b2b;
+}
+
+body.dark-mode .block-content.bubble.tutor {
+    background: #232e2c;
+}
+
+body.dark-mode .block-content.bubble p.quote {
+    color: #e0e0e0;
+}
+
+/* ==========================================
+   Status specific palettes (HSL colors)
+   ========================================== */
+
+/* 1. PENDIENTE (Amber / Gold) */
+.card-status-bar.pendiente {
+    background-color: hsl(38, 92%, 50%); /* Amber */
+}
+.detail-avatar.pendiente {
+    background-color: hsl(38, 92%, 95%);
+    color: hsl(38, 92%, 40%);
+}
+.status-badge.pendiente {
+    background-color: hsl(38, 92%, 95%);
+    color: hsl(38, 92%, 40%);
+}
+
+/* 2. PAGADA (Blue / Indigo) */
+.card-status-bar.pagada {
+    background-color: hsl(210, 92%, 50%); /* Blue */
+}
+.detail-avatar.pagada {
+    background-color: hsl(210, 92%, 95%);
+    color: hsl(210, 92%, 40%);
+}
+.status-badge.pagada {
+    background-color: hsl(210, 92%, 95%);
+    color: hsl(210, 92%, 40%);
+}
+
+/* 3. REALIZADA (Emerald / Green) */
+.card-status-bar.realizada {
+    background-color: hsl(142, 70%, 45%); /* Emerald */
+}
+.detail-avatar.realizada {
+    background-color: hsl(142, 70%, 95%);
+    color: hsl(142, 70%, 35%);
+}
+.status-badge.realizada {
+    background-color: hsl(142, 70%, 95%);
+    color: hsl(142, 70%, 35%);
+}
+
+/* 4. CANCELADA (Rose / Red) */
+.card-status-bar.cancelada {
+    background-color: hsl(350, 80%, 55%); /* Rose */
+}
+.detail-avatar.cancelada {
+    background-color: hsl(350, 80%, 96%);
+    color: hsl(350, 80%, 45%);
+}
+.status-badge.cancelada {
+    background-color: hsl(350, 80%, 96%);
+    color: hsl(350, 80%, 45%);
+}
+
+/* Status Badge Base */
+.status-badge {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 30px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
