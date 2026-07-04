@@ -32,5 +32,15 @@ export class Home {
       description: 'Administración de usuarios, clientes y tutores.',
       icon: 'group',
     },
+    {
+    title: 'Profesionales',
+    description: 'Administración de los perfiles de los tutores, su información y disponibilidad.',
+    icon: 'badge',
+  },
+  {
+    title: 'Citas',
+    description: 'Administración de las citas programadas entre estudiantes y tutores.',
+    icon: 'event',
+  },
   ]);
 }

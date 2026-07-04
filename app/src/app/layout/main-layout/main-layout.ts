@@ -30,15 +30,19 @@ export class MainLayout {
   publicMenu = signal<MenuItem[]>([
     { label: 'Inicio', path: '/', icon: 'home' },
     { label: 'Servicios', path: '/servicios', icon: 'school' },
+    { label: 'Profesionales', path: '/profesionales', icon: 'person_search' },
   ]);
 
   adminMaintenanceMenu = signal<MenuItem[]>([
     { label: 'Servicios', path: '/admin/servicios', icon: 'design_services' },
     { label: 'Categorías', path: '/admin/categorias', icon: 'category' },
+    { label: 'Profesionales', path: '/admin/profesionales', icon: 'badge' },
   ]);
 
   adminManagementMenu = signal<MenuItem[]>([
     { label: 'Usuarios', path: '/admin/usuarios', icon: 'group' },
+    { label: 'Citas', path: '/admin/citas', icon: 'event' },
+    { label: 'Reportes', path: '/admin/reportes', icon: 'bar_chart' },
   ]);
 
   isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
