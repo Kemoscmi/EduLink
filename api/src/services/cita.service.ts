@@ -51,8 +51,10 @@ export const citaService = {
                 take,
                 select: {
                     id: true,
+                    tutorId: true,
                     fechaCita: true,
                     horaInicio: true,
+                    horaFin: true,
                     estado: true,
 
                     cliente: {
