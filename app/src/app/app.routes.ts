@@ -8,6 +8,7 @@ import { CategoriasList } from './pages/categorias/categorias-list/categorias-li
 import { CitasList } from './pages/citas/citas-list/citas-list';
 import { CitaDetail } from './pages/citas/cita-detail/cita-detail';
 import { ProfesionalesList } from './pages/profesionales/profesionales-list/profesionales-list';
+import { ProfesionalDetail } from './pages/profesionales/profesionales';
 
 export const routes: Routes = [
   {
@@ -67,8 +68,18 @@ export const routes: Routes = [
         component: ProfesionalesList,
       },
       {
+        path: 'profesionales/:id',
+        component: ProfesionalDetail,
+        title: 'Detalle de Profesional',
+      },
+      {
         path: 'admin/profesionales',
         component: ProfesionalesList,
+      },
+      {
+        path: 'admin/profesionales/:id',
+        component: ProfesionalDetail,
+        title: 'Detalle de Profesional',
       },
     ],
   },

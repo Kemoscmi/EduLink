@@ -1,5 +1,5 @@
 import { Profesional } from './profesional.model';
-import { ServicioEspecialidad } from './servicio-especialidad.model';
+import { Especialidad } from './especialidad.model';
 
 
 export interface TutorEspecialidad {
@@ -7,7 +7,7 @@ export interface TutorEspecialidad {
     especialidadId: number;
 
     tutor?: Profesional;
-    especialidad?: ServicioEspecialidad;
+    especialidad?: Especialidad;
 }
 
 export interface TutorEspecialidadCreateDto {

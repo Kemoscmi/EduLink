@@ -1,1 +1,142 @@
-<p>profesionales-list works!</p>
+<section class="page-header">
+    <div class="header-overlay"></div>
+    <h1>Directorio de Profesionales</h1>
+    <p>Lista de Profesionales disponibles para brindar asesorías en Edulink</p>
+</section>
+
+<div class="result-summary-container">
+    <div class="result-summary">
+        <mat-icon>people</mat-icon>
+        <span>Se encontraron <strong>{{totalProfesionales()}}</strong> profesionales en total</span>
+    </div>
+</div>
+
+<div class="profesionales-layout">
+    <!-- 🔎 PANEL DE FILTROS -->
+    <aside class="filters-sidebar">
+        <h2><mat-icon>filter_list</mat-icon> Filtros de Búsqueda</h2>
+        
+        <!-- Búsqueda General -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Buscar profesional</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [value]="search()" (input)="search.set($any($event.target).value)" placeholder="Nombre, apellido o título..." />
+        </mat-form-field>
+
+        <!-- Modalidad -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Modalidad de Trabajo</mat-label>
+            <mat-icon matPrefix>laptop_mac</mat-icon>
+            <mat-select [value]="modalidad()" (selectionChange)="modalidad.set($event.value)">
+                <mat-option [value]="null">Todas las modalidades</mat-option>
+                <mat-option value="VIRTUAL">VIRTUAL</mat-option>
+                <mat-option value="PRESENCIAL">PRESENCIAL</mat-option>
+                <mat-option value="MIXTA">MIXTA</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Disponibilidad -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Disponibilidad</mat-label>
+            <mat-icon matPrefix>lock_open</mat-icon>
+            <mat-select [value]="disponible()" (selectionChange)="disponible.set($event.value)">
+                <mat-option [value]="null">Todos los estados</mat-option>
+                <mat-option [value]="true">Disponible</mat-option>
+                <mat-option [value]="false">No disponible</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Botón Limpiar -->
+        <button mat-flat-button class="clear-btn" (click)="clearFilters()">
+            <mat-icon>filter_alt_off</mat-icon>
+            Limpiar filtros
+        </button>
+    </aside>
+
+    <!-- 📋 LISTADO DE PROFESIONALES -->
+    <main class="profesionales-content">
+        @if (loading()) {
+            <div class="state loading-state">
+                <mat-spinner diameter="50" />
+                <p>Cargando catálogo de profesionales...</p>
+            </div>
+        } @else if (error()) {
+            <div class="state error-state">
+                <mat-icon class="error-icon">error</mat-icon>
+                <p>{{ error() }}</p>
+                <button mat-stroked-button (click)="loadProfesionales()">Reintentar</button>
+            </div>
+        } @else if (profesionalesFiltrados().length === 0) {
+            <div class="state empty-state">
+                <mat-icon class="empty-icon">search_off</mat-icon>
+                <h3>Sin resultados</h3>
+                <p>No se encontraron profesionales que coincidan con los filtros seleccionados.</p>
+                <button mat-button color="primary" (click)="clearFilters()">Ver todos los tutores</button>
+            </div>
+        } @else {
+            <div class="profesionales-grid">
+                @for (p of profesionalesFiltrados(); track p.id) {
+                    <mat-card class="profesional-card" [class.disponible]="p.disponible" [class.no-disponible]="!p.disponible">
+                        <!-- Indicador visual superior -->
+                        <div class="status-top-bar" [class.disponible]="p.disponible"></div>
+                        
+                        <!-- Cabecera de la tarjeta con imagen -->
+                        <div class="card-hero">
+                            <div class="avatar-wrapper">
+                                @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
+                                    <img [src]="'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="profile-img" />
+                                } @else {
+                                    <div class="profile-placeholder">
+                                        <mat-icon>person</mat-icon>
+                                    </div>
+                                }
+                            </div>
+                            <div class="hero-text">
+                                <h3>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h3>
+                                <p class="title-tag">{{ p.tituloProfesional }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Detalles técnicos -->
+                        <mat-card-content>
+                            <p class="bio-text">
+                                {{ p.descripcion || 'Este tutor aún no ha ingresado una descripción en su perfil profesional de EduLink.' }}
+                            </p>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <mat-icon>computer</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Modalidad</span>
+                                        <span class="info-value badge-modalidad" [class]="p.modalidad.toLowerCase()">
+                                            {{ p.modalidad }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <mat-icon>sell</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Tarifa Base</span>
+                                        <span class="info-value price-tag">₡{{ p.tarifaBase | number:'1.0-0' }}/h</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+
+                        <!-- Acciones y estado de disponibilidad -->
+                        <mat-card-actions>
+                            <span class="status-badge" [class.disponible]="p.disponible">
+                                {{ p.disponible ? 'Disponible' : 'No Disponible' }}
+                            </span>
+                            
+                            <a mat-button color="primary" [routerLink]="['/admin/profesionales', p.id]" class="detail-btn">
+                                <mat-icon>visibility</mat-icon> Detalle
+                            </a>
+                        </mat-card-actions>
+                    </mat-card>
+                }
+            </div>
+        }
+    </main>
+</div>

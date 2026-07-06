@@ -1,0 +1,674 @@
+/* ==========================================
+   Detail Header & Navigation
+   ========================================== */
+.detail-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+}
+
+.back-btn {
+    align-self: flex-start;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 500 !important;
+    color: #00796b !important;
+    border-color: rgba(0, 150, 136, 0.25) !important;
+    background-color: transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+.back-btn:hover {
+    background-color: rgba(0, 150, 136, 0.05) !important;
+    border-color: #00796b !important;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+@media (max-width: 600px) {
+    .header-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+.badge-id {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: rgba(0, 150, 136, 0.08);
+    color: #00796b;
+    border-radius: 30px;
+    letter-spacing: 0.5px;
+}
+
+.header-title h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mat-sys-on-surface, #212121);
+    letter-spacing: -0.5px;
+}
+
+/* ==========================================
+   States (Loading, Error)
+   ========================================== */
+.state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--mat-sys-surface-container-low, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+    animation: fadeIn 0.4s ease;
+}
+
+.state p {
+    margin-top: 1rem;
+    color: var(--mat-sys-on-surface-variant, #666666);
+    font-size: 1rem;
+}
+
+.error-state {
+    border-color: rgba(211, 47, 47, 0.2);
+}
+
+.error-state h2 {
+    color: #d32f2f;
+    margin: 1rem 0 0.5rem 0;
+    font-size: 1.35rem;
+}
+
+.error-icon {
+    font-size: 3.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    color: #d32f2f;
+}
+
+/* ==========================================
+   Detail Grid & Cards Base
+   ========================================== */
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.detail-card {
+    position: relative;
+    border-radius: 16px !important;
+    overflow: hidden;
+    background: var(--mat-sys-surface, #ffffff) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.06)) !important;
+}
+
+.card-status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background-color: #9e9e9e; /* No disponible */
+}
+
+.card-status-bar.disponible {
+    background-color: hsl(142, 70%, 45%); /* Disponible */
+}
+
+.detail-card mat-card-header {
+    padding: 1.5rem 1.75rem 1.25rem !important;
+}
+
+.detail-card mat-card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--mat-sys-on-surface, #212121);
+}
+
+.detail-card mat-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--mat-sys-on-surface-variant, #757575);
+    margin-top: 3px;
+}
+
+.detail-card mat-card-content {
+    padding: 1.5rem 1.75rem !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================
+   Main Hero Card Layout
+   ========================================== */
+.main-hero-card {
+    padding: 0.5rem 0 0 0;
+}
+
+.hero-layout {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 2.25rem 1.5rem 2.25rem;
+}
+
+@media (max-width: 640px) {
+    .hero-layout {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.25rem;
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+    }
+}
+
+.hero-avatar-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.hero-profile-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.hero-profile-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: rgba(0, 150, 136, 0.08);
+    color: #00796b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(0, 150, 136, 0.12);
+}
+
+.hero-profile-placeholder mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+}
+
+.hero-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .title-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+}
+
+.title-row h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mat-sys-on-surface, #212121);
+    letter-spacing: -0.5px;
+}
+
+.professional-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant, #555555);
+    margin: 6px 0 8px 0;
+}
+
+.experience-tag {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #00796b;
+    margin: 0;
+}
+
+.experience-tag mat-icon {
+    font-size: 1.15rem;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: #ffb300;
+}
+
+.bio-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+    color: var(--mat-sys-on-surface, #333333);
+}
+
+.bio-section p {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--mat-sys-on-surface-variant, #555555);
+}
+
+/* ==========================================
+   Split Grid Layout (Operational and Contact)
+   ========================================== */
+.split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .split-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.avatar-circle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    background-color: rgba(0, 150, 136, 0.08);
+    color: #00796b;
+}
+
+.avatar-circle-icon.contact {
+    background-color: rgba(33, 150, 243, 0.08);
+    color: #2196f3;
+}
+
+.data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.data-item-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.data-item-row mat-icon {
+    font-size: 1.35rem;
+    width: 1.35rem;
+    height: 1.35rem;
+    color: var(--mat-sys-on-surface-variant, #888888);
+}
+
+.laboral-details-card .data-item-row mat-icon {
+    color: #00796b;
+}
+
+.contact-details-card .data-item-row mat-icon {
+    color: #2196f3;
+}
+
+.item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-text .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--mat-sys-on-surface-variant, #999999);
+}
+
+.item-text .value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface, #333333);
+}
+
+.price-tag {
+    font-size: 1.15rem !important;
+    color: #2e7d32 !important;
+}
+
+.badge-modalidad {
+    display: inline-block;
+    padding: 0.15rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: fit-content;
+    color: #ffffff !important;
+}
+
+.badge-modalidad.virtual {
+    background: #00796b !important;
+}
+
+.badge-modalidad.presencial {
+    background: #2196f3 !important;
+}
+
+.badge-modalidad.mixta {
+    background: #e65100 !important;
+}
+
+.email-link a {
+    color: #00796b;
+    text-decoration: none;
+    transition: text-decoration 0.2s ease;
+}
+
+.email-link a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   Specialties Section
+   ========================================== */
+.avatar-circle-icon.specialty {
+    background-color: rgba(156, 39, 176, 0.08);
+    color: #9c27b0;
+}
+
+.chips-container {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.specialty-chip {
+    padding: 0.45rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background-color: rgba(0, 150, 136, 0.08);
+    color: #00796b;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 150, 136, 0.12);
+    transition: all 0.2s ease;
+}
+
+.specialty-chip:hover {
+    background-color: #00796b;
+    color: #ffffff;
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   Services Offered Section
+   ========================================== */
+.avatar-circle-icon.services {
+    background-color: rgba(233, 30, 99, 0.08);
+    color: #e91e63;
+}
+
+.no-services-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--mat-sys-on-surface-variant, #888888);
+}
+
+.no-services-state mat-icon {
+    font-size: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.services-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.service-row-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--mat-sys-surface-container-low, #fcfcfc);
+    border-radius: 12px;
+    border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.05));
+    transition: all 0.2s ease;
+}
+
+.service-row-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 150, 136, 0.15);
+}
+
+@media (max-width: 768px) {
+    .service-row-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+}
+
+.service-main-info {
+    flex: 1;
+}
+
+.service-main-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--mat-sys-on-surface, #222222);
+}
+
+.service-desc {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--mat-sys-on-surface-variant, #666666);
+    line-height: 1.4;
+}
+
+.service-meta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .service-meta {
+        width: 100%;
+        justify-content: space-between;
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+        padding-top: 0.75rem;
+    }
+}
+
+.meta-block {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--mat-sys-on-surface-variant, #555555);
+}
+
+.meta-block mat-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: #888888;
+}
+
+.meta-block.price {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2e7d32;
+}
+
+/* ==========================================
+   Badges & States (HSL details)
+   ========================================== */
+.availability-badge {
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 30px;
+    letter-spacing: 0.5px;
+    background-color: #eee;
+    color: #757575;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.availability-badge.disponible {
+    background-color: hsl(142, 70%, 95%);
+    color: hsl(142, 70%, 35%);
+}
+
+/* ==========================================
+   Dark Mode Customizations
+   ========================================== */
+@media (prefers-color-scheme: dark) {
+    .badge-id {
+        background: rgba(0, 150, 136, 0.15);
+        color: #4db6ac;
+    }
+    .hero-profile-placeholder {
+        background-color: rgba(0, 150, 136, 0.12);
+        color: #4db6ac;
+    }
+    .avatar-circle-icon {
+        background-color: rgba(0, 150, 136, 0.12);
+        color: #4db6ac;
+    }
+    .avatar-circle-icon.contact {
+        background-color: rgba(33, 150, 243, 0.12);
+        color: #64b5f6;
+    }
+    .avatar-circle-icon.specialty {
+        background-color: rgba(156, 39, 176, 0.12);
+        color: #ba68c8;
+    }
+    .avatar-circle-icon.services {
+        background-color: rgba(233, 30, 99, 0.12);
+        color: #f06292;
+    }
+    .email-link a {
+        color: #4db6ac;
+    }
+    .specialty-chip {
+        background-color: rgba(0, 150, 136, 0.12);
+        color: #4db6ac;
+        border-color: rgba(0, 150, 136, 0.2);
+    }
+    .specialty-chip:hover {
+        background-color: #00796b;
+        color: #ffffff;
+    }
+    .availability-badge {
+        background-color: #333333;
+        color: #9e9e9e;
+    }
+    .availability-badge.disponible {
+        background-color: rgba(76, 175, 80, 0.12);
+        color: #81c784;
+    }
+}
+
+body.dark-mode .badge-id {
+    background: rgba(0, 150, 136, 0.15);
+    color: #4db6ac;
+}
+
+body.dark-mode .hero-profile-placeholder {
+    background-color: rgba(0, 150, 136, 0.12);
+    color: #4db6ac;
+}
+
+body.dark-mode .avatar-circle-icon {
+    background-color: rgba(0, 150, 136, 0.12);
+    color: #4db6ac;
+}
+
+body.dark-mode .avatar-circle-icon.contact {
+    background-color: rgba(33, 150, 243, 0.12);
+    color: #64b5f6;
+}
+
+body.dark-mode .avatar-circle-icon.specialty {
+    background-color: rgba(156, 39, 176, 0.12);
+    color: #ba68c8;
+}
+
+body.dark-mode .avatar-circle-icon.services {
+    background-color: rgba(233, 30, 99, 0.12);
+    color: #f06292;
+}
+
+body.dark-mode .email-link a {
+    color: #4db6ac;
+}
+
+body.dark-mode .specialty-chip {
+    background-color: rgba(0, 150, 136, 0.12);
+    color: #4db6ac;
+    border-color: rgba(0, 150, 136, 0.2);
+}
+
+body.dark-mode .specialty-chip:hover {
+    background-color: #00796b;
+    color: #ffffff;
+}
+
+body.dark-mode .availability-badge {
+    background-color: #333333;
+    color: #9e9e9e;
+}
+
+body.dark-mode .availability-badge.disponible {
+    background-color: rgba(76, 175, 80, 0.12);
+    color: #81c784;
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

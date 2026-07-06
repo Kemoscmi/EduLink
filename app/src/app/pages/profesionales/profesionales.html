@@ -1,1 +1,210 @@
-<p>profesionales works!</p>
+<section class="detail-header">
+    <button mat-stroked-button (click)="volver()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon> Volver al listado
+    </button>
+    <div class="header-title">
+        <span class="badge-id">Tutor #{{ profesional()?.id }}</span>
+        <h1>Perfil del Profesional</h1>
+    </div>
+</section>
+
+@if (loading()) {
+    <div class="state loading-state">
+        <mat-spinner diameter="50" />
+        <p>Cargando información del tutor...</p>
+    </div>
+} @else if (error()) {
+    <div class="state error-state">
+        <mat-icon class="error-icon">error</mat-icon>
+        <h2>Error al cargar</h2>
+        <p>{{ error() }}</p>
+        <button mat-flat-button color="primary" (click)="volver()">Regresar</button>
+    </div>
+} @else if (profesional(); as p) {
+    <div class="detail-grid">
+        
+        <!-- 💡 CABECERA Y DATOS DE IDENTIDAD -->
+        <mat-card class="detail-card main-hero-card">
+            <div class="card-status-bar" [class.disponible]="p.disponible"></div>
+            
+            <div class="hero-layout">
+                <div class="hero-avatar-wrapper">
+                    @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
+                        <img [src]="'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="hero-profile-img" />
+                    } @else {
+                        <div class="hero-profile-placeholder">
+                            <mat-icon>person</mat-icon>
+                        </div>
+                    }
+                </div>
+                <div class="hero-info">
+                    <div class="title-row">
+                        <h2>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h2>
+                        <span class="availability-badge" [class.disponible]="p.disponible">
+                            {{ p.disponible ? 'Disponible' : 'No Disponible' }}
+                        </span>
+                    </div>
+                    <p class="professional-title">{{ p.tituloProfesional }}</p>
+                    <p class="experience-tag">
+                        <mat-icon>star</mat-icon>
+                        <span>{{ p.aniosExperiencia }} años de experiencia</span>
+                    </p>
+                </div>
+            </div>
+
+            <mat-card-content>
+                <div class="bio-section">
+                    <h3>Sobre mí</h3>
+                    <p>{{ p.descripcion || 'Este tutor aún no ha redactado una biografía para su perfil profesional de EduLink.' }}</p>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- 👥 PANEL DE CONTACTO Y DATOS OPERATIVOS -->
+        <div class="split-container">
+            <!-- DATOS OPERATIVOS -->
+            <mat-card class="detail-card info-card laboral-details-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="avatar-circle-icon">
+                        <mat-icon>business_center</mat-icon>
+                    </div>
+                    <mat-card-title>Detalles Laborales</mat-card-title>
+                    <mat-card-subtitle>Modalidad y tarifas base</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="data-list">
+                        <div class="data-item-row">
+                            <mat-icon>laptop_mac</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Modalidad</span>
+                                <span class="value badge-modalidad" [class]="p.modalidad.toLowerCase()">{{ p.modalidad }}</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item-row">
+                            <mat-icon>payments</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Tarifa Base del Tutor</span>
+                                <span class="value price-tag">₡{{ p.tarifaBase | number:'1.0-0' }} / hora</span>
+                            </div>
+                        </div>
+
+                        <div class="data-item-row">
+                            <mat-icon>place</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Ubicación / Sede</span>
+                                <span class="value">{{ p.ubicacion }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <!-- INFORMACIÓN DE CONTACTO -->
+            <mat-card class="detail-card info-card contact-details-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="avatar-circle-icon contact">
+                        <mat-icon>contacts</mat-icon>
+                    </div>
+                    <mat-card-title>Información de Contacto</mat-card-title>
+                    <mat-card-subtitle>Canales directos de comunicación</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="data-list">
+                        <div class="data-item-row">
+                            <mat-icon>mail</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Correo Electrónico</span>
+                                <span class="value email-link">
+                                    <a href="mailto:{{ p.usuario?.email }}">{{ p.usuario?.email }}</a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="data-item-row">
+                            <mat-icon>phone</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Teléfono</span>
+                                <span class="value">{{ p.usuario?.telefono || 'No registrado' }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="data-item-row">
+                            <mat-icon>verified_user</mat-icon>
+                            <div class="item-text">
+                                <span class="label">Rol en EduLink</span>
+                                <span class="value" style="text-transform: capitalize;">{{ p.usuario?.role?.toLowerCase() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- 🏷️ ESPECIALIDADES -->
+        @if (p.tutorEspecialidads && p.tutorEspecialidads.length > 0) {
+            <mat-card class="detail-card specialties-card">
+                <mat-card-header>
+                    <div mat-card-avatar class="avatar-circle-icon specialty">
+                        <mat-icon>label</mat-icon>
+                    </div>
+                    <mat-card-title>Especialidades</mat-card-title>
+                    <mat-card-subtitle>Áreas temáticas en las que se especializa</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="chips-container">
+                        @for (te of p.tutorEspecialidads; track te.especialidadId) {
+                            <span class="specialty-chip">
+                                {{ te.especialidad?.nombre }}
+                            </span>
+                        }
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        }
+
+        <!-- 📖 SERVICIOS EDUCATIVOS OFRECIDOS -->
+        <mat-card class="detail-card services-list-card">
+            <mat-card-header>
+                <div mat-card-avatar class="avatar-circle-icon services">
+                    <mat-icon>menu_book</mat-icon>
+                </div>
+                <mat-card-title>Servicios Educativos</mat-card-title>
+                <mat-card-subtitle>Lista de clases y asesorías ofrecidas por el tutor</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                @if (!p.servicios || p.servicios.length === 0) {
+                    <div class="no-services-state">
+                        <mat-icon>info_outline</mat-icon>
+                        <p>Este profesional aún no ha registrado servicios de tutoría en la plataforma.</p>
+                    </div>
+                } @else {
+                    <div class="services-grid">
+                        @for (s of p.servicios; track s.id) {
+                            <div class="service-row-card">
+                                <div class="service-main-info">
+                                    <h4>{{ s.nombre }}</h4>
+                                    <p class="service-desc">{{ s.descripcion || 'Sin descripción disponible.' }}</p>
+                                </div>
+                                <div class="service-meta">
+                                    <div class="meta-block">
+                                        <mat-icon>schedule</mat-icon>
+                                        <span>{{ s.duracion }} mins</span>
+                                    </div>
+                                    <div class="meta-block">
+                                        <mat-icon>computer</mat-icon>
+                                        <span class="badge-modalidad" [class]="s.modalidad.toLowerCase()">{{ s.modalidad }}</span>
+                                    </div>
+                                    <div class="meta-block price">
+                                        <span>₡{{ s.precio | number:'1.0-0' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </mat-card-content>
+        </mat-card>
+
+    </div>
+}

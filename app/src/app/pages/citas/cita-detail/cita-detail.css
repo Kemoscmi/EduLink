@@ -222,21 +222,19 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     width: fit-content;
+    color: #ffffff !important;
 }
 
 .badge-modalidad.virtual {
-    background: #e0f7fa;
-    color: #00838f;
+    background: #00796b !important;
 }
 
 .badge-modalidad.presencial {
-    background: #ede7f6;
-    color: #5e35b1;
+    background: #2196f3 !important;
 }
 
 .badge-modalidad.mixta {
-    background: #fff3e0;
-    color: #e65100;
+    background: #e65100 !important;
 }
 
 .main-info-card mat-card-actions {
