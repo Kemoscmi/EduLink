@@ -57,9 +57,11 @@ export const profesionalService = {
                     id: true,
 
                     tituloProfesional: true,
+                    descripcion: true,
                     modalidad: true,
                     tarifaBase: true,
                     disponible: true,
+                    imagenPerfil: true,
 
                     usuario: {
                         select: {
