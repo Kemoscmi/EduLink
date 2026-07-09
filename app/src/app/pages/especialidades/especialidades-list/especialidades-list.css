@@ -50,16 +50,11 @@
 }
 
 .search-field {
-  flex: 2 1 260px;
+  flex: 2 1 280px;
 }
 
-.categoria-field,
-.modalidad-field {
-  flex: 1 1 200px;
-}
-
-.precio-field {
-  flex: 1 1 140px;
+.estado-field {
+  flex: 1 1 220px;
 }
 
 .counter {
@@ -68,79 +63,14 @@
   font-weight: 600;
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.25rem;
-}
-
-.dashboard-card {
-  position: relative;
-  overflow: hidden;
-  padding-top: 1rem;
-  border-radius: 28px;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.12);
-}
-
-.card-icon {
-  display: grid;
-  place-items: center;
-  width: 58px;
-  height: 58px;
-  margin: 1.25rem 1.25rem 0;
+.table-card {
+  padding: 0.5rem;
   border-radius: 20px;
-  background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
-  color: var(--mat-sys-primary);
+  overflow-x: auto;
 }
 
-.card-icon mat-icon {
-  width: 34px;
-  height: 34px;
-  font-size: 34px;
-}
-
-.dashboard-card h2 {
-  margin: 0 0 0.5rem;
-  color: var(--mat-sys-on-surface);
-  font-size: 1.25rem;
-  font-weight: 800;
-}
-
-.dashboard-card p {
-  margin: 0;
-  padding-top: 0.6rem;
-  color: var(--mat-sys-on-surface-variant);
-  line-height: 1.5;
-}
-
-.dashboard-card mat-chip-set {
-  margin-top: 0.75rem;
-}
-
-.card-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem 1rem;
-}
-
-.card-actions-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+.especialidades-table {
+  width: 100%;
 }
 
 .chip-active {

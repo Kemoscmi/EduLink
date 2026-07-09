@@ -2,32 +2,26 @@
   <div class="hero-content">
 
     <span class="eyebrow">
-      Angular + API REST
+      Marketplace de tutorías
     </span>
 
-    <h1>EduLink</h1>
+    <h1>Conecta con el tutor ideal</h1>
 
     <p>
-      Plataforma para gestionar servicios educativos,
-      usuarios y categorías de forma sencilla.
+      EduLink une a estudiantes con profesionales verificados para reforzar
+      cualquier materia: matemáticas, idiomas, programación, ciencias y más.
     </p>
 
     <div class="hero-actions">
 
       <a mat-flat-button class="secondary-button" routerLink="/servicios">
-        Ver servicios
+        <mat-icon>design_services</mat-icon>
+        Explorar servicios
       </a>
 
-      <a mat-flat-button class="tertiary-button" routerLink="/usuarios">
-        Ver usuarios
-      </a>
-
-      <a mat-flat-button class="secondary-button" routerLink="/profesionales">
-        Ver profesionales
-      </a>
-
-      <a mat-flat-button class="tertiary-button" routerLink="/citas">
-        Ver citas
+      <a mat-flat-button class="tertiary-button" routerLink="/profesionales">
+        <mat-icon>badge</mat-icon>
+        Conocer profesionales
       </a>
 
     </div>
@@ -39,29 +33,36 @@
   </div>
 </section>
 
+<section class="section-intro">
+  <span class="eyebrow">Panel administrativo</span>
+  <h2>Gestiona todo el ecosistema de EduLink</h2>
+</section>
+
 <section class="summary-grid">
 
   @for (card of cards(); track card.title) {
 
-  <mat-card class="dashboard-card glass-card">
+  <a class="card-link" [routerLink]="card.path">
+    <mat-card class="dashboard-card glass-card">
 
-    <mat-card-header>
+      <mat-card-header>
 
-      <div class="card-icon">
-        <mat-icon>{{ card.icon }}</mat-icon>
-      </div>
+        <div class="card-icon">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
 
-      <h2>{{ card.title }}</h2>
+        <h2>{{ card.title }}</h2>
 
-    </mat-card-header>
+      </mat-card-header>
 
-    <mat-card-content>
+      <mat-card-content>
 
-      <p>{{ card.description }}</p>
+        <p>{{ card.description }}</p>
 
-    </mat-card-content>
+      </mat-card-content>
 
-  </mat-card>
+    </mat-card>
+  </a>
 
   }
 

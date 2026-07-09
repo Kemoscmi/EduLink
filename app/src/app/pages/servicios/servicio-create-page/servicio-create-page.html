@@ -1,0 +1,32 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Servicios</span>
+    <h1>Registrar servicio</h1>
+    <p>Complete el formulario para agregar un nuevo servicio al catálogo.</p>
+  </div>
+</section>
+
+@if (loading()) {
+  <div class="state-box">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando formulario...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="state-box error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+@if (!loading() && !error()) {
+  <app-servicio-form
+    [categorias]="categorias()"
+    [profesionales]="profesionales()"
+    [especialidades]="especialidades()"
+    [saving]="saving()"
+    (guardar)="guardar($event)"
+    (cancelar)="cancelar()"
+  />
+}
