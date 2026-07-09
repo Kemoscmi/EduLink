@@ -11,15 +11,15 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-import { CategoriaService } from '../../../core/services/categoria';
-import { Categoria } from '../../../core/models/categoria.model';
+import { EspecialidadService } from '../../../core/services/especialidad';
+import { Especialidad } from '../../../core/models/especialidad.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 
 type EstadoFiltro = 'ACTIVO' | 'INACTIVO' | null;
 
 @Component({
-  selector: 'app-categorias-list',
+  selector: 'app-especialidades-list',
   imports: [
     FormsModule,
     MatCardModule,
@@ -33,15 +33,15 @@ type EstadoFiltro = 'ACTIVO' | 'INACTIVO' | null;
     MatSlideToggleModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './categorias-list.html',
-  styleUrl: './categorias-list.css',
+  templateUrl: './especialidades-list.html',
+  styleUrl: './especialidades-list.css',
 })
-export class CategoriasList {
-  private readonly categoriaService = inject(CategoriaService);
+export class EspecialidadesList {
+  private readonly especialidadService = inject(EspecialidadService);
   private readonly notification = inject(NotificationService);
   private readonly confirmDialog = inject(ConfirmDialogService);
 
-  categorias = signal<Categoria[]>([]);
+  especialidades = signal<Especialidad[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
   updatingId = signal<number | null>(null);
@@ -51,66 +51,66 @@ export class CategoriasList {
 
   columnas = ['nombre', 'descripcion', 'activo', 'acciones'];
 
-  categoriasFiltradas = computed(() => {
+  especialidadesFiltradas = computed(() => {
     const texto = this.search().trim().toLowerCase();
     const estado = this.estadoFilter();
 
-    return this.categorias().filter((categoria) => {
-      const nombre = categoria.nombre?.toLowerCase() ?? '';
+    return this.especialidades().filter((especialidad) => {
+      const nombre = especialidad.nombre?.toLowerCase() ?? '';
 
       const coincideTexto = texto.length === 0 || nombre.includes(texto);
 
       const coincideEstado =
         estado === null ||
-        (estado === 'ACTIVO' && categoria.activo) ||
-        (estado === 'INACTIVO' && !categoria.activo);
+        (estado === 'ACTIVO' && especialidad.activo) ||
+        (estado === 'INACTIVO' && !especialidad.activo);
 
       return coincideTexto && coincideEstado;
     });
   });
 
-  totalCategorias = computed(() => this.categoriasFiltradas().length);
+  totalEspecialidades = computed(() => this.especialidadesFiltradas().length);
 
   ngOnInit(): void {
-    this.loadCategorias();
+    this.loadEspecialidades();
   }
 
-  loadCategorias(): void {
+  loadEspecialidades(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    this.categoriaService.listar().subscribe({
+    this.especialidadService.listar().subscribe({
       next: (response) => {
-        this.categorias.set(response.data ?? []);
+        this.especialidades.set(response.data ?? []);
         this.loading.set(false);
       },
       error: () => {
-        this.error.set('No se pudieron cargar las categorías.');
+        this.error.set('No se pudieron cargar las especialidades.');
         this.loading.set(false);
       },
     });
   }
 
-  cambiarEstado(categoria: Categoria): void {
-    const accion = categoria.activo ? 'desactivar' : 'activar';
+  cambiarEstado(especialidad: Especialidad): void {
+    const accion = especialidad.activo ? 'desactivar' : 'activar';
 
     this.confirmDialog
       .confirm({
-        title: categoria.activo ? 'Desactivar categoría' : 'Activar categoría',
-        message: `¿Desea ${accion} la categoría "${categoria.nombre}"?`,
-        icon: 'category',
-        confirmLabel: categoria.activo ? 'Desactivar' : 'Activar',
-        danger: categoria.activo,
+        title: especialidad.activo ? 'Desactivar especialidad' : 'Activar especialidad',
+        message: `¿Desea ${accion} la especialidad "${especialidad.nombre}"?`,
+        icon: 'workspace_premium',
+        confirmLabel: especialidad.activo ? 'Desactivar' : 'Activar',
+        danger: especialidad.activo,
       })
       .subscribe((confirmado) => {
         if (!confirmado) return;
 
-        this.updatingId.set(categoria.id);
+        this.updatingId.set(especialidad.id);
 
-        this.categoriaService.cambiarEstado(categoria.id).subscribe({
+        this.especialidadService.cambiarEstado(especialidad.id).subscribe({
           next: (response) => {
-            this.categorias.update((lista) =>
-              lista.map((item) => (item.id === categoria.id ? response.data : item))
+            this.especialidades.update((lista) =>
+              lista.map((item) => (item.id === especialidad.id ? response.data : item))
             );
             this.notification.success(response.message ?? 'Estado actualizado correctamente');
             this.updatingId.set(null);

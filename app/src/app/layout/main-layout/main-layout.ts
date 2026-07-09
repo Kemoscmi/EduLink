@@ -36,6 +36,7 @@ export class MainLayout {
   adminMaintenanceMenu = signal<MenuItem[]>([
     { label: 'Servicios', path: '/admin/servicios', icon: 'design_services' },
     { label: 'Categorías', path: '/admin/categorias', icon: 'category' },
+    { label: 'Especialidades', path: '/admin/especialidades', icon: 'workspace_premium' },
     { label: 'Profesionales', path: '/admin/profesionales', icon: 'badge' },
   ]);
 

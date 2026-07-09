@@ -1,0 +1,92 @@
+.glass-card {
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 24%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 72%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+}
+
+.service-form-card {
+  border-radius: 24px;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.service-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.form-grid.two-columns {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.form-grid.three-columns {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.full-width {
+  width: 100%;
+}
+
+.publish-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--mat-sys-primary) 8%, transparent);
+}
+
+.publish-box small {
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.section-title h3 {
+  margin: 0;
+  color: var(--mat-sys-on-surface);
+  font-weight: 800;
+}
+
+.section-title p {
+  margin: 0.25rem 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.tags-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem 1rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.button-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+@media (max-width: 720px) {
+  .form-grid.two-columns,
+  .form-grid.three-columns {
+    grid-template-columns: 1fr;
+  }
+}

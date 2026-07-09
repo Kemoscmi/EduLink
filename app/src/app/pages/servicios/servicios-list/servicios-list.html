@@ -5,10 +5,56 @@
     <p>Listado de servicios disponibles en EduLink.</p>
   </div>
 
-  <button mat-flat-button color="primary" (click)="clearFilters()">
-    Limpiar filtros
-  </button>
+  <div class="header-actions">
+    <button mat-flat-button color="primary" routerLink="/admin/servicios/nuevo">
+      <mat-icon>add_circle</mat-icon>
+      Nuevo servicio
+    </button>
+
+    <button mat-stroked-button color="primary" (click)="clearFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpiar filtros
+    </button>
+  </div>
 </section>
+
+<mat-card class="filters-card glass-card">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar por nombre</mat-label>
+    <input matInput [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Ej: Álgebra" />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="categoria-field">
+    <mat-label>Categoría</mat-label>
+    <mat-select [ngModel]="categoriaFilter()" (ngModelChange)="categoriaFilter.set($event)">
+      <mat-option [value]="null">Todas las categorías</mat-option>
+      @for (categoria of categorias(); track categoria.id) {
+        <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="modalidad-field">
+    <mat-label>Modalidad</mat-label>
+    <mat-select [ngModel]="modalidadFilter()" (ngModelChange)="modalidadFilter.set($event)">
+      <mat-option [value]="null">Todas las modalidades</mat-option>
+      @for (modalidad of modalidades; track modalidad) {
+        <mat-option [value]="modalidad">{{ modalidad }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="precio-field">
+    <mat-label>Precio mínimo</mat-label>
+    <input matInput type="number" [ngModel]="precioMin()" (ngModelChange)="precioMin.set($event)" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="precio-field">
+    <mat-label>Precio máximo</mat-label>
+    <input matInput type="number" [ngModel]="precioMax()" (ngModelChange)="precioMax.set($event)" />
+  </mat-form-field>
+</mat-card>
 
 @if (loading()) {
   <div class="state-box">
@@ -39,22 +85,44 @@
 
         <mat-card-content>
           <p>{{ servicio.descripcion }}</p>
+          <p><strong>Profesional:</strong> {{ nombreProfesional(servicio) }}</p>
           <p><strong>Categoría:</strong> {{ servicio.categoria?.nombre || 'Sin categoría' }}</p>
           <p><strong>Precio:</strong> ₡{{ servicio.precio }}</p>
           <p><strong>Duración:</strong> {{ servicio.duracion }} minutos</p>
           <p><strong>Modalidad:</strong> {{ servicio.modalidad }}</p>
+
+          <mat-chip-set>
+            <mat-chip [class.chip-active]="servicio.activo" [class.chip-inactive]="!servicio.activo">
+              {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </mat-chip-set>
         </mat-card-content>
 
-        <mat-card-actions>
-          <button mat-stroked-button color="primary">
-            Ver detalle
-          </button>
+        <mat-card-actions class="card-actions">
+          <div class="card-actions-buttons">
+            <button mat-stroked-button color="primary" [routerLink]="['/admin/servicios', servicio.id]">
+              Ver detalle
+            </button>
+
+            <button mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+          </div>
+
+          <mat-slide-toggle
+            [checked]="servicio.activo"
+            [disabled]="updatingId() === servicio.id"
+            (change)="cambiarEstado(servicio)"
+          >
+            {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+          </mat-slide-toggle>
         </mat-card-actions>
       </mat-card>
     } @empty {
       <div class="state-box">
         <mat-icon>search_off</mat-icon>
-        <p>No hay servicios registrados.</p>
+        <p>No hay servicios que coincidan con los filtros.</p>
       </div>
     }
   </section>
