@@ -18,15 +18,20 @@ export const routes: Routes = [
       {
         path: '',
         component: Home,
+        title: 'Inicio',
       },
+      // SERVICIOS
       {
         path: 'servicios',
         component: ServiciosList,
+        title: 'Catálogo de Servicios',
       },
       {
         path: 'admin/servicios',
         component: ServiciosList,
+        title: 'Catálogo de Servicios',
       },
+      
       {
         path: 'usuarios',
         component: UsuariosList,
@@ -46,7 +51,7 @@ export const routes: Routes = [
       {
         path: 'citas',
         component: CitasList,
-        title: 'Catálogo citas',
+        title: 'Catálogo de Citas',
       },
       {
         path: 'citas/:id',
@@ -56,7 +61,7 @@ export const routes: Routes = [
       {
         path: 'admin/citas',
         component: CitasList,
-        title: 'Catálogo citas',
+        title: 'Catálogo de Citas',
       },
       {
         path: 'admin/citas/:id',
@@ -66,6 +71,7 @@ export const routes: Routes = [
       {
         path: 'profesionales',
         component: ProfesionalesList,
+        title: 'Catálogo de Profesionales',
       },
       {
         path: 'profesionales/:id',
@@ -75,6 +81,7 @@ export const routes: Routes = [
       {
         path: 'admin/profesionales',
         component: ProfesionalesList,
+        title: 'Catálogo de Profesionales',
       },
       {
         path: 'admin/profesionales/:id',
