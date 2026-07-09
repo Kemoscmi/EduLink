@@ -1,9 +1,10 @@
 @use '@angular/material' as mat;
 @use './app/styles/theme-colors' as theme;
 html {
-   color-scheme: light dark;
+   color-scheme: light;
   @include mat.theme((
     color: (
+      theme-type: light,
       primary: theme.$primary-palette,
       secondary: theme.$secondary-palette,
       tertiary: theme.$tertiary-palette
@@ -11,9 +12,6 @@ html {
     typography: Roboto,
     density: 0
   ));
-}
-body.dark-mode {
-  color-scheme: dark;
 }
 body {
   margin: 0;

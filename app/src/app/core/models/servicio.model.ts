@@ -40,3 +40,31 @@ export interface UsuarioTutor {
   apellidos: string;
   email: string;
 }
+
+export type Modalidad = 'VIRTUAL' | 'PRESENCIAL' | 'MIXTA';
+
+export interface ServicioCreateDto {
+  tutorId: number;
+  categoriaId: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  duracion: number;
+  modalidad: Modalidad;
+  activo?: boolean;
+  especialidadesIds?: number[];
+}
+
+export type ServicioUpdateDto = Partial<ServicioCreateDto>;
+
+export interface ServicioFormModel {
+  tutorId: number | null;
+  categoriaId: number | null;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  duracion: number;
+  modalidad: Modalidad;
+  activo: boolean;
+  especialidadesIds: number[];
+}

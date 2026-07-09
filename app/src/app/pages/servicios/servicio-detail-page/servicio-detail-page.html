@@ -1,0 +1,104 @@
+@if (loading()) {
+  <div class="state-box">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando detalle del servicio...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="state-box error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+@if (servicio(); as servicio) {
+  <section class="page-header">
+    <div>
+      <span class="eyebrow">Servicios</span>
+      <h1>{{ servicio.nombre }}</h1>
+      <mat-chip-set>
+        <mat-chip [class.chip-active]="servicio.activo" [class.chip-inactive]="!servicio.activo">
+          {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <div class="header-actions">
+      <button mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+
+      <button mat-flat-button color="primary" routerLink="/admin/servicios">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al listado
+      </button>
+    </div>
+  </section>
+
+  <div class="detail-grid">
+    <mat-card class="glass-card detail-card">
+      <mat-card-header>
+        <h2>Información general</h2>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="description">{{ servicio.descripcion }}</p>
+
+        <div class="detail-row">
+          <span class="detail-label">Precio</span>
+          <span class="detail-value">₡{{ servicio.precio }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Duración</span>
+          <span class="detail-value">{{ servicio.duracion }} minutos</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Modalidad</span>
+          <span class="detail-value">{{ servicio.modalidad }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Categoría</span>
+          <span class="detail-value">{{ servicio.categoria?.nombre || 'Sin categoría' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="glass-card detail-card">
+      <mat-card-header>
+        <h2>Profesional</h2>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="detail-row">
+          <span class="detail-label">Nombre</span>
+          <span class="detail-value">{{ nombreProfesional(servicio) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Título</span>
+          <span class="detail-value">{{ servicio.tutor?.tituloProfesional || 'No especificado' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Correo</span>
+          <span class="detail-value">{{ servicio.tutor?.usuario?.email || 'No especificado' }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="glass-card detail-card full-width-card">
+      <mat-card-header>
+        <h2>Especialidades asociadas</h2>
+      </mat-card-header>
+      <mat-card-content>
+        @if (servicio.servicioEspecialidades && servicio.servicioEspecialidades.length > 0) {
+          <mat-chip-set>
+            @for (item of servicio.servicioEspecialidades; track item.especialidadId) {
+              <mat-chip>{{ item.especialidad.nombre }}</mat-chip>
+            }
+          </mat-chip-set>
+        } @else {
+          <p class="no-data">Este servicio no tiene especialidades asociadas.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+}

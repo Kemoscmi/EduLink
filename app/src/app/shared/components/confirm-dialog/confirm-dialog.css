@@ -1,0 +1,47 @@
+.confirm-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 0.5rem 0;
+  min-width: 280px;
+}
+
+.confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+  color: var(--mat-sys-primary);
+}
+
+.confirm-icon.danger {
+  background: color-mix(in srgb, #d32f2f 16%, transparent);
+  color: #d32f2f;
+}
+
+.confirm-icon mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+
+h2[mat-dialog-title] {
+  margin: 0 0 0.25rem;
+  font-weight: 800;
+}
+
+mat-dialog-content p {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.5;
+}
+
+mat-dialog-actions {
+  width: 100%;
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+}

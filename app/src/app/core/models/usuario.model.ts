@@ -3,7 +3,7 @@ export interface Usuario {
   nombre: string;
   apellidos: string;
   email: string;
-  role: 'ADMIN' | 'CLIENTE' | 'PROFESIONAL';
+  role: 'ADMIN' | 'USER' | 'TUTOR';
   telefono?: string;
   activo: boolean;
   createAt?: string;

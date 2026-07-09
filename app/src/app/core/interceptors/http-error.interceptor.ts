@@ -17,6 +17,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
 
             if (error.error instanceof ErrorEvent) {
                 message = `Error del cliente: ${error.error.message}`
+            } else if (error.error?.message && error.status !== 500) {
+                // El backend (AppError) ya trae un mensaje claro y específico (ej. "Ya existe un servicio con ese nombre")
+                message = error.error.message
             } else {
                 switch (error.status) {
                     case 0:
@@ -33,6 +36,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
                         break
                     case 404:
                         message = 'Recurso no encontrado'
+                        break
+                    case 409:
+                        message = 'El registro ya existe o está en conflicto con datos actuales'
                         break
                     case 422:
                         message = 'Los datos enviados no son válidos'
