@@ -52,7 +52,7 @@ export class ServicioCreatePage {
     }).subscribe({
       next: ({ categorias, profesionales, especialidades }) => {
         this.categorias.set(categorias.data ?? []);
-        this.profesionales.set(profesionales.data.data ?? []);
+        this.profesionales.set(profesionales ?? []);
         this.especialidades.set(especialidades.data ?? []);
       },
       error: () => {

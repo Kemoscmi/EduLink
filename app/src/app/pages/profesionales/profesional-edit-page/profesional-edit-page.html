@@ -1,0 +1,30 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Profesionales</span>
+    <h1>Editar profesional</h1>
+    <p>Modifique la información del perfil profesional de EduLink.</p>
+  </div>
+</section>
+
+@if (loading()) {
+  <div class="state-box animate-fade-in">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando información del profesional...</p>
+  </div>
+}
+
+@if (error()) {
+  <div class="state-box error-box animate-fade-in">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+@if (!loading() && !error() && profesional()) {
+  <app-profesional-form
+    [profesional]="profesional()"
+    [saving]="saving()"
+    (guardar)="guardar($event)"
+    (cancelar)="cancelar()"
+  />
+}

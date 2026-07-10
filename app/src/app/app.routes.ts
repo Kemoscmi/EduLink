@@ -13,6 +13,8 @@ import { CitasList } from './pages/citas/citas-list/citas-list';
 import { CitaDetail } from './pages/citas/cita-detail/cita-detail';
 import { ProfesionalesList } from './pages/profesionales/profesionales-list/profesionales-list';
 import { ProfesionalDetail } from './pages/profesionales/profesionales';
+import { ProfesionalCreatePage } from './pages/profesionales/profesional-create-page/profesional-create-page';
+import { ProfesionalEditPage } from './pages/profesionales/profesional-edit-page/profesional-edit-page';
 
 export const routes: Routes = [
   {
@@ -103,6 +105,16 @@ export const routes: Routes = [
         path: 'admin/profesionales',
         component: ProfesionalesList,
         title: 'Catálogo de Profesionales',
+      },
+      {
+        path: 'admin/profesionales/nuevo',
+        component: ProfesionalCreatePage,
+        title: 'Registrar Profesional',
+      },
+      {
+        path: 'admin/profesionales/:id/editar',
+        component: ProfesionalEditPage,
+        title: 'Editar Profesional',
       },
       {
         path: 'profesionales/:id',
