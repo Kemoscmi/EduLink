@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,14 +9,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatSlideToggle } from "@angular/material/slide-toggle";
 
 import { ProfesionalService } from '../../../core/services/profesional';
 import { Profesional, Modalidad } from '../../../core/models/profesional.model';
 
-@Component({
-  selector: 'app-profesionales-list',
-  standalone: true,
-  imports: [
+@Cimports: [
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -25,13 +26,33 @@ import { Profesional, Modalidad } from '../../../core/models/profesional.model';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSlideToggle
+] MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatTableModule,
+    MatSlideToggleModule,
+    MatChipsModule
   ],
   templateUrl: './profesionales-list.html',
   styleUrl: './profesionales-list.css',
 })
 export class ProfesionalesList {
   private readonly profesionalService = inject(ProfesionalService);
+  private readonly router = inject(Router);
+
+  isAdminMode = computed(() => this.router.url.includes('/admin'));
+  updatingId = signal<number | null>(null);
+
+  columnas = [
+    'nombreCompleto',
+    'tituloProfesional',
+    'modalidad',
+    'tarifaBase',
+    'disponible',
+    'acciones'
+  ];
 
   // DATA
   profesionales = signal<Profesional[]>([]);
@@ -91,6 +112,27 @@ export class ProfesionalesList {
   });
 
   totalProfesionales = computed(() => this.profesionalesFiltrados().length);
+
+  cambiarDisponibilidad(p: Profesional): void {
+    this.updatingId.set(p.id);
+    this.profesionalService.cambiarDisponibilidad(p.id).subscribe({
+      next: (res) => {
+        this.profesionales.update((lista) =>
+          lista.map((item) => {
+            if (item.id === p.id) {
+              return { ...item, disponible: !item.disponible };
+            }
+            return item;
+          })
+        );
+        this.updatingId.set(null);
+      },
+      error: (err) => {
+        console.error('Error al cambiar disponibilidad:', err);
+        this.updatingId.set(null);
+      }
+    });
+  }
 
   clearFilters() {
     this.search.set('');

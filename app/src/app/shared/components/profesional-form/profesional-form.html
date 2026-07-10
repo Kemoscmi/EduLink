@@ -1,0 +1,188 @@
+<mat-card class="professional-form-card glass-card animate-fade-in">
+  <mat-card-content>
+    <form class="professional-form" (submit)="$event.preventDefault(); submit()">
+      
+      <!-- Datos principales del Profesional -->
+      <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">person</mat-icon>
+          <h3>Información Personal</h3>
+        </div>
+        <div class="form-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.nombre" placeholder="Ej: Juan" />
+            @if (profesionalForm.nombre().touched() && profesionalForm.nombre().invalid()) {
+              <mat-error>{{ profesionalForm.nombre().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.apellidos" placeholder="Ej: Pérez Gómez" />
+            @if (profesionalForm.apellidos().touched() && profesionalForm.apellidos().invalid()) {
+              <mat-error>{{ profesionalForm.apellidos().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Correo electrónico</mat-label>
+            <input matInput type="email" [formField]="profesionalForm.email" placeholder="Ej: juan.perez@email.com" />
+            <mat-icon matSuffix>mail</mat-icon>
+            @if (profesionalForm.email().touched() && profesionalForm.email().invalid()) {
+              <mat-error>{{ profesionalForm.email().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Teléfono</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.telefono" placeholder="Ej: 88888888" />
+            <mat-icon matSuffix>phone</mat-icon>
+            @if (profesionalForm.telefono().touched() && profesionalForm.telefono().invalid()) {
+              <mat-error>{{ profesionalForm.telefono().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Perfil del Profesional -->
+      <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">business_center</mat-icon>
+          <h3>Perfil Profesional</h3>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título profesional</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.tituloProfesional" placeholder="Ej: Licenciado en Ingeniería del Software / Profesor de Matemática" />
+            @if (profesionalForm.tituloProfesional().touched() && profesionalForm.tituloProfesional().invalid()) {
+              <mat-error>{{ profesionalForm.tituloProfesional().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-grid three-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Años de experiencia</mat-label>
+            <input matInput type="number" [formField]="profesionalForm.aniosExperiencia" />
+            @if (profesionalForm.aniosExperiencia().touched() && profesionalForm.aniosExperiencia().invalid()) {
+              <mat-error>{{ profesionalForm.aniosExperiencia().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modalidad de Trabajo</mat-label>
+            <mat-select [formField]="profesionalForm.modalidad">
+              <mat-option value="VIRTUAL">VIRTUAL</mat-option>
+              <mat-option value="PRESENCIAL">PRESENCIAL</mat-option>
+              <mat-option value="MIXTA">MIXTA</mat-option>
+            </mat-select>
+            @if (profesionalForm.modalidad().touched() && profesionalForm.modalidad().invalid()) {
+              <mat-error>{{ profesionalForm.modalidad().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tarifa Base (₡/hora)</mat-label>
+            <input matInput type="number" [formField]="profesionalForm.tarifaBase" />
+            @if (profesionalForm.tarifaBase().touched() && profesionalForm.tarifaBase().invalid()) {
+              <mat-error>{{ profesionalForm.tarifaBase().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ubicación / Sede</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.ubicacion" placeholder="Ej: San José, Costa Rica" />
+            <mat-icon matSuffix>place</mat-icon>
+            @if (profesionalForm.ubicacion().touched() && profesionalForm.ubicacion().invalid()) {
+              <mat-error>{{ profesionalForm.ubicacion().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-grid">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descripción / Biografía corta</mat-label>
+            <textarea matInput rows="3" [formField]="profesionalForm.descripcion" placeholder="Escriba una breve descripción sobre su trayectoria y especialidades para que la vean los clientes..."></textarea>
+            @if (profesionalForm.descripcion().touched() && profesionalForm.descripcion().invalid()) {
+              <mat-error>{{ profesionalForm.descripcion().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+
+      <!-- Imagen del Profesional -->
+      <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">photo_camera</mat-icon>
+          <h3>Imagen de Perfil</h3>
+        </div>
+        
+        <div class="form-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del archivo de imagen o URL</mat-label>
+            <input matInput type="text" [formField]="profesionalForm.imagenPerfil" placeholder="Ej: mi-foto.jpg o enlace web..." />
+            <mat-icon matSuffix>image</mat-icon>
+            @if (profesionalForm.imagenPerfil().touched() && profesionalForm.imagenPerfil().invalid()) {
+              <mat-error>{{ profesionalForm.imagenPerfil().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+          
+          <div class="image-preview-container">
+            <span class="preview-label">Vista previa de imagen:</span>
+            <div class="preview-wrapper">
+              @if (profesionalModel().imagenPerfil && profesionalModel().imagenPerfil !== 'image-not-found.jpg') {
+                <img [src]="profesionalModel().imagenPerfil.startsWith('http') ? profesionalModel().imagenPerfil : 'assets/images/' + profesionalModel().imagenPerfil" alt="Vista previa de perfil" class="preview-img" />
+              } @else {
+                <div class="preview-placeholder">
+                  <mat-icon>person</mat-icon>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disponibilidad del Profesional -->
+      <section class="form-section availability-section">
+        <div class="publish-box">
+          <mat-checkbox [formField]="profesionalForm.disponible">
+            Profesional disponible para citas
+          </mat-checkbox>
+          <small>Si está desmarcado, el profesional figurará como "No disponible" y no podrá recibir citas.</small>
+        </div>
+      </section>
+
+      <!-- Acciones -->
+      <div class="form-actions">
+        <button mat-stroked-button color="accent" class="cancel-btn" type="button" (click)="cancelar.emit()">
+          <mat-icon>close</mat-icon>
+          Cancelar
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="submit-btn"
+          [disabled]="isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <span class="button-label"><mat-icon class="spin-icon">hourglass_top</mat-icon> Guardando...</span>
+          } @else {
+            <span class="button-label">
+              <mat-icon>{{ isEdit() ? 'save' : 'person_add' }}</mat-icon>
+              {{ isEdit() ? 'Guardar Cambios' : 'Registrar Profesional' }}
+            </span>
+          }
+        </button>
+      </div>
+
+    </form>
+  </mat-card-content>
+</mat-card>

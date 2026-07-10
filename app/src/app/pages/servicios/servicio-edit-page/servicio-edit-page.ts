@@ -68,7 +68,7 @@ export class ServicioEditPage {
       next: ({ servicio, categorias, profesionales, especialidades }) => {
         this.servicio.set(servicio.data);
         this.categorias.set(categorias.data ?? []);
-        this.profesionales.set(profesionales.data.data ?? []);
+        this.profesionales.set(profesionales ?? []);
         this.especialidades.set(especialidades.data ?? []);
       },
       error: () => {

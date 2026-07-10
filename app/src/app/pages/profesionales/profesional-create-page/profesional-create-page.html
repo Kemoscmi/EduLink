@@ -1,0 +1,20 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Profesionales</span>
+    <h1>Registrar profesional</h1>
+    <p>Complete el formulario para agregar un nuevo perfil profesional en EduLink.</p>
+  </div>
+</section>
+
+@if (error()) {
+  <div class="state-box error-box animate-fade-in">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+}
+
+<app-profesional-form
+  [saving]="saving()"
+  (guardar)="guardar($event)"
+  (cancelar)="cancelar()"
+/>

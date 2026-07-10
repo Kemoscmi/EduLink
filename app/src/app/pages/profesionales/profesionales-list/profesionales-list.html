@@ -1,7 +1,19 @@
 <section class="page-header">
     <div class="header-overlay"></div>
-    <h1>Directorio de Profesionales</h1>
-    <p>Lista de Profesionales disponibles para brindar asesorías en Edulink</p>
+    <div class="header-content-wrapper">
+        <div>
+            <h1>Directorio de Profesionales</h1>
+            <p>Lista de Profesionales disponibles para brindar asesorías en Edulink</p>
+        </div>
+        @if (isAdminMode()) {
+            <div class="header-actions">
+                <a mat-flat-button color="primary" routerLink="/admin/profesionales/nuevo">
+                    <mat-icon>person_add</mat-icon>
+                    Registrar Profesional
+                </a>
+            </div>
+        }
+    </div>
 </section>
 
 <div class="result-summary-container">
@@ -12,7 +24,7 @@
 </div>
 
 <div class="profesionales-layout">
-    <!-- PANEL DE FILTROS -->
+    <!-- Filtros -->
     <aside class="filters-sidebar">
         <h2><mat-icon>filter_list</mat-icon> Filtros de Búsqueda</h2>
         
@@ -53,7 +65,7 @@
         </button>
     </aside>
 
-    <!-- LISTADO DE PROFESIONALES -->
+    <!-- Listado completo-->
     <main class="profesionales-content">
         @if (loading()) {
             <div class="state loading-state">
@@ -74,69 +86,148 @@
                 <button mat-button color="primary" (click)="clearFilters()">Ver todos los tutores</button>
             </div>
         } @else {
-            <div class="profesionales-grid">
-                @for (p of profesionalesFiltrados(); track p.id) {
-                    <mat-card class="profesional-card" [class.disponible]="p.disponible" [class.no-disponible]="!p.disponible">
-                        <!-- Indicador visual superior -->
-                        <div class="status-top-bar" [class.disponible]="p.disponible"></div>
-                        
-                        <!-- Cabecera de la tarjeta con imagen -->
-                        <div class="card-hero">
-                            <div class="avatar-wrapper">
-                                @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
-                                    <img [src]="'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="profile-img" />
-                                } @else {
-                                    <div class="profile-placeholder">
-                                        <mat-icon>person</mat-icon>
-                                    </div>
-                                }
-                            </div>
-                            <div class="hero-text">
-                                <h3>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h3>
-                                <p class="title-tag">{{ p.tituloProfesional }}</p>
-                            </div>
-                        </div>
-
-                        <!-- Detalles técnicos -->
-                        <mat-card-content>
-                            <p class="bio-text">
-                                {{ p.descripcion || 'Este tutor aún no ha ingresado una descripción en su perfil profesional de EduLink.' }}
-                            </p>
+            @if (isAdminMode()) {
+                <!-- Vista de Profesionales para administrador, se estará mostrando una tabla -->
+                <mat-card class="table-card glass-card">
+                    <div class="table-content">
+                        <table mat-table [dataSource]="profesionalesFiltrados()" class="profesionales-table">
                             
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <mat-icon>computer</mat-icon>
-                                    <div class="info-text">
-                                        <span class="info-label">Modalidad</span>
-                                        <span class="info-value badge-modalidad" [class]="p.modalidad.toLowerCase()">
-                                            {{ p.modalidad }}
+                            <!-- Nombre Completo -->
+                            <ng-container matColumnDef="nombreCompleto">
+                                <th mat-header-cell *matHeaderCellDef>Nombre Completo</th>
+                                <td mat-cell *matCellDef="let p">
+                                    <a [routerLink]="['/admin/profesionales', p.id]" class="table-link fw-semibold">
+                                        {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}
+                                    </a>
+                                </td>
+                            </ng-container>
+
+                            <!-- Título Profesional -->
+                            <ng-container matColumnDef="tituloProfesional">
+                                <th mat-header-cell *matHeaderCellDef>Título Profesional</th>
+                                <td mat-cell *matCellDef="let p" class="title-cell">{{ p.tituloProfesional }}</td>
+                            </ng-container>
+
+                            <!-- Modalidad -->
+                            <ng-container matColumnDef="modalidad">
+                                <th mat-header-cell *matHeaderCellDef>Modalidad</th>
+                                <td mat-cell *matCellDef="let p">
+                                    <span class="badge-modalidad" [class]="p.modalidad.toLowerCase()">
+                                        {{ p.modalidad }}
+                                    </span>
+                                </td>
+                            </ng-container>
+
+                            <!-- Tarifa Base -->
+                            <ng-container matColumnDef="tarifaBase">
+                                <th mat-header-cell *matHeaderCellDef>Tarifa Base</th>
+                                <td mat-cell *matCellDef="let p" class="price-tag fw-semibold">
+                                    ₡{{ p.tarifaBase | number:'1.0-0' }}/h
+                                </td>
+                            </ng-container>
+
+                            <!-- Disponibilidad -->
+                            <ng-container matColumnDef="disponible">
+                                <th mat-header-cell *matHeaderCellDef>Disponibilidad</th>
+                                <td mat-cell *matCellDef="let p">
+                                    <mat-slide-toggle
+                                        [checked]="p.disponible"
+                                        [disabled]="updatingId() === p.id"
+                                        (change)="cambiarDisponibilidad(p)"
+                                    >
+                                        <span class="status-label" [class.disponible]="p.disponible">
+                                            {{ p.disponible ? 'Disponible' : 'No disponible' }}
                                         </span>
-                                    </div>
-                                </div>
+                                    </mat-slide-toggle>
+                                </td>
+                            </ng-container>
 
-                                <div class="info-item">
-                                    <mat-icon>sell</mat-icon>
-                                    <div class="info-text">
-                                        <span class="info-label">Tarifa Base</span>
-                                        <span class="info-value price-tag">₡{{ p.tarifaBase | number:'1.0-0' }}/h</span>
+                            <!-- Acciones de Detalle y Editar -->
+                            <ng-container matColumnDef="acciones">
+                                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                                <td mat-cell *matCellDef="let p">
+                                    <div class="table-actions-row">
+                                        <a mat-stroked-button color="primary" [routerLink]="['/admin/profesionales', p.id]" class="action-btn-sm">
+                                            <mat-icon>visibility</mat-icon> Detalle
+                                        </a>
+                                        <a mat-stroked-button color="accent" [routerLink]="['/admin/profesionales', p.id, 'editar']" class="action-btn-sm">
+                                            <mat-icon>edit</mat-icon> Editar
+                                        </a>
                                     </div>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                        </table>
+                    </div>
+                </mat-card>
+            } @else {
+                <!-- Vista de Profesionales para Clientes -->
+                <div class="profesionales-grid">
+                    @for (p of profesionalesFiltrados(); track p.id) {
+                        <mat-card class="profesional-card" [class.disponible]="p.disponible" [class.no-disponible]="!p.disponible">
+                            <!-- Indicador visual superior -->
+                            <div class="status-top-bar" [class.disponible]="p.disponible"></div>
+                            
+                            <!-- Cabecera de la tarjeta con imagen -->
+                            <div class="card-hero">
+                                <div class="avatar-wrapper">
+                                    @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
+                                        <img [src]="p.imagenPerfil.startsWith('http') ? p.imagenPerfil : 'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="profile-img" />
+                                    } @else {
+                                        <div class="profile-placeholder">
+                                            <mat-icon>person</mat-icon>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="hero-text">
+                                    <h3>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h3>
+                                    <p class="title-tag">{{ p.tituloProfesional }}</p>
                                 </div>
                             </div>
-                        </mat-card-content>
 
-                        <!-- Acciones y estado de disponibilidad -->
-                        <mat-card-actions>
-                            <span class="status-badge" [class.disponible]="p.disponible">
-                                {{ p.disponible ? 'Disponible' : 'No Disponible' }}
-                            </span>
-                            
-                            <a mat-button color="primary" [routerLink]="['/admin/profesionales', p.id]" class="detail-btn">
-                                <mat-icon>visibility</mat-icon> Detalle
-                            </a>
-                        </mat-card-actions>
-                    </mat-card>
-                }
-            </div>
+                            <!-- Detalles -->
+                            <mat-card-content>
+                                <p class="bio-text">
+                                    {{ p.descripcion || 'Este tutor aún no ha ingresado una descripción en su perfil profesional de EduLink.' }}
+                                </p>
+                                
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <mat-icon>computer</mat-icon>
+                                        <div class="info-text">
+                                            <span class="info-label">Modalidad</span>
+                                            <span class="info-value badge-modalidad" [class]="p.modalidad.toLowerCase()">
+                                                {{ p.modalidad }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="info-item">
+                                        <mat-icon>sell</mat-icon>
+                                        <div class="info-text">
+                                            <span class="info-label">Tarifa Base</span>
+                                            <span class="info-value price-tag">₡{{ p.tarifaBase | number:'1.0-0' }}/h</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+
+                            <!-- Acciones y estado de disponibilidad -->
+                            <mat-card-actions>
+                                <span class="status-badge" [class.disponible]="p.disponible">
+                                    {{ p.disponible ? 'Disponible' : 'No Disponible' }}
+                                </span>
+                                
+                                <a mat-button color="primary" [routerLink]="['/profesionales', p.id]" class="detail-btn">
+                                    <mat-icon>visibility</mat-icon> Detalle
+                                </a>
+                            </mat-card-actions>
+                        </mat-card>
+                    }
+                </div>
+            }
         }
     </main>
 </div>
