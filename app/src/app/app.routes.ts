@@ -11,6 +11,7 @@ import { CategoriasList } from './pages/categorias/categorias-list/categorias-li
 import { EspecialidadesList } from './pages/especialidades/especialidades-list/especialidades-list';
 import { CitasList } from './pages/citas/citas-list/citas-list';
 import { CitaDetail } from './pages/citas/cita-detail/cita-detail';
+import { CitaCreate } from './pages/citas/cita-create/cita-create';
 import { ProfesionalesList } from './pages/profesionales/profesionales-list/profesionales-list';
 import { ProfesionalDetail } from './pages/profesionales/profesionales';
 import { ProfesionalCreatePage } from './pages/profesionales/profesional-create-page/profesional-create-page';
@@ -81,14 +82,14 @@ export const routes: Routes = [
         title: 'Catálogo de Citas',
       },
       {
+        path: 'admin/citas/nuevo',
+        component: CitaCreate,
+        title: 'Registrar Cita',
+      },
+      {
         path: 'citas/:id',
         component: CitaDetail,
         title: 'Detalle de Cita',
-      },
-      {
-        path: 'admin/citas',
-        component: CitasList,
-        title: 'Catálogo de Citas',
       },
       {
         path: 'admin/citas/:id',

@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { citaService } from "../services/cita.service";
 import { sendSuccess } from "../utils/http-response";
-import { profesionalService } from "../services/profesional.service";
 export class CitaController {
     listar = async (request, response, next) => {
         try {
@@ -40,7 +39,13 @@ export class CitaController {
         }
     };
     crear = async (request, response, next) => {
-        const profesional = await profesionalService.crear(request.body);
-        return sendSuccess(response, profesional, "Profesional creado correctamente", StatusCodes.CREATED);
+        try {
+            const cita = await citaService.crear(request.body);
+            return sendSuccess(response, cita, "Cita registrada correctamente", StatusCodes.CREATED);
+        }
+        catch (error) {
+            console.error(error);
+            next(error);
+        }
     };
 }

@@ -27,4 +27,7 @@ export class CitaService {
     return this.http.get<ApiResponse<Cita>>(`${this.apiUrl}/${id}`);
   }
 
+  crear(cita: Partial<Cita>): Observable<ApiResponse<Cita>> {
+    return this.http.post<ApiResponse<Cita>>(this.apiUrl, cita);
+  }
 }

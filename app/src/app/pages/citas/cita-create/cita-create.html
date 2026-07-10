@@ -1,0 +1,218 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Citas</span>
+    <h1>Registrar cita</h1>
+    <p>Complete el formulario para agendar la cita y conectar al cliente con el profesional.</p>
+  </div>
+</section>
+
+@if (loading()) {
+    <div class="state loading-state">
+      <mat-spinner diameter="50" />
+      <p>Cargando información requerida...</p>
+    </div>
+  } @else if (error()) {
+    <div class="state error-state">
+      <mat-icon class="error-icon">error</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-stroked-button (click)="cargarDatosFormulario()">Reintentar</button>
+    </div>
+  } @else {
+    <mat-card class="cita-form-card glass-card animate-fade-in">
+      <mat-card-header class="form-header-badge">
+        <div class="badge-title">
+          <mat-icon>event_note</mat-icon>
+          <span>Datos de la Cita</span>
+        </div>
+        <div class="status-indicator pending">
+          <span class="pulse-dot"></span>
+          Estado Asignado: <strong>PENDIENTE</strong>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form class="cita-form" (submit)="$event.preventDefault(); submit()">
+          
+          <!-- SECCIÓN: Participantes -->
+          <section class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">people</mat-icon>
+              <h3>Participantes</h3>
+            </div>
+            <p class="section-desc">Seleccione el cliente que solicita el servicio y el profesional que lo atenderá.</p>
+            
+            <div class="form-grid two-columns">
+              <!-- Cliente -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Cliente</mat-label>
+                <mat-select [formField]="citaForm.clienteId">
+                  <mat-option [value]="null">Seleccione un cliente</mat-option>
+                  @for (c of clientes(); track c.id) {
+                    <mat-option [value]="c.id">
+                      {{ c.nombre }} {{ c.apellidos }} — {{ c.email }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-icon matPrefix>person</mat-icon>
+                @if (citaForm.clienteId().touched() && citaForm.clienteId().invalid()) {
+                  <mat-error>{{ citaForm.clienteId().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+
+              <!-- Profesional -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Profesional</mat-label>
+                <mat-select [formField]="citaForm.tutorId">
+                  <mat-option [value]="null">Seleccione un profesional</mat-option>
+                  @for (p of profesionales(); track p.id) {
+                    <mat-option [value]="p.id">
+                      {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }} — {{ p.tituloProfesional }}
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-icon matPrefix>badge</mat-icon>
+                @if (citaForm.tutorId().touched() && citaForm.tutorId().invalid()) {
+                  <mat-error>{{ citaForm.tutorId().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </section>
+
+          <!-- SECCIÓN: Detalles del Servicio -->
+          <section class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">school</mat-icon>
+              <h3>Servicio y Modalidad</h3>
+            </div>
+            <p class="section-desc">Seleccione el servicio ofrecido por el profesional y la modalidad de la sesión.</p>
+            
+            <div class="form-grid two-columns">
+              <!-- Servicio -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Servicio</mat-label>
+                <mat-select [formField]="citaForm.servicioId">
+                  @if (!citaModel().tutorId) {
+                    <mat-option [value]="null">Seleccione primero un profesional</mat-option>
+                  } @else if (serviciosFiltrados().length === 0) {
+                    <mat-option [value]="null">Este profesional no tiene servicios activos</mat-option>
+                  } @else {
+                    <mat-option [value]="null">Seleccione un servicio</mat-option>
+                    @for (s of serviciosFiltrados(); track s.id) {
+                      <mat-option [value]="s.id">
+                        {{ s.nombre }} — {{ s.duracion }} min (₡{{ s.precio }})
+                      </mat-option>
+                    }
+                  }
+                </mat-select>
+                <mat-icon matPrefix>class</mat-icon>
+                @if (citaForm.servicioId().touched() && citaForm.servicioId().invalid()) {
+                  <mat-error>{{ citaForm.servicioId().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+              
+              <!-- Modalidad -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Modalidad</mat-label>
+                <mat-select [formField]="citaForm.modalidad">
+                  <mat-option value="PRESENCIAL">Presencial</mat-option>
+                  <mat-option value="VIRTUAL">Virtual</mat-option>
+                  <mat-option value="MIXTA">Mixta</mat-option>
+                </mat-select>
+                <mat-icon matPrefix>location_on</mat-icon>
+                @if (citaForm.modalidad().touched() && citaForm.modalidad().invalid()) {
+                  <mat-error>{{ citaForm.modalidad().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </section>
+
+          <!-- SECCIÓN: Agenda -->
+          <section class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">schedule</mat-icon>
+              <h3>Agenda y Horarios</h3>
+            </div>
+            <p class="section-desc">Especifique el día y la hora de inicio de la cita. El sistema calculará la hora de fin según el servicio.</p>
+            
+            <div class="form-grid three-columns">
+              <!-- Fecha -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Fecha de la Cita</mat-label>
+                <input matInput type="date" [formField]="citaForm.fechaCita" />
+                <mat-icon matPrefix>calendar_today</mat-icon>
+                @if (citaForm.fechaCita().touched() && citaForm.fechaCita().invalid()) {
+                  <mat-error>{{ citaForm.fechaCita().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+
+              <!-- Hora Inicio -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Hora de Inicio</mat-label>
+                <input matInput type="time" [formField]="citaForm.horaInicio" />
+                <mat-icon matPrefix>access_time</mat-icon>
+                @if (citaForm.horaInicio().touched() && citaForm.horaInicio().invalid()) {
+                  <mat-error>{{ citaForm.horaInicio().errors()[0].message }}</mat-error>
+                }
+              </mat-form-field>
+
+              <!-- Hora Fin (Calculada) -->
+              <mat-form-field appearance="outline" class="full-width time-calculated">
+                <mat-label>Hora de Fin (Calculada)</mat-label>
+                <input matInput type="text" [value]="citaModel().horaFin" placeholder="Se calcula al elegir hora inicio" readonly />
+                <mat-icon matPrefix>history</mat-icon>
+                <mat-hint>Calculado usando la duración del servicio.</mat-hint>
+              </mat-form-field>
+            </div>
+          </section>
+
+          <!-- SECCIÓN: Comentario / Descripción -->
+          <section class="form-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">description</mat-icon>
+              <h3>Comentario o Descripción</h3>
+            </div>
+            <p class="section-desc">Escriba una breve descripción del motivo de la cita, dudas preliminares, o cualquier comentario de utilidad.</p>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Descripción / Comentario del Cliente</mat-label>
+              <textarea matInput rows="3" [formField]="citaForm.comentarioCliente" placeholder="Ej. Necesito reforzamiento en el tema de álgebra para el examen de admisión del próximo mes..."></textarea>
+              <mat-icon matPrefix>mode_comment</mat-icon>
+              @if (citaForm.comentarioCliente().touched() && citaForm.comentarioCliente().invalid()) {
+                <mat-error>{{ citaForm.comentarioCliente().errors()[0].message }}</mat-error>
+              }
+              <mat-hint align="end">{{ citaModel().comentarioCliente.length }}/200</mat-hint>
+            </mat-form-field>
+          </section>
+
+          <!-- Acciones de Formulario -->
+          <div class="form-actions">
+            <button mat-stroked-button color="accent" class="cancel-btn" type="button" (click)="cancelar()">
+              <mat-icon>close</mat-icon>
+              Cancelar
+            </button>
+
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              class="submit-btn"
+              [disabled]="saving()"
+            >
+              @if (saving()) {
+                <span class="button-label">
+                  <mat-icon class="spin-icon">hourglass_top</mat-icon>
+                  Registrando...
+                </span>
+              } @else {
+                <span class="button-label">
+                  <mat-icon>check_circle</mat-icon>
+                  Agendar Cita
+                </span>
+              }
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }

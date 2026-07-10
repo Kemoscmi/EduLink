@@ -65,18 +65,19 @@ export class CitaController {
         }
     };
     crear = async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            const cita = await citaService.crear(request.body);
 
-        const profesional =
-            await profesionalService.crear(
-                request.body
+            return sendSuccess(
+                response,
+                cita,
+                "Cita registrada correctamente",
+                StatusCodes.CREATED
             );
-
-        return sendSuccess(
-            response,
-            profesional,
-            "Profesional creado correctamente",
-            StatusCodes.CREATED
-        );
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
     };
 
 }
