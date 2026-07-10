@@ -12,6 +12,41 @@
     overflow: hidden;
 }
 
+.header-content-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .header-content-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.25rem;
+    }
+}
+
+.create-btn {
+    background-color: #ffffff !important;
+    color: #673ab7 !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.25rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.create-btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
 .header-overlay {
     position: absolute;
     top: 0;

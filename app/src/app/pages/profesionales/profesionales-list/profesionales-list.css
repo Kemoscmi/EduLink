@@ -604,6 +604,17 @@ body.dark-mode .contact-btn {
     color: #d32f2f !important;
 }
 
+.disponibilidad-cell-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.inline-chip-set mat-chip {
+    font-size: 0.8rem !important;
+    min-height: 28px !important;
+}
+
 .table-actions-row {
     display: flex;
     gap: 8px;

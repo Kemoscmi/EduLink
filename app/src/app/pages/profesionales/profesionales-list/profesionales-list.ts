@@ -16,8 +16,12 @@ import { MatSlideToggle } from "@angular/material/slide-toggle";
 
 import { ProfesionalService } from '../../../core/services/profesional';
 import { Profesional, Modalidad } from '../../../core/models/profesional.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
-@Cimports: [
+@Component({
+  selector: 'app-profesionales-list',
+  standalone: true,
+  imports: [
     CommonModule,
     RouterLink,
     MatCardModule,
@@ -25,10 +29,6 @@ import { Profesional, Modalidad } from '../../../core/models/profesional.model';
     MatSelectModule,
     MatInputModule,
     MatIconModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatSlideToggle
-] MatIconModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     MatTableModule,
@@ -41,6 +41,7 @@ import { Profesional, Modalidad } from '../../../core/models/profesional.model';
 export class ProfesionalesList {
   private readonly profesionalService = inject(ProfesionalService);
   private readonly router = inject(Router);
+  private readonly notification = inject(NotificationService);
 
   isAdminMode = computed(() => this.router.url.includes('/admin'));
   updatingId = signal<number | null>(null);
@@ -116,7 +117,7 @@ export class ProfesionalesList {
   cambiarDisponibilidad(p: Profesional): void {
     this.updatingId.set(p.id);
     this.profesionalService.cambiarDisponibilidad(p.id).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.profesionales.update((lista) =>
           lista.map((item) => {
             if (item.id === p.id) {
@@ -125,10 +126,16 @@ export class ProfesionalesList {
             return item;
           })
         );
+        const nuevoEstadoTexto = !p.disponible ? 'Disponible' : 'No disponible';
+        this.notification.success(
+          `Disponibilidad de ${p.usuario?.nombre} ${p.usuario?.apellidos} actualizada a: ${nuevoEstadoTexto}`
+        );
         this.updatingId.set(null);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al cambiar disponibilidad:', err);
+        const errorMsg = err.error?.message || 'No se pudo actualizar la disponibilidad.';
+        this.notification.error(errorMsg);
         this.updatingId.set(null);
       }
     });
