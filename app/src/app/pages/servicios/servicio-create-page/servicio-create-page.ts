@@ -51,9 +51,9 @@ export class ServicioCreatePage {
       especialidades: this.especialidadService.listar(),
     }).subscribe({
       next: ({ categorias, profesionales, especialidades }) => {
-        this.categorias.set(categorias.data ?? []);
-        this.profesionales.set(profesionales ?? []);
-        this.especialidades.set(especialidades.data ?? []);
+        this.categorias.set((categorias.data ?? []).filter((c) => c.activo));
+        this.profesionales.set((profesionales ?? []).filter((p) => p.disponible));
+        this.especialidades.set((especialidades.data ?? []).filter((e) => e.activo));
       },
       error: () => {
         this.error.set('No se pudieron cargar los datos del formulario');

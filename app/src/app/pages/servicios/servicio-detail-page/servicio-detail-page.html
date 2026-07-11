@@ -1,100 +1,165 @@
+<section class="detail-header">
+  <a mat-stroked-button routerLink="/admin/servicios" class="back-btn">
+    <mat-icon>arrow_back</mat-icon> Volver al listado
+  </a>
+  <div class="header-title">
+    <span class="badge-id">Servicio #{{ servicio()?.id }}</span>
+    <h1>Detalle del Servicio</h1>
+  </div>
+</section>
+
 @if (loading()) {
-  <div class="state-box">
-    <mat-spinner diameter="40"></mat-spinner>
+  <div class="state loading-state">
+    <mat-spinner diameter="50" />
     <p>Cargando detalle del servicio...</p>
   </div>
-}
-
-@if (error()) {
-  <div class="state-box error">
-    <mat-icon>error</mat-icon>
+} @else if (error()) {
+  <div class="state error-state">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h2>Error al cargar</h2>
     <p>{{ error() }}</p>
+    <a mat-flat-button color="primary" routerLink="/admin/servicios">Regresar</a>
   </div>
-}
-
-@if (servicio(); as servicio) {
-  <section class="page-header">
-    <div>
-      <span class="eyebrow">Servicios</span>
-      <h1>{{ servicio.nombre }}</h1>
-      <mat-chip-set>
-        <mat-chip [class.chip-active]="servicio.activo" [class.chip-inactive]="!servicio.activo">
-          {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-        </mat-chip>
-      </mat-chip-set>
-    </div>
-
-    <div class="header-actions">
-      <button mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']">
-        <mat-icon>edit</mat-icon>
-        Editar
-      </button>
-
-      <button mat-flat-button color="primary" routerLink="/admin/servicios">
-        <mat-icon>arrow_back</mat-icon>
-        Volver al listado
-      </button>
-    </div>
-  </section>
-
+} @else if (servicio(); as servicio) {
   <div class="detail-grid">
-    <mat-card class="glass-card detail-card">
-      <mat-card-header>
-        <h2>Información general</h2>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="description">{{ servicio.descripcion }}</p>
+    <mat-card class="detail-card main-hero-card">
+      <div class="card-status-bar" [class.activo]="servicio.activo"></div>
 
-        <div class="detail-row">
-          <span class="detail-label">Precio</span>
-          <span class="detail-value">₡{{ servicio.precio }}</span>
+      <div class="hero-layout">
+        <div class="hero-avatar-wrapper">
+          <div class="hero-icon-placeholder">
+            <mat-icon>school</mat-icon>
+          </div>
         </div>
-        <div class="detail-row">
-          <span class="detail-label">Duración</span>
-          <span class="detail-value">{{ servicio.duracion }} minutos</span>
+        <div class="hero-info">
+          <div class="title-row">
+            <h2>{{ servicio.nombre }}</h2>
+            <span class="availability-badge" [class.activo]="servicio.activo">
+              {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </div>
+          <p class="category-title">{{ servicio.categoria?.nombre || 'Sin categoría' }}</p>
+          <p class="price-tag-row">
+            <mat-icon>payments</mat-icon>
+            <span>₡{{ servicio.precio }} · {{ servicio.duracion }} minutos</span>
+          </p>
         </div>
-        <div class="detail-row">
-          <span class="detail-label">Modalidad</span>
-          <span class="detail-value">{{ servicio.modalidad }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Categoría</span>
-          <span class="detail-value">{{ servicio.categoria?.nombre || 'Sin categoría' }}</span>
+
+        <a mat-flat-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="edit-btn">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </a>
+      </div>
+
+      <mat-card-content>
+        <div class="bio-section">
+          <h3>Descripción</h3>
+          <p>{{ servicio.descripcion }}</p>
         </div>
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="glass-card detail-card">
-      <mat-card-header>
-        <h2>Profesional</h2>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="detail-row">
-          <span class="detail-label">Nombre</span>
-          <span class="detail-value">{{ nombreProfesional(servicio) }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Título</span>
-          <span class="detail-value">{{ servicio.tutor?.tituloProfesional || 'No especificado' }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-label">Correo</span>
-          <span class="detail-value">{{ servicio.tutor?.usuario?.email || 'No especificado' }}</span>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <div class="split-container">
+      <mat-card class="detail-card info-card general-details-card">
+        <mat-card-header>
+          <div mat-card-avatar class="avatar-circle-icon">
+            <mat-icon>info</mat-icon>
+          </div>
+          <mat-card-title>Información General</mat-card-title>
+          <mat-card-subtitle>Categoría, precio y modalidad</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="data-list">
+            <div class="data-item-row">
+              <mat-icon>category</mat-icon>
+              <div class="item-text">
+                <span class="label">Categoría</span>
+                <span class="value">{{ servicio.categoria?.nombre || 'Sin categoría' }}</span>
+              </div>
+            </div>
 
-    <mat-card class="glass-card detail-card full-width-card">
+            <div class="data-item-row">
+              <mat-icon>sell</mat-icon>
+              <div class="item-text">
+                <span class="label">Precio</span>
+                <span class="value price-tag">₡{{ servicio.precio }}</span>
+              </div>
+            </div>
+
+            <div class="data-item-row">
+              <mat-icon>schedule</mat-icon>
+              <div class="item-text">
+                <span class="label">Duración</span>
+                <span class="value">{{ servicio.duracion }} minutos</span>
+              </div>
+            </div>
+
+            <div class="data-item-row">
+              <mat-icon>laptop_mac</mat-icon>
+              <div class="item-text">
+                <span class="label">Modalidad</span>
+                <span class="value badge-modalidad" [class]="servicio.modalidad.toLowerCase()">{{ servicio.modalidad }}</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="detail-card info-card professional-details-card">
+        <mat-card-header>
+          <div mat-card-avatar class="avatar-circle-icon contact">
+            <mat-icon>person</mat-icon>
+          </div>
+          <mat-card-title>Profesional Asignado</mat-card-title>
+          <mat-card-subtitle>Responsable de brindar el servicio</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="data-list">
+            <div class="data-item-row">
+              <mat-icon>badge</mat-icon>
+              <div class="item-text">
+                <span class="label">Nombre</span>
+                <span class="value">{{ nombreProfesional(servicio) }}</span>
+              </div>
+            </div>
+
+            <div class="data-item-row">
+              <mat-icon>work</mat-icon>
+              <div class="item-text">
+                <span class="label">Título</span>
+                <span class="value">{{ servicio.tutor?.tituloProfesional || 'No especificado' }}</span>
+              </div>
+            </div>
+
+            <div class="data-item-row">
+              <mat-icon>mail</mat-icon>
+              <div class="item-text">
+                <span class="label">Correo</span>
+                <span class="value email-link">
+                  <a href="mailto:{{ servicio.tutor?.usuario?.email }}">{{ servicio.tutor?.usuario?.email || 'No especificado' }}</a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="detail-card specialties-card">
       <mat-card-header>
-        <h2>Especialidades asociadas</h2>
+        <div mat-card-avatar class="avatar-circle-icon specialty">
+          <mat-icon>label</mat-icon>
+        </div>
+        <mat-card-title>Especialidades Asociadas</mat-card-title>
+        <mat-card-subtitle>Áreas temáticas cubiertas por este servicio</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @if (servicio.servicioEspecialidades && servicio.servicioEspecialidades.length > 0) {
-          <mat-chip-set>
+          <div class="chips-container">
             @for (item of servicio.servicioEspecialidades; track item.especialidadId) {
-              <mat-chip>{{ item.especialidad.nombre }}</mat-chip>
+              <span class="specialty-chip">{{ item.especialidad.nombre }}</span>
             }
-          </mat-chip-set>
+          </div>
         } @else {
           <p class="no-data">Este servicio no tiene especialidades asociadas.</p>
         }

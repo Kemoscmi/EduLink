@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -44,6 +44,23 @@ export class ServicioEditPage {
   loading = signal(true);
   saving = signal(false);
   error = signal<string | null>(null);
+
+  categoriasDisponibles = computed(() => {
+    const actualId = this.servicio()?.categoriaId;
+    return this.categorias().filter((c) => c.activo || c.id === actualId);
+  });
+
+  profesionalesDisponibles = computed(() => {
+    const actualId = this.servicio()?.tutorId;
+    return this.profesionales().filter((p) => p.disponible || p.id === actualId);
+  });
+
+  especialidadesDisponibles = computed(() => {
+    const actualIds = new Set(
+      this.servicio()?.servicioEspecialidades?.map((item) => item.especialidadId) ?? [],
+    );
+    return this.especialidades().filter((e) => e.activo || actualIds.has(e.id));
+  });
 
   constructor() {
     this.cargarDatosFormulario();

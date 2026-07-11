@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { AppError } from "../utils/app-error";
 
 export const categoriaService = {
   async listar() {
@@ -22,7 +23,7 @@ export const categoriaService = {
     });
 
     if (!categoria) {
-      throw new Error("Categoría no encontrada");
+      throw AppError.notFound("Categoría no encontrada");
     }
 
     return await prisma.categoria.update({
