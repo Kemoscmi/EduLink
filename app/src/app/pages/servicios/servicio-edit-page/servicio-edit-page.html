@@ -23,9 +23,9 @@
 @if (!loading() && !error()) {
   <app-servicio-form
     [servicio]="servicio()"
-    [categorias]="categorias()"
-    [profesionales]="profesionales()"
-    [especialidades]="especialidades()"
+    [categorias]="categoriasDisponibles()"
+    [profesionales]="profesionalesDisponibles()"
+    [especialidades]="especialidadesDisponibles()"
     [saving]="saving()"
     (guardar)="guardar($event)"
     (cancelar)="cancelar()"

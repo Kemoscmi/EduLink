@@ -5,72 +5,239 @@
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
 }
 
+/* ==========================================
+   Header & Page Title Section
+   ========================================== */
 .page-header {
+  position: relative;
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(63, 81, 181, 0.9) 0%, rgba(3, 169, 244, 0.8) 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 32px 0 rgba(63, 81, 181, 0.15);
+  overflow: hidden;
+}
+
+.header-content-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  position: relative;
+  z-index: 2;
   flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  gap: 1.5rem;
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.15), transparent 60%);
+  pointer-events: none;
+}
+
+.page-header .eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.8);
+  display: inline-block;
+  margin-bottom: 0.5rem;
 }
 
 .page-header h1 {
-  margin: 0.25rem 0 0;
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--mat-sys-on-surface);
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
 }
 
 .page-header p {
-  margin: 0.25rem 0 0;
-  color: var(--mat-sys-on-surface-variant);
+  font-size: 1rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 600px;
 }
 
-.eyebrow {
-  display: inline-block;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
-  color: var(--mat-sys-primary);
-  font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.filters-card {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1.25rem 1.5rem;
+/* ==========================================
+   Result Summary
+   ========================================== */
+.result-summary-container {
   margin-bottom: 1.5rem;
-  border-radius: 20px;
-  align-items: flex-start;
+  padding: 0 0.5rem;
 }
 
-.search-field {
-  flex: 2 1 280px;
+.result-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(57, 73, 171, 0.06);
+  color: #3949ab;
+  font-size: 0.9rem;
+  border: 1px solid rgba(57, 73, 171, 0.1);
 }
 
-.role-field {
-  flex: 1 1 220px;
+.result-summary mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
-.counter {
-  margin: 0 0 0.75rem;
-  color: var(--mat-sys-on-surface-variant);
+/* ==========================================
+   Main Layout Structure
+   ========================================== */
+.usuarios-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .usuarios-layout {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* ==========================================
+   Filters Sidebar
+   ========================================== */
+.filters-sidebar {
+  background: var(--mat-sys-surface-container-low, #ffffff);
+  padding: 1.75rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.filters-sidebar h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--mat-sys-on-surface, #333333);
+}
+
+.filters-sidebar h2 mat-icon {
+  color: #3949ab;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.clear-btn {
+  width: 100%;
+  padding: 1.5rem;
+  border-radius: 10px;
+  background-color: var(--mat-sys-error-container, #ffebee) !important;
+  color: var(--mat-sys-error, #c62828) !important;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  background-color: var(--mat-sys-error, #c62828) !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================
+   Content Area & States
+   ========================================== */
+.usuarios-content {
+  min-height: 300px;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--mat-sys-surface-container-low, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--mat-sys-outline-variant, rgba(0, 0, 0, 0.08));
+  animation: fadeIn 0.4s ease;
+}
+
+.state p {
+  margin-top: 1rem;
+  color: var(--mat-sys-on-surface-variant, #666666);
+  font-size: 1rem;
+}
+
+.error-state {
+  border-color: rgba(211, 47, 47, 0.2);
+}
+
+.error-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: #d32f2f;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--mat-sys-on-surface-variant, #999999);
+  margin-bottom: 0.5rem;
+}
+
+.empty-state h3 {
+  margin: 0.5rem 0;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   Table
+   ========================================== */
 .table-card {
   padding: 0.5rem;
   border-radius: 20px;
+}
+
+.table-content {
+  width: 100%;
   overflow-x: auto;
 }
 
 .usuarios-table {
   width: 100%;
+  background: transparent !important;
 }
 
 .chip-active {
@@ -81,25 +248,4 @@
 .chip-inactive {
   background-color: color-mix(in srgb, #d32f2f 16%, transparent) !important;
   color: #d32f2f !important;
-}
-
-.state-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 3rem 1rem;
-  color: var(--mat-sys-on-surface-variant);
-  text-align: center;
-}
-
-.state-box.error {
-  color: #d32f2f;
-}
-
-.state-box mat-icon {
-  width: 40px;
-  height: 40px;
-  font-size: 40px;
 }

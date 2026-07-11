@@ -1,129 +1,181 @@
 <section class="page-header">
-  <div>
-    <span class="eyebrow">Catálogo</span>
-    <h1>Servicios educativos</h1>
-    <p>Listado de servicios disponibles en EduLink.</p>
-  </div>
+  <div class="header-overlay"></div>
+  <div class="header-content-wrapper">
+    <div>
+      <span class="eyebrow">Catálogo</span>
+      <h1>Servicios educativos</h1>
+      <p>Listado de servicios disponibles en EduLink.</p>
+    </div>
 
-  <div class="header-actions">
-    <button mat-flat-button color="primary" routerLink="/admin/servicios/nuevo">
-      <mat-icon>add_circle</mat-icon>
-      Nuevo servicio
-    </button>
-
-    <button mat-stroked-button color="primary" (click)="clearFilters()">
-      <mat-icon>filter_alt_off</mat-icon>
-      Limpiar filtros
-    </button>
+    <div class="header-actions">
+      <a mat-flat-button routerLink="/admin/servicios/nuevo">
+        <mat-icon>add_circle</mat-icon>
+        Nuevo servicio
+      </a>
+    </div>
   </div>
 </section>
 
-<mat-card class="filters-card glass-card">
-  <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Buscar por nombre</mat-label>
-    <input matInput [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Ej: Álgebra" />
-    <mat-icon matSuffix>search</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="categoria-field">
-    <mat-label>Categoría</mat-label>
-    <mat-select [ngModel]="categoriaFilter()" (ngModelChange)="categoriaFilter.set($event)">
-      <mat-option [value]="null">Todas las categorías</mat-option>
-      @for (categoria of categorias(); track categoria.id) {
-        <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="modalidad-field">
-    <mat-label>Modalidad</mat-label>
-    <mat-select [ngModel]="modalidadFilter()" (ngModelChange)="modalidadFilter.set($event)">
-      <mat-option [value]="null">Todas las modalidades</mat-option>
-      @for (modalidad of modalidades; track modalidad) {
-        <mat-option [value]="modalidad">{{ modalidad }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="precio-field">
-    <mat-label>Precio mínimo</mat-label>
-    <input matInput type="number" [ngModel]="precioMin()" (ngModelChange)="precioMin.set($event)" />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="precio-field">
-    <mat-label>Precio máximo</mat-label>
-    <input matInput type="number" [ngModel]="precioMax()" (ngModelChange)="precioMax.set($event)" />
-  </mat-form-field>
-</mat-card>
-
-@if (loading()) {
-  <div class="state-box">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Cargando servicios...</p>
+<div class="result-summary-container">
+  <div class="result-summary">
+    <mat-icon>design_services</mat-icon>
+    <span>Se encontraron <strong>{{ totalServicios() }}</strong> servicios en total</span>
   </div>
-}
+</div>
 
-@if (error()) {
-  <div class="state-box error">
-    <mat-icon>error</mat-icon>
-    <p>{{ error() }}</p>
-  </div>
-}
+<div class="servicios-layout">
+  <aside class="filters-sidebar">
+    <h2><mat-icon>filter_list</mat-icon> Filtros de Búsqueda</h2>
 
-@if (!loading() && !error()) {
-  <p class="counter">Servicios encontrados: {{ totalServicios() }}</p>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Buscar por nombre</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput [ngModel]="search()" (ngModelChange)="search.set($event)" placeholder="Ej: Álgebra" />
+    </mat-form-field>
 
-  <section class="summary-grid">
-    @for (servicio of serviciosFiltrados(); track servicio.id) {
-      <mat-card class="dashboard-card glass-card">
-        <mat-card-header>
-          <div class="card-icon">
-            <mat-icon>school</mat-icon>
-          </div>
-          <h2>{{ servicio.nombre }}</h2>
-        </mat-card-header>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Categoría</mat-label>
+      <mat-icon matPrefix>category</mat-icon>
+      <mat-select [ngModel]="categoriaFilter()" (ngModelChange)="categoriaFilter.set($event)">
+        <mat-option [value]="null">Todas las categorías</mat-option>
+        @for (categoria of categorias(); track categoria.id) {
+          <mat-option [value]="categoria.id">{{ categoria.nombre }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-        <mat-card-content>
-          <p>{{ servicio.descripcion }}</p>
-          <p><strong>Profesional:</strong> {{ nombreProfesional(servicio) }}</p>
-          <p><strong>Categoría:</strong> {{ servicio.categoria?.nombre || 'Sin categoría' }}</p>
-          <p><strong>Precio:</strong> ₡{{ servicio.precio }}</p>
-          <p><strong>Duración:</strong> {{ servicio.duracion }} minutos</p>
-          <p><strong>Modalidad:</strong> {{ servicio.modalidad }}</p>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Modalidad</mat-label>
+      <mat-icon matPrefix>laptop_mac</mat-icon>
+      <mat-select [ngModel]="modalidadFilter()" (ngModelChange)="modalidadFilter.set($event)">
+        <mat-option [value]="null">Todas las modalidades</mat-option>
+        @for (modalidad of modalidades; track modalidad) {
+          <mat-option [value]="modalidad">{{ modalidad }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
 
-          <mat-chip-set>
-            <mat-chip [class.chip-active]="servicio.activo" [class.chip-inactive]="!servicio.activo">
-              {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-            </mat-chip>
-          </mat-chip-set>
-        </mat-card-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Precio mínimo</mat-label>
+      <mat-icon matPrefix>sell</mat-icon>
+      <input matInput type="number" [ngModel]="precioMin()" (ngModelChange)="precioMin.set($event)" />
+    </mat-form-field>
 
-        <mat-card-actions class="card-actions">
-          <div class="card-actions-buttons">
-            <button mat-stroked-button color="primary" [routerLink]="['/admin/servicios', servicio.id]">
-              Ver detalle
-            </button>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Precio máximo</mat-label>
+      <mat-icon matPrefix>sell</mat-icon>
+      <input matInput type="number" [ngModel]="precioMax()" (ngModelChange)="precioMax.set($event)" />
+    </mat-form-field>
 
-            <button mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']">
-              <mat-icon>edit</mat-icon>
-              Editar
-            </button>
-          </div>
+    <button mat-flat-button class="clear-btn" (click)="clearFilters()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpiar filtros
+    </button>
+  </aside>
 
-          <mat-slide-toggle
-            [checked]="servicio.activo"
-            [disabled]="updatingId() === servicio.id"
-            (change)="cambiarEstado(servicio)"
-          >
-            {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-          </mat-slide-toggle>
-        </mat-card-actions>
-      </mat-card>
-    } @empty {
-      <div class="state-box">
-        <mat-icon>search_off</mat-icon>
-        <p>No hay servicios que coincidan con los filtros.</p>
+  <main class="servicios-content">
+    @if (loading()) {
+      <div class="state loading-state">
+        <mat-spinner diameter="50" />
+        <p>Cargando servicios...</p>
+      </div>
+    } @else if (error()) {
+      <div class="state error-state">
+        <mat-icon class="error-icon">error</mat-icon>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="loadServicios()">Reintentar</button>
+      </div>
+    } @else if (serviciosFiltrados().length === 0) {
+      <div class="state empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>Sin resultados</h3>
+        <p>No se encontraron servicios que coincidan con los filtros seleccionados.</p>
+        <button mat-button color="primary" (click)="clearFilters()">Ver todos los servicios</button>
+      </div>
+    } @else {
+      <div class="servicios-grid">
+        @for (servicio of serviciosFiltrados(); track servicio.id) {
+          <mat-card class="servicio-card" [class.activo]="servicio.activo" [class.inactivo]="!servicio.activo">
+            <div class="status-top-bar" [class.activo]="servicio.activo"></div>
+
+            <div class="card-hero">
+              <div class="avatar-wrapper">
+                <div class="service-icon">
+                  <mat-icon>school</mat-icon>
+                </div>
+              </div>
+              <div class="hero-text">
+                <h3>{{ servicio.nombre }}</h3>
+                <p class="title-tag">{{ servicio.categoria?.nombre || 'Sin categoría' }}</p>
+              </div>
+            </div>
+
+            <mat-card-content>
+              <p class="bio-text">{{ servicio.descripcion }}</p>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>person</mat-icon>
+                  <div class="info-text">
+                    <span class="info-label">Profesional</span>
+                    <span class="info-value">{{ nombreProfesional(servicio) }}</span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>sell</mat-icon>
+                  <div class="info-text">
+                    <span class="info-label">Precio</span>
+                    <span class="info-value price-tag">₡{{ servicio.precio }}</span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <div class="info-text">
+                    <span class="info-label">Duración</span>
+                    <span class="info-value">{{ servicio.duracion }} min</span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>computer</mat-icon>
+                  <div class="info-text">
+                    <span class="info-label">Modalidad</span>
+                    <span class="info-value badge-modalidad" [class]="servicio.modalidad.toLowerCase()">
+                      {{ servicio.modalidad }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <div class="card-actions-top">
+                <span class="status-badge" [class.activo]="servicio.activo">
+                  {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                </span>
+
+                <mat-slide-toggle
+                  [checked]="servicio.activo"
+                  [disabled]="updatingId() === servicio.id"
+                  (change)="cambiarEstado(servicio)"
+                >
+                </mat-slide-toggle>
+              </div>
+
+              <div class="card-actions-buttons">
+                <a mat-stroked-button color="primary" [routerLink]="['/admin/servicios', servicio.id]" class="action-btn-sm">
+                  <mat-icon>visibility</mat-icon> Detalle
+                </a>
+                <a mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="action-btn-sm">
+                  <mat-icon>edit</mat-icon> Editar
+                </a>
+              </div>
+            </mat-card-actions>
+          </mat-card>
+        }
       </div>
     }
-  </section>
-}
+  </main>
+</div>

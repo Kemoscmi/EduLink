@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { AppError } from "../utils/app-error";
 
 export const usuarioService = {
   async listar() {
@@ -25,7 +26,7 @@ export const usuarioService = {
     });
 
     if (!usuario) {
-      throw new Error("Usuario no encontrado");
+      throw AppError.notFound("Usuario no encontrado");
     }
 
     return await prisma.usuario.update({

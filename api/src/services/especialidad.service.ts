@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { AppError } from "../utils/app-error";
 
 export const especialidadService = {
   async listar() {
@@ -22,7 +23,7 @@ export const especialidadService = {
     });
 
     if (!especialidad) {
-      throw new Error("Especialidad no encontrada");
+      throw AppError.notFound("Especialidad no encontrada");
     }
 
     return await prisma.especialidad.update({

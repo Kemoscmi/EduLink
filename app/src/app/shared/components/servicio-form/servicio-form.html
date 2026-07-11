@@ -1,7 +1,12 @@
-<mat-card class="service-form-card glass-card">
+<mat-card class="service-form-card glass-card animate-fade-in">
   <mat-card-content>
     <form class="service-form" (submit)="$event.preventDefault(); submit()">
       <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">description</mat-icon>
+          <h3>Información General</h3>
+        </div>
+
         <div class="form-grid">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre del servicio</mat-label>
@@ -22,6 +27,11 @@
       </section>
 
       <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">payments</mat-icon>
+          <h3>Precio y Detalles</h3>
+        </div>
+
         <div class="form-grid three-columns">
           <mat-form-field appearance="outline">
             <mat-label>Precio (₡)</mat-label>
@@ -91,12 +101,11 @@
       </section>
 
       <section class="form-section">
-        <div class="section-title">
-          <div>
-            <h3>Especialidades</h3>
-            <p>Seleccione las especialidades asociadas a este servicio (opcional).</p>
-          </div>
+        <div class="section-header">
+          <mat-icon class="section-icon">school</mat-icon>
+          <h3>Especialidades</h3>
         </div>
+        <p class="section-desc">Seleccione las especialidades asociadas a este servicio (opcional).</p>
 
         <div class="tags-grid">
           @for (especialidad of especialidades(); track especialidad.id) {
@@ -118,7 +127,7 @@
         </button>
 
         <button
-          mat-stroked-button
+          mat-flat-button
           type="submit"
           [color]="isEdit() ? 'accent' : 'primary'"
           [class.edit-icon-button]="isEdit()"
