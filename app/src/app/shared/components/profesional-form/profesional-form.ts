@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormField,
@@ -19,6 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Profesional, Modalidad } from '../../../core/models/profesional.model';
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
+import { ImageService } from '../../../core/services/image.service';
 
 export interface ProfesionalFormModel {
   nombre: string;
@@ -48,11 +50,18 @@ export interface ProfesionalFormModel {
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
-  ],
+    MatProgressSpinner
+],
   templateUrl: './profesional-form.html',
   styleUrl: './profesional-form.css',
 })
 export class ProfesionalForm {
+  private readonly imageService = inject(ImageService)
+
+  uploadingImage = signal(false)
+  imagePreview = signal<string | null>(null)
+  selectedImageFile = signal<File | null>(null)
+
   profesional = input<Profesional | null>(null);
   saving = input<boolean>(false);
 
@@ -71,7 +80,7 @@ export class ProfesionalForm {
     ubicacion: '',
     tarifaBase: 5000,
     disponible: true,
-    imagenPerfil: 'image-not-found.jpg',
+    imagenPerfil: '',
   });
 
   profesionalForm = form(this.profesionalModel, (path) => {
@@ -133,8 +142,12 @@ export class ProfesionalForm {
         ubicacion: p.ubicacion ?? '',
         tarifaBase: Number(p.tarifaBase ?? 0),
         disponible: p.disponible ?? true,
-        imagenPerfil: p.imagenPerfil ?? 'image-not-found.jpg',
+        imagenPerfil: p.imagenPerfil ?? '',
       });
+      this.selectedImageFile.set(null)
+      this.imagePreview.set(
+        p.imagenPerfil ? this.imageService.getImageUrl(p.imagenPerfil) : null
+      )
     });
   }
 
@@ -151,8 +164,35 @@ export class ProfesionalForm {
       ubicacion: '',
       tarifaBase: 5000,
       disponible: true,
-      imagenPerfil: 'image-not-found.jpg',
+      imagenPerfil: '',
     });
+    this.selectedImageFile.set(null)
+    this.imagePreview.set(null)
+  }
+
+  private subirImagenYGuardar(file: File) {
+    this.uploadingImage.set(true)
+    this.imageService.upload(file).subscribe({
+      next: (response) => {
+        this.profesionalModel.update((value) => ({
+          ...value,
+          imagen: response.fileName,
+        }))
+        this.selectedImageFile.set(null)
+        this.emitirGuardar()
+      },
+      error: () => {
+        alert('No se pudo subir la imagen')
+      },
+      complete: () => {
+        this.uploadingImage.set(false)
+      },
+    })
+  }
+  private emitirGuardar() {
+    const dto = this.buildDto()
+    console.log('JSON enviado al API:', dto)
+    this.guardar.emit(dto)
   }
 
   private marcarCamposComoTocados(): void {
@@ -199,10 +239,16 @@ export class ProfesionalForm {
       ubicacion: value.ubicacion.trim(),
       tarifaBase: Number(value.tarifaBase),
       disponible: value.disponible,
-      imagenPerfil: value.imagenPerfil.trim(),
+      imagenPerfil: value.imagenPerfil,
     };
   }
-
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement
+    const file = input.files?.[0]
+    if (!file) return
+    this.selectedImageFile.set(file)
+    this.imagePreview.set(URL.createObjectURL(file))
+  }
   submit(): void {
     if (this.isSubmitting()) return;
 
