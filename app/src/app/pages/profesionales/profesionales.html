@@ -30,7 +30,7 @@
             <div class="hero-layout">
                 <div class="hero-avatar-wrapper">
                     @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
-                        <img [src]="'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="hero-profile-img" />
+                        <img [src]="p.imagenPerfil.startsWith('http') ? p.imagenPerfil : imageUrl + '/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="hero-profile-img" />
                     } @else {
                         <div class="hero-profile-placeholder">
                             <mat-icon>person</mat-icon>

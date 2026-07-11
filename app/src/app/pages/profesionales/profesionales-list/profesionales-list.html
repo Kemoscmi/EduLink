@@ -172,7 +172,7 @@
                             <div class="card-hero">
                                 <div class="avatar-wrapper">
                                     @if (p.imagenPerfil && p.imagenPerfil !== 'image-not-found.jpg') {
-                                        <img [src]="p.imagenPerfil.startsWith('http') ? p.imagenPerfil : 'assets/images/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="profile-img" />
+                                        <img [src]="p.imagenPerfil.startsWith('http') ? p.imagenPerfil : imageUrl + '/' + p.imagenPerfil" [alt]="p.usuario?.nombre" class="profile-img" />
                                     } @else {
                                         <div class="profile-placeholder">
                                             <mat-icon>person</mat-icon>

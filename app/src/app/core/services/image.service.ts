@@ -18,17 +18,23 @@ export class ImageService {
 
     
 
-upload(file: File) {
-    const formData = new FormData();
-    formData.append('image', file);
+    upload(file: File, previousFileName?: string) {
+        const formData = new FormData();
+        formData.append('image', file);
+        if (previousFileName) {
+            formData.append('previousFileName', previousFileName);
+        }
 
-    return this.http.post<ImageUploadResponse>(
-        `${this.apiUrl}/upload`,
-        formData
-    );
-}
+        return this.http.post<ImageUploadResponse>(
+            `${this.apiUrl}/upload`,
+            formData
+        );
+    }
 
     getImageUrl(imageName: string): string {
+        if (imageName.startsWith('http://') || imageName.startsWith('https://')) {
+            return imageName;
+        }
         return `${environment.imageUrl}/${imageName}`;
     }
 

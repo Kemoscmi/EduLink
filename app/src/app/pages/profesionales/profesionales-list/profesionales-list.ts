@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { environment } from '../../../../environments/environment.development';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -41,6 +42,8 @@ export class ProfesionalesList {
   private readonly profesionalService = inject(ProfesionalService);
   private readonly router = inject(Router);
   private readonly notification = inject(NotificationService);
+
+  readonly imageUrl = environment.imageUrl;
 
   isAdminMode = computed(() => this.router.url.includes('/admin'));
   updatingId = signal<number | null>(null);

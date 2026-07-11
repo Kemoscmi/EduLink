@@ -119,7 +119,7 @@ export class ProfesionalForm {
   });
 
   isEdit = computed(() => this.profesional() !== null);
-  isSubmitting = computed(() => this.saving());
+  isSubmitting = computed(() => this.saving() || this.uploadingImage());
 
   constructor() {
     effect(() => {
@@ -171,23 +171,25 @@ export class ProfesionalForm {
   }
 
   private subirImagenYGuardar(file: File) {
-    this.uploadingImage.set(true)
-    this.imageService.upload(file).subscribe({
+    this.uploadingImage.set(true);
+    const previousFileName = this.profesional()?.imagenPerfil;
+    this.imageService.upload(file, previousFileName).subscribe({
       next: (response) => {
         this.profesionalModel.update((value) => ({
           ...value,
-          imagen: response.fileName,
-        }))
-        this.selectedImageFile.set(null)
-        this.emitirGuardar()
+          imagenPerfil: response.fileName,
+        }));
+        this.selectedImageFile.set(null);
+        this.emitirGuardar();
       },
       error: () => {
-        alert('No se pudo subir la imagen')
+        alert('No se pudo subir la imagen');
+        this.uploadingImage.set(false);
       },
       complete: () => {
-        this.uploadingImage.set(false)
+        this.uploadingImage.set(false);
       },
-    })
+    });
   }
   private emitirGuardar() {
     const dto = this.buildDto()
@@ -243,11 +245,17 @@ export class ProfesionalForm {
     };
   }
   onImageSelected(event: Event) {
-    const input = event.target as HTMLInputElement
-    const file = input.files?.[0]
-    if (!file) return
-    this.selectedImageFile.set(file)
-    this.imagePreview.set(URL.createObjectURL(file))
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.selectedImageFile.set(file);
+    this.imagePreview.set(URL.createObjectURL(file));
+
+    // Actualizar imagenPerfil en el modelo del formulario para que pase la validación de obligatorio
+    this.profesionalModel.update((value) => ({
+      ...value,
+      imagenPerfil: file.name,
+    }));
   }
   submit(): void {
     if (this.isSubmitting()) return;
@@ -256,7 +264,11 @@ export class ProfesionalForm {
 
     if (this.formularioInvalido()) return;
 
-    const dto = this.buildDto();
-    this.guardar.emit(dto);
+    const file = this.selectedImageFile();
+    if (file) {
+      this.subirImagenYGuardar(file);
+    } else {
+      this.emitirGuardar();
+    }
   }
 }

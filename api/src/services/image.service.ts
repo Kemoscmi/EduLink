@@ -9,7 +9,7 @@ export class ImageService {
             throw new Error("Debe seleccionar una imagen");
         }
 
-        if (previousFileName) {
+        if (previousFileName && previousFileName !== "image-not-found.jpg") {
             await this.deleteImageIfExists(previousFileName);
         }
 

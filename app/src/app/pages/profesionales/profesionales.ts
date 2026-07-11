@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { environment } from '../../../environments/environment.development';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,6 +28,8 @@ export class ProfesionalDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly profesionalService = inject(ProfesionalService);
+
+  readonly imageUrl = environment.imageUrl;
 
   profesional = signal<Profesional | null>(null);
   loading = signal<boolean>(true);
