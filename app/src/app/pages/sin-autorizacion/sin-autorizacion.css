@@ -1,0 +1,46 @@
+.denied-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 3.5rem 1rem;
+}
+
+.denied-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 24px;
+  text-align: center;
+}
+
+.denied-icon {
+  width: 56px;
+  height: 56px;
+  font-size: 56px;
+  color: #d32f2f;
+}
+
+.denied-card h1 {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--mat-sys-on-surface);
+}
+
+.denied-card p {
+  margin: 0 0 1.5rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

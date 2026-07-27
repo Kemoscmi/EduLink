@@ -1,0 +1,75 @@
+<section class="auth-wrapper">
+  <mat-card class="auth-card glass-card animate-fade-in">
+    <mat-card-content>
+      <div class="auth-header">
+        <span class="eyebrow">EduLink</span>
+        <h1>Crear cuenta</h1>
+        <p>Regístrese como cliente para solicitar tutorías en la plataforma.</p>
+      </div>
+
+      <form class="auth-form" (submit)="$event.preventDefault(); submit()">
+        <div class="form-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput type="text" autocomplete="given-name" [formField]="registroForm.nombre" />
+            @if (registroForm.nombre().touched() && registroForm.nombre().invalid()) {
+              <mat-error>{{ registroForm.nombre().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput type="text" autocomplete="family-name" [formField]="registroForm.apellidos" />
+            @if (registroForm.apellidos().touched() && registroForm.apellidos().invalid()) {
+              <mat-error>{{ registroForm.apellidos().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" autocomplete="email" [formField]="registroForm.email" />
+          @if (registroForm.email().touched() && registroForm.email().invalid()) {
+            <mat-error>{{ registroForm.email().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput type="tel" autocomplete="tel" [formField]="registroForm.telefono" />
+          @if (registroForm.telefono().touched() && registroForm.telefono().invalid()) {
+            <mat-error>{{ registroForm.telefono().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput type="password" autocomplete="new-password" [formField]="registroForm.password" />
+          @if (registroForm.password().touched() && registroForm.password().invalid()) {
+            <mat-error>{{ registroForm.password().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (registroError()) {
+          <div class="form-alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ registroError() }}</span>
+          </div>
+        }
+
+        <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="button-label"><mat-icon>hourglass_top</mat-icon> Creando cuenta...</span>
+          } @else {
+            <span class="button-label"><mat-icon>person_add</mat-icon> Crear cuenta</span>
+          }
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        ¿Ya tiene una cuenta?
+        <a routerLink="/login">Inicie sesión</a>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</section>

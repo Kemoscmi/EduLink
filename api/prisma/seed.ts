@@ -1,9 +1,13 @@
+import bcrypt from "bcryptjs";
 import { EstadoCita, Modalidad, Role } from "../generated/prisma/enums";
 import { prisma } from "../src/config/prisma";
 
+const PASSWORD_SEMILLA = "Edulink2026*";
+
 async function main() {
     console.log("Iniciando seed...");
-    // 1. Limpieza de datos 
+    const passwordHasheada = await bcrypt.hash(PASSWORD_SEMILLA, 10);
+    // 1. Limpieza de datos
     const models = [
         prisma.resena,
         prisma.cita,
@@ -101,7 +105,7 @@ async function main() {
                 nombre: "Administrador",
                 apellidos: "Sistema",
                 email: "admin@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88880000",
                 activo: true,
                 role: Role.ADMIN
@@ -110,7 +114,7 @@ async function main() {
                 nombre: "Ana",
                 apellidos: "Rodríguez",
                 email: "ana@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88881111",
                 activo: true,
                 role: Role.TUTOR
@@ -119,7 +123,7 @@ async function main() {
                 nombre: "Carlos",
                 apellidos: "Mora",
                 email: "carlos@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88882222",
                 activo: true,
                 role: Role.TUTOR
@@ -128,7 +132,7 @@ async function main() {
                 nombre: "María",
                 apellidos: "Fernández",
                 email: "maria@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88883333",
                 activo: true,
                 role: Role.TUTOR
@@ -137,7 +141,7 @@ async function main() {
                 nombre: "José",
                 apellidos: "Castro",
                 email: "jose@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88884444",
                 activo: true,
                 role: Role.TUTOR
@@ -146,7 +150,7 @@ async function main() {
                 nombre: "Sofía",
                 apellidos: "Ramírez",
                 email: "sofia@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88885555",
                 activo: true,
                 role: Role.TUTOR
@@ -155,7 +159,7 @@ async function main() {
                 nombre: "Laura",
                 apellidos: "Jiménez",
                 email: "laura@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88886666",
                 activo: true,
                 role: Role.USER
@@ -164,7 +168,7 @@ async function main() {
                 nombre: "David",
                 apellidos: "Vargas",
                 email: "david@edulink.com",
-                password: "hash_password",
+                password: passwordHasheada,
                 telefono: "88887777",
                 activo: true,
                 role: Role.USER
@@ -656,6 +660,7 @@ async function main() {
     })
 
     console.log("Seed completado con éxito.");
+    console.log(`Todos los usuarios semilla usan la contraseña: ${PASSWORD_SEMILLA}`);
 }
 
 main()

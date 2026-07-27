@@ -14,15 +14,27 @@
 
     <div class="hero-actions">
 
-      <a mat-flat-button class="secondary-button" routerLink="/servicios">
-        <mat-icon>design_services</mat-icon>
-        Explorar servicios
-      </a>
+      @if (currentUser()) {
+        <a mat-flat-button class="secondary-button" routerLink="/servicios">
+          <mat-icon>design_services</mat-icon>
+          Explorar servicios
+        </a>
 
-      <a mat-flat-button class="tertiary-button" routerLink="/profesionales">
-        <mat-icon>badge</mat-icon>
-        Conocer profesionales
-      </a>
+        <a mat-flat-button class="tertiary-button" routerLink="/profesionales">
+          <mat-icon>badge</mat-icon>
+          Conocer profesionales
+        </a>
+      } @else {
+        <a mat-flat-button class="secondary-button" routerLink="/login">
+          <mat-icon>login</mat-icon>
+          Iniciar sesión
+        </a>
+
+        <a mat-flat-button class="tertiary-button" routerLink="/registro">
+          <mat-icon>person_add</mat-icon>
+          Crear cuenta
+        </a>
+      }
 
     </div>
 
@@ -33,37 +45,39 @@
   </div>
 </section>
 
-<section class="section-intro">
-  <span class="eyebrow">Panel administrativo</span>
-  <h2>Gestiona todo el ecosistema de EduLink</h2>
-</section>
+@if (isAdmin()) {
+  <section class="section-intro">
+    <span class="eyebrow">Panel administrativo</span>
+    <h2>Gestiona todo el ecosistema de EduLink</h2>
+  </section>
 
-<section class="summary-grid">
+  <section class="summary-grid">
 
-  @for (card of cards(); track card.title) {
+    @for (card of cards(); track card.title) {
 
-  <a class="card-link" [routerLink]="card.path">
-    <mat-card class="dashboard-card glass-card">
+    <a class="card-link" [routerLink]="card.path">
+      <mat-card class="dashboard-card glass-card">
 
-      <mat-card-header>
+        <mat-card-header>
 
-        <div class="card-icon">
-          <mat-icon>{{ card.icon }}</mat-icon>
-        </div>
+          <div class="card-icon">
+            <mat-icon>{{ card.icon }}</mat-icon>
+          </div>
 
-        <h2>{{ card.title }}</h2>
+          <h2>{{ card.title }}</h2>
 
-      </mat-card-header>
+        </mat-card-header>
 
-      <mat-card-content>
+        <mat-card-content>
 
-        <p>{{ card.description }}</p>
+          <p>{{ card.description }}</p>
 
-      </mat-card-content>
+        </mat-card-content>
 
-    </mat-card>
-  </a>
+      </mat-card>
+    </a>
 
-  }
+    }
 
-</section>
+  </section>
+}

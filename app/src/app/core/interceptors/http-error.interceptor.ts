@@ -5,14 +5,25 @@ import {
 } from '@angular/common/http'
 import { catchError, throwError } from 'rxjs'
 import { NotificationService } from '../services/notification.service'
+import { AuthenticationService } from '../services/authentication.service'
 
 export const httpErrorInterceptor: HttpInterceptorFn = (request, next) => {
     const noti = inject(NotificationService)
+    const authService = inject(AuthenticationService)
 
     console.log('Request URL:', request.url)
 
     return next(request).pipe(
         catchError((error: HttpErrorResponse) => {
+            // Una petición autenticada (con token) que responde 401 significa que el
+            // token es inválido o venció. Se cierra la sesión y se avisa al usuario,
+            // en vez de mostrarle el mensaje genérico de "No autorizado".
+            if (error.status === 401 && request.headers.has('Authorization')) {
+                authService.logout(true)
+                noti.error('Su sesión ha vencido. Por favor inicie sesión nuevamente.', 'Sesión expirada', 6000)
+                return throwError(() => error)
+            }
+
             let message = 'Se presentó un error inesperado'
 
             if (error.error instanceof ErrorEvent) {

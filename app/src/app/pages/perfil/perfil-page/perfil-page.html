@@ -1,0 +1,77 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Mi cuenta</span>
+    <h1>Mi perfil</h1>
+    <p>Consulte y actualice su información personal.</p>
+  </div>
+</section>
+
+@if (usuario(); as user) {
+  <mat-card class="perfil-card glass-card animate-fade-in">
+    <mat-card-content>
+      <div class="perfil-role">
+        <mat-chip-set>
+          <mat-chip>{{ roleLabel(user.role) }}</mat-chip>
+        </mat-chip-set>
+      </div>
+
+      <form class="perfil-form" (submit)="$event.preventDefault(); guardar()">
+        <div class="form-grid two-columns">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput type="text" [formField]="perfilForm.nombre" />
+            @if (perfilForm.nombre().touched() && perfilForm.nombre().invalid()) {
+              <mat-error>{{ perfilForm.nombre().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput type="text" [formField]="perfilForm.apellidos" />
+            @if (perfilForm.apellidos().touched() && perfilForm.apellidos().invalid()) {
+              <mat-error>{{ perfilForm.apellidos().errors()[0].message }}</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input matInput type="email" [formField]="perfilForm.email" />
+          @if (perfilForm.email().touched() && perfilForm.email().invalid()) {
+            <mat-error>{{ perfilForm.email().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Teléfono</mat-label>
+          <input matInput type="tel" [formField]="perfilForm.telefono" />
+          @if (perfilForm.telefono().touched() && perfilForm.telefono().invalid()) {
+            <mat-error>{{ perfilForm.telefono().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (perfilError()) {
+          <div class="form-alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ perfilError() }}</span>
+          </div>
+        }
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+            @if (guardando()) {
+              <span class="button-label"><mat-icon>hourglass_top</mat-icon> Guardando...</span>
+            } @else {
+              <span class="button-label"><mat-icon>save</mat-icon> Guardar cambios</span>
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <div class="state-box">
+    <mat-icon>hourglass_top</mat-icon>
+    <p>Cargando perfil...</p>
+  </div>
+}
