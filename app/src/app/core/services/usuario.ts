@@ -18,4 +18,8 @@ export class UsuarioService {
   cambiarEstado(id: number) {
     return this.http.patch<ApiResponse<Usuario>>(`${this.apiUrl}/${id}/estado`, {});
   }
+
+  cambiarRol(id: number, role: Usuario['role']) {
+    return this.http.patch<ApiResponse<Usuario>>(`${this.apiUrl}/${id}/rol`, { role });
+  }
 }

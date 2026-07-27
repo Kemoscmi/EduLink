@@ -1,47 +1,59 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { usuarioService } from "../services/usuario.service";
+import { sendSuccess } from "../utils/http-response";
+import { AppError } from "../utils/app-error";
+import { parseId } from "../utils/parse-id";
 
 export class UsuarioController {
-  listar = async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const usuarios = await usuarioService.listar();
+    listar = async (_request: Request, response: Response) => {
+        const usuarios = await usuarioService.listar();
+        return sendSuccess(response, usuarios);
+    };
 
-      return response.status(StatusCodes.OK).json({
-        success: true,
-        data: usuarios,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    cambiarEstado = async (request: Request, response: Response) => {
+        const id = parseId(request.params.id);
+        const usuario = await usuarioService.cambiarEstado(id);
 
-  cambiarEstado = async (
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) => {
-    try {
-      const id = Number(request.params.id);
+        return sendSuccess(
+            response,
+            usuario,
+            usuario.activo ? "Usuario activado correctamente" : "Usuario desactivado correctamente"
+        );
+    };
 
-      if (isNaN(id)) {
-        return response.status(StatusCodes.BAD_REQUEST).json({
-          success: false,
-          message: "El id del usuario no es válido",
-        });
-      }
+    cambiarRol = async (request: Request, response: Response) => {
+        const id = parseId(request.params.id);
+        const usuario = await usuarioService.cambiarRol(id, request.body);
 
-      const usuario = await usuarioService.cambiarEstado(id);
+        return sendSuccess(response, usuario, "Rol actualizado correctamente");
+    };
 
-      return response.status(StatusCodes.OK).json({
-        success: true,
-        message: usuario.activo
-          ? "Usuario activado correctamente"
-          : "Usuario desactivado correctamente",
-        data: usuario,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+    registrar = async (request: Request, response: Response) => {
+        const usuario = await usuarioService.registrar(request.body);
+        return sendSuccess(response, usuario, "Usuario registrado correctamente", StatusCodes.CREATED);
+    };
+
+    login = async (request: Request, response: Response) => {
+        const { usuario, token } = await usuarioService.login(request.body);
+        return sendSuccess(response, { usuario, token }, "Inicio de sesión exitoso");
+    };
+
+    perfil = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const usuario = await usuarioService.obtenerPerfil(request.user.id);
+        return sendSuccess(response, usuario);
+    };
+
+    actualizarPerfil = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const usuario = await usuarioService.actualizarPerfil(request.user.id, request.body);
+        return sendSuccess(response, usuario, "Perfil actualizado correctamente");
+    };
 }

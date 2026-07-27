@@ -10,6 +10,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { UsuarioService } from '../../../core/services/usuario';
 import { Usuario } from '../../../core/models/usuario.model';
@@ -35,6 +36,7 @@ interface RoleOption {
     MatChipsModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
+    MatMenuModule,
   ],
   templateUrl: './usuarios-list.html',
   styleUrl: './usuarios-list.css',
@@ -132,6 +134,41 @@ export class UsuariosList {
 
   roleLabel(role: Usuario['role']): string {
     return this.roles.find((item) => item.value === role)?.label ?? role;
+  }
+
+  rolesDisponibles(usuario: Usuario): RoleOption[] {
+    return this.roles.filter((item) => item.value !== usuario.role);
+  }
+
+  cambiarRol(usuario: Usuario, nuevoRol: Usuario['role']): void {
+    const nombreCompleto = `${usuario.nombre} ${usuario.apellidos}`;
+
+    this.confirmDialog
+      .confirm({
+        title: 'Cambiar rol',
+        message: `¿Desea cambiar el rol de ${nombreCompleto} a "${this.roleLabel(nuevoRol)}"?`,
+        icon: 'badge',
+        confirmLabel: 'Cambiar rol',
+        danger: true,
+      })
+      .subscribe((confirmado) => {
+        if (!confirmado) return;
+
+        this.updatingId.set(usuario.id);
+
+        this.usuarioService.cambiarRol(usuario.id, nuevoRol).subscribe({
+          next: (response) => {
+            this.usuarios.update((lista) =>
+              lista.map((item) => (item.id === usuario.id ? response.data : item))
+            );
+            this.notification.success(response.message ?? 'Rol actualizado correctamente');
+            this.updatingId.set(null);
+          },
+          error: () => {
+            this.updatingId.set(null);
+          },
+        });
+      });
   }
 
   clearFilters(): void {

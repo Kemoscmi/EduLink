@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -41,6 +41,9 @@ export class ServiciosList {
   private readonly servicioService = inject(ServicioService);
   private readonly notification = inject(NotificationService);
   private readonly confirmDialog = inject(ConfirmDialogService);
+  private readonly router = inject(Router);
+
+  isAdminMode = computed(() => this.router.url.includes('/admin'));
 
   servicios = signal<Servicio[]>([]);
   loading = signal(false);

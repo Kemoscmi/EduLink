@@ -26,6 +26,15 @@
         }
       }
 
+      @if (currentUser()) {
+        @for (item of clienteMenu(); track item.path) {
+          <a mat-button [routerLink]="item.path" routerLinkActive="active-link">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            {{ item.label }}
+          </a>
+        }
+      }
+
       @if (isAdmin()) {
         <button mat-button [matMenuTriggerFor]="maintenanceMenu">
           <mat-icon>settings</mat-icon>
@@ -42,23 +51,23 @@
     <span class="spacer"></span>
 
     @if (currentUser(); as user) {
-      <div class="user-chip">
+      <a class="user-chip" routerLink="/perfil" title="Ver mi perfil">
         <mat-icon>person</mat-icon>
         <span>{{ user.nombre }}</span>
-        <strong>{{ user.role }}</strong>
-      </div>
+        <strong>{{ roleLabel(user.role) }}</strong>
+      </a>
 
       <button mat-flat-button color="primary" (click)="logoutUser.emit()">
         Salir
       </button>
     } @else {
-      <button mat-stroked-button color="primary" (click)="loginClient.emit()">
-        Cliente demo
-      </button>
+      <a mat-stroked-button color="primary" routerLink="/login">
+        Iniciar sesión
+      </a>
 
-      <button mat-flat-button color="primary" (click)="loginAdmin.emit()">
-        Admin demo
-      </button>
+      <a mat-flat-button color="primary" routerLink="/registro">
+        Registrarse
+      </a>
     }
 
     <button class="mobile-menu-button" mat-icon-button [matMenuTriggerFor]="mobileMenu">
@@ -95,6 +104,15 @@
     }
   }
 
+  @if (currentUser()) {
+    @for (item of clienteMenu(); track item.path) {
+      <a mat-menu-item [routerLink]="item.path">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  }
+
   @if (isAdmin()) {
     <button mat-menu-item [matMenuTriggerFor]="maintenanceMenu">
       <mat-icon>settings</mat-icon>
@@ -105,5 +123,27 @@
       <mat-icon>admin_panel_settings</mat-icon>
       <span>Gestión</span>
     </button>
+  }
+
+  @if (currentUser(); as user) {
+    <a mat-menu-item routerLink="/perfil">
+      <mat-icon>person</mat-icon>
+      <span>Mi perfil ({{ roleLabel(user.role) }})</span>
+    </a>
+
+    <button mat-menu-item (click)="logoutUser.emit()">
+      <mat-icon>logout</mat-icon>
+      <span>Salir</span>
+    </button>
+  } @else {
+    <a mat-menu-item routerLink="/login">
+      <mat-icon>login</mat-icon>
+      <span>Iniciar sesión</span>
+    </a>
+
+    <a mat-menu-item routerLink="/registro">
+      <mat-icon>person_add</mat-icon>
+      <span>Registrarse</span>
+    </a>
   }
 </mat-menu>

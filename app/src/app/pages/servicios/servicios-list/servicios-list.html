@@ -7,12 +7,14 @@
       <p>Listado de servicios disponibles en EduLink.</p>
     </div>
 
-    <div class="header-actions">
-      <a mat-flat-button routerLink="/admin/servicios/nuevo">
-        <mat-icon>add_circle</mat-icon>
-        Nuevo servicio
-      </a>
-    </div>
+    @if (isAdminMode()) {
+      <div class="header-actions">
+        <a mat-flat-button routerLink="/admin/servicios/nuevo">
+          <mat-icon>add_circle</mat-icon>
+          Nuevo servicio
+        </a>
+      </div>
+    }
   </div>
 </section>
 
@@ -156,22 +158,26 @@
                   {{ servicio.activo ? 'Activo' : 'Inactivo' }}
                 </span>
 
-                <mat-slide-toggle
-                  [checked]="servicio.activo"
-                  [disabled]="updatingId() === servicio.id"
-                  (change)="cambiarEstado(servicio)"
-                >
-                </mat-slide-toggle>
+                @if (isAdminMode()) {
+                  <mat-slide-toggle
+                    [checked]="servicio.activo"
+                    [disabled]="updatingId() === servicio.id"
+                    (change)="cambiarEstado(servicio)"
+                  >
+                  </mat-slide-toggle>
+                }
               </div>
 
-              <div class="card-actions-buttons">
-                <a mat-stroked-button color="primary" [routerLink]="['/admin/servicios', servicio.id]" class="action-btn-sm">
-                  <mat-icon>visibility</mat-icon> Detalle
-                </a>
-                <a mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="action-btn-sm">
-                  <mat-icon>edit</mat-icon> Editar
-                </a>
-              </div>
+              @if (isAdminMode()) {
+                <div class="card-actions-buttons">
+                  <a mat-stroked-button color="primary" [routerLink]="['/admin/servicios', servicio.id]" class="action-btn-sm">
+                    <mat-icon>visibility</mat-icon> Detalle
+                  </a>
+                  <a mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="action-btn-sm">
+                    <mat-icon>edit</mat-icon> Editar
+                  </a>
+                </div>
+              }
             </mat-card-actions>
           </mat-card>
         }

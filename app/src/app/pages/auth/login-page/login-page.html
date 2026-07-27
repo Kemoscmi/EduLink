@@ -1,0 +1,59 @@
+<section class="auth-wrapper">
+  <mat-card class="auth-card glass-card animate-fade-in">
+    <mat-card-content>
+      <div class="auth-header">
+        <span class="eyebrow">EduLink</span>
+        <h1>Iniciar sesión</h1>
+        <p>Ingrese sus credenciales para acceder al marketplace de tutorías.</p>
+      </div>
+
+      <form class="auth-form" (submit)="$event.preventDefault(); submit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Correo electrónico</mat-label>
+          <input
+            matInput
+            type="email"
+            autocomplete="email"
+            [formField]="credencialesForm.email"
+          />
+          @if (credencialesForm.email().touched() && credencialesForm.email().invalid()) {
+            <mat-error>{{ credencialesForm.email().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Contraseña</mat-label>
+          <input
+            matInput
+            type="password"
+            autocomplete="current-password"
+            [formField]="credencialesForm.password"
+          />
+          @if (credencialesForm.password().touched() && credencialesForm.password().invalid()) {
+            <mat-error>{{ credencialesForm.password().errors()[0].message }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (loginError()) {
+          <div class="form-alert">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ loginError() }}</span>
+          </div>
+        }
+
+        <button mat-flat-button color="primary" type="submit" class="submit-button" [disabled]="submitting()">
+          @if (submitting()) {
+            <span class="button-label"><mat-icon>hourglass_top</mat-icon> Iniciando sesión...</span>
+          } @else {
+            <span class="button-label"><mat-icon>login</mat-icon> Iniciar sesión</span>
+          }
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        ¿No tiene una cuenta?
+        <a routerLink="/registro">Regístrese aquí</a>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</section>
