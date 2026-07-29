@@ -30,6 +30,8 @@ export class MainLayout {
   clienteMenu = signal<MenuItem[]>([
     { label: 'Servicios', path: '/servicios', icon: 'school' },
     { label: 'Profesionales', path: '/profesionales', icon: 'person_search' },
+    { label: 'Mis citas', path: '/mis-citas', icon: 'event_note', roles: ['USER'] },
+    { label: 'Mi agenda', path: '/agenda', icon: 'calendar_month', roles: ['TUTOR'] },
   ]);
 
   adminMaintenanceMenu = signal<MenuItem[]>([
@@ -42,6 +44,7 @@ export class MainLayout {
   adminManagementMenu = signal<MenuItem[]>([
     { label: 'Usuarios', path: '/admin/usuarios', icon: 'group' },
     { label: 'Citas', path: '/admin/citas', icon: 'event' },
+    { label: 'Agenda', path: '/agenda', icon: 'calendar_month' },
     { label: 'Reportes', path: '/admin/reportes', icon: 'bar_chart' },
   ]);
 

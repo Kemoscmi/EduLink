@@ -1,0 +1,42 @@
+<div class="motivo-dialog">
+  <div class="confirm-icon" [class.danger]="data.danger">
+    <mat-icon>{{ data.icon || 'edit_note' }}</mat-icon>
+  </div>
+
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+
+  <mat-dialog-content>
+    <p>{{ data.message }}</p>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ data.motivoLabel || 'Motivo' }}</mat-label>
+      <textarea
+        matInput
+        rows="3"
+        name="motivo"
+        required
+        [minlength]="minLength"
+        [ngModel]="motivo()"
+        (ngModelChange)="motivo.set($event)"
+        maxlength="255"
+      ></textarea>
+    </mat-form-field>
+
+    @if (mostrarError()) {
+      <p class="motivo-error">
+        <mat-icon>error_outline</mat-icon>
+        Ingrese al menos {{ minLength }} caracteres.
+      </p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="cancelar()">
+      {{ data.cancelLabel || 'Cancelar' }}
+    </button>
+
+    <button mat-flat-button [color]="data.danger ? 'warn' : 'primary'" (click)="confirmar()">
+      {{ data.confirmLabel || 'Confirmar' }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -21,9 +21,10 @@ enum Role {
 
 enum EstadoCita {
   PENDIENTE
-  PAGADA
-  REALIZADA
+  ACEPTADA
+  RECHAZADA
   CANCELADA
+  COMPLETADA
 }
 
 enum Modalidad {
@@ -168,6 +169,7 @@ model Cita {
   montoEstimado       Decimal @default(0.00) @db.Decimal(10, 2)
 
   resenas Resena[]
+  historial HistorialCita[]
 
   cliente Usuario @relation(fields:[clienteId], references:[id])
   tutor PerfilTutor @relation(fields:[tutorId], references:[id])
@@ -176,6 +178,19 @@ model Cita {
   createAt DateTime @default(now())
   updateAt DateTime @default(now()) @updatedAt
 
+}
+
+model HistorialCita {
+  id              Int @id @default(autoincrement())
+  citaId          Int
+  estadoAnterior  EstadoCita?
+  estadoNuevo     EstadoCita
+  motivo          String? @db.VarChar(255)
+  fecha           DateTime @default(now())
+
+  cita Cita @relation(fields: [citaId], references: [id])
+
+  @@map("historial_cita")
 }
 
 model Resena {

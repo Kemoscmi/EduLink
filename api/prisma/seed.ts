@@ -10,6 +10,7 @@ async function main() {
     // 1. Limpieza de datos
     const models = [
         prisma.resena,
+        prisma.historialCita,
         prisma.cita,
         prisma.servicioEspecialidad,
         prisma.tutorEspecialidad,
@@ -478,13 +479,22 @@ async function main() {
     })
 
 
-    // 6. Creación de Citas
+    // 6. Creación de Citas (fechas relativas al momento de ejecutar el seed,
+    // para que "pasado" y "futuro" sigan siendo correctos sin importar cuándo se corra).
+    // Se anclan a medianoche UTC (no hora local) para coincidir con como el
+    // resto del sistema interpreta fechaCita y evitar corrimientos de un día.
+    const diasDesdeHoy = (n: number) => {
+        const ahora = new Date();
+        return new Date(Date.UTC(ahora.getUTCFullYear(), ahora.getUTCMonth(), ahora.getUTCDate() + n));
+    };
+    const horasAntesDeAhora = (n: number) => new Date(Date.now() - n * 60 * 60 * 1000);
+
     const cita1 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["laura@edulink.com"],
             tutorId: tutorAna.id,
             servicioId: servicioJava.id,
-            fechaCita: new Date("2026-06-20"),
+            fechaCita: diasDesdeHoy(5),
             horaInicio: "08:00",
             horaFin: "10:00",
             modalidad: Modalidad.VIRTUAL,
@@ -494,12 +504,13 @@ async function main() {
         }
     })
 
+    // Traslape intencional con cita1: mismo tutor, misma fecha, horario cruzado (08:00-10:00 vs 09:00-11:00)
     const cita2 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorAna.id,
             servicioId: servicioJavaScript.id,
-            fechaCita: new Date("2026-06-21"),
+            fechaCita: diasDesdeHoy(5),
             horaInicio: "09:00",
             horaFin: "11:00",
             modalidad: Modalidad.VIRTUAL,
@@ -514,9 +525,9 @@ async function main() {
             clienteId: usuarioMap["laura@edulink.com"],
             tutorId: tutorAna.id,
             servicioId: servicioBD.id,
-            fechaCita: new Date("2026-06-22"),
-            horaInicio: "14:00",
-            horaFin: "16:00",
+            fechaCita: diasDesdeHoy(1),
+            horaInicio: "17:00",
+            horaFin: "19:00",
             modalidad: Modalidad.MIXTA,
             estado: EstadoCita.PENDIENTE,
             comentarioCliente: "Necesito ayuda con consultas SQL.",
@@ -529,7 +540,7 @@ async function main() {
             clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorCarlos.id,
             servicioId: servicioAlgebra.id,
-            fechaCita: new Date("2026-06-23"),
+            fechaCita: diasDesdeHoy(7),
             horaInicio: "08:00",
             horaFin: "09:30",
             modalidad: Modalidad.PRESENCIAL,
@@ -539,17 +550,19 @@ async function main() {
         }
     })
 
+    // Aceptada y futura: puede cancelarse para probar esa regla
     const cita5 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["laura@edulink.com"],
             tutorId: tutorCarlos.id,
             servicioId: servicioCalculo.id,
-            fechaCita: new Date("2026-06-24"),
+            fechaCita: diasDesdeHoy(10),
             horaInicio: "10:00",
             horaFin: "12:00",
             modalidad: Modalidad.MIXTA,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.ACEPTADA,
             comentarioCliente: "Repasar integrales definidas.",
+            comentarioTutor: "Perfecto, nos vemos en la sesión.",
             montoEstimado: 12000
         }
     })
@@ -559,12 +572,13 @@ async function main() {
             clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorMaria.id,
             servicioId: servicioInglesConversacional.id,
-            fechaCita: new Date("2026-06-25"),
+            fechaCita: diasDesdeHoy(3),
             horaInicio: "13:00",
             horaFin: "14:00",
             modalidad: Modalidad.VIRTUAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.ACEPTADA,
             comentarioCliente: "Práctica de conversación.",
+            comentarioTutor: "Con gusto, preparo ejercicios de conversación.",
             montoEstimado: 10000
         }
     })
@@ -574,57 +588,64 @@ async function main() {
             clienteId: usuarioMap["laura@edulink.com"],
             tutorId: tutorMaria.id,
             servicioId: servicioInglesEmpresarial.id,
-            fechaCita: new Date("2026-06-26"),
+            fechaCita: diasDesdeHoy(2),
             horaInicio: "15:00",
             horaFin: "16:30",
             modalidad: Modalidad.VIRTUAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.RECHAZADA,
             comentarioCliente: "Preparación para entrevista laboral.",
+            comentarioTutor: "No tengo disponibilidad esa semana, por favor reprograme.",
             montoEstimado: 12000
         }
     })
 
+    // Completada (pasada) con reseña
     const cita8 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorJose.id,
             servicioId: servicioFisica.id,
-            fechaCita: new Date("2026-06-27"),
+            fechaCita: diasDesdeHoy(-3),
             horaInicio: "09:00",
             horaFin: "11:00",
             modalidad: Modalidad.PRESENCIAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.COMPLETADA,
             comentarioCliente: "Resolver ejercicios de mecánica.",
+            comentarioTutor: "Sesión realizada sin inconvenientes.",
             montoEstimado: 13000
         }
     })
 
+    // Completada (pasada) SIN reseña todavía
     const cita9 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["laura@edulink.com"],
             tutorId: tutorJose.id,
             servicioId: servicioQuimica.id,
-            fechaCita: new Date("2026-06-28"),
+            fechaCita: diasDesdeHoy(-5),
             horaInicio: "14:00",
             horaFin: "16:00",
             modalidad: Modalidad.PRESENCIAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.COMPLETADA,
             comentarioCliente: "Repasar balanceo de ecuaciones.",
+            comentarioTutor: "Sesión realizada sin inconvenientes.",
             montoEstimado: 13000
         }
     })
 
+    // Completada (pasada) con reseña
     const cita10 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorSofia.id,
             servicioId: servicioPiano.id,
-            fechaCita: new Date("2026-06-29"),
+            fechaCita: diasDesdeHoy(-10),
             horaInicio: "10:00",
             horaFin: "11:30",
             modalidad: Modalidad.PRESENCIAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.COMPLETADA,
             comentarioCliente: "Introducción al piano.",
+            comentarioTutor: "Sesión realizada sin inconvenientes.",
             montoEstimado: 11000
         }
     })
@@ -632,31 +653,96 @@ async function main() {
     const cita11 = await prisma.cita.create({
         data: {
             clienteId: usuarioMap["laura@edulink.com"],
+            tutorId: tutorCarlos.id,
+            servicioId: servicioAlgebra.id,
+            fechaCita: diasDesdeHoy(-2),
+            horaInicio: "18:00",
+            horaFin: "19:30",
+            modalidad: Modalidad.PRESENCIAL,
+            estado: EstadoCita.CANCELADA,
+            comentarioCliente: "Repaso general para examen final.",
+            montoEstimado: 10000
+        }
+    })
+
+    // Aceptada cuya fecha ya pasó: lista para marcarse como Completada
+    const cita12 = await prisma.cita.create({
+        data: {
+            clienteId: usuarioMap["david@edulink.com"],
+            tutorId: tutorSofia.id,
+            servicioId: servicioPiano.id,
+            fechaCita: diasDesdeHoy(-1),
+            horaInicio: "14:00",
+            horaFin: "15:30",
+            modalidad: Modalidad.PRESENCIAL,
+            estado: EstadoCita.ACEPTADA,
+            comentarioCliente: "Repaso de escalas y acordes básicos.",
+            comentarioTutor: "Perfecto, ya está confirmada.",
+            montoEstimado: 11000
+        }
+    })
+
+    // Completada (pasada) con reseña
+    const cita13 = await prisma.cita.create({
+        data: {
+            clienteId: usuarioMap["david@edulink.com"],
             tutorId: tutorAna.id,
             servicioId: servicioJava.id,
-            fechaCita: new Date("2026-06-30"),
-            horaInicio: "17:00",
-            horaFin: "19:00",
+            fechaCita: diasDesdeHoy(-7),
+            horaInicio: "16:00",
+            horaFin: "18:00",
             modalidad: Modalidad.VIRTUAL,
-            estado: EstadoCita.PENDIENTE,
+            estado: EstadoCita.COMPLETADA,
             comentarioCliente: "Repasar colecciones y streams.",
+            comentarioTutor: "Sesión realizada sin inconvenientes.",
             montoEstimado: 12000
         }
     })
 
-    const cita12 = await prisma.cita.create({
-        data: {
-            clienteId: usuarioMap["david@edulink.com"],
-            tutorId: tutorCarlos.id,
-            servicioId: servicioAlgebra.id,
-            fechaCita: new Date("2026-07-01"),
-            horaInicio: "18:00",
-            horaFin: "19:30",
-            modalidad: Modalidad.PRESENCIAL,
-            estado: EstadoCita.PENDIENTE,
-            comentarioCliente: "Repaso general para examen final.",
-            montoEstimado: 10000
-        }
+    // 7. Historial de cambios de estado (citas que ya salieron de Pendiente)
+    await prisma.historialCita.createMany({
+        data: [
+            { citaId: cita5.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(48) },
+            { citaId: cita6.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(30) },
+            { citaId: cita7.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.RECHAZADA, motivo: "No tengo disponibilidad esa semana, por favor reprograme.", fecha: horasAntesDeAhora(20) },
+            { citaId: cita8.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(96) },
+            { citaId: cita8.id, estadoAnterior: EstadoCita.ACEPTADA, estadoNuevo: EstadoCita.COMPLETADA, motivo: "Sesión realizada.", fecha: horasAntesDeAhora(70) },
+            { citaId: cita9.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(140) },
+            { citaId: cita9.id, estadoAnterior: EstadoCita.ACEPTADA, estadoNuevo: EstadoCita.COMPLETADA, motivo: "Sesión realizada.", fecha: horasAntesDeAhora(118) },
+            { citaId: cita10.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(260) },
+            { citaId: cita10.id, estadoAnterior: EstadoCita.ACEPTADA, estadoNuevo: EstadoCita.COMPLETADA, motivo: "Sesión realizada.", fecha: horasAntesDeAhora(238) },
+            { citaId: cita11.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.CANCELADA, motivo: "El cliente canceló por motivos personales.", fecha: horasAntesDeAhora(60) },
+            { citaId: cita12.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(30) },
+            { citaId: cita13.id, estadoAnterior: EstadoCita.PENDIENTE, estadoNuevo: EstadoCita.ACEPTADA, motivo: "Aceptada por el profesional.", fecha: horasAntesDeAhora(190) },
+            { citaId: cita13.id, estadoAnterior: EstadoCita.ACEPTADA, estadoNuevo: EstadoCita.COMPLETADA, motivo: "Sesión realizada.", fecha: horasAntesDeAhora(166) },
+        ]
+    })
+
+    // 8. Reseñas (cita9 queda completada sin reseña, para distinguir ambos casos)
+    await prisma.resena.createMany({
+        data: [
+            {
+                citaId: cita8.id,
+                clienteId: usuarioMap["david@edulink.com"],
+                tutorId: tutorJose.id,
+                puntuacion: 5,
+                comentario: "Excelente explicación, muy paciente y claro con los conceptos de mecánica."
+            },
+            {
+                citaId: cita10.id,
+                clienteId: usuarioMap["david@edulink.com"],
+                tutorId: tutorSofia.id,
+                puntuacion: 4,
+                comentario: "Buena introducción al piano, aunque me hubiera gustado más tiempo de práctica."
+            },
+            {
+                citaId: cita13.id,
+                clienteId: usuarioMap["david@edulink.com"],
+                tutorId: tutorAna.id,
+                puntuacion: 3,
+                comentario: "Estuvo bien, pero esperaba más profundidad en el tema de streams."
+            }
+        ]
     })
 
     console.log("Seed completado con éxito.");

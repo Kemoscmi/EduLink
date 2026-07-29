@@ -384,28 +384,28 @@
     color: hsl(38, 92%, 40%);
 }
 
-/* 2. PAGADA (Blue / Indigo) */
-.status-bar.pagada {
+/* 2. ACEPTADA (Blue / Indigo) */
+.status-bar.aceptada {
     background-color: hsl(210, 92%, 50%); /* Blue */
 }
-.cita-avatar.pagada {
+.cita-avatar.aceptada {
     background-color: hsl(210, 92%, 95%);
     color: hsl(210, 92%, 40%);
 }
-.status-badge.pagada {
+.status-badge.aceptada {
     background-color: hsl(210, 92%, 95%);
     color: hsl(210, 92%, 40%);
 }
 
-/* 3. REALIZADA (Emerald / Green) */
-.status-bar.realizada {
+/* 3. COMPLETADA (Emerald / Green) */
+.status-bar.completada {
     background-color: hsl(142, 70%, 45%); /* Emerald */
 }
-.cita-avatar.realizada {
+.cita-avatar.completada {
     background-color: hsl(142, 70%, 95%);
     color: hsl(142, 70%, 35%);
 }
-.status-badge.realizada {
+.status-badge.completada {
     background-color: hsl(142, 70%, 95%);
     color: hsl(142, 70%, 35%);
 }
@@ -421,6 +421,19 @@
 .status-badge.cancelada {
     background-color: hsl(350, 80%, 96%);
     color: hsl(350, 80%, 45%);
+}
+
+/* 5. RECHAZADA (Violet / Purple) */
+.status-bar.rechazada {
+    background-color: hsl(280, 60%, 55%); /* Violet */
+}
+.cita-avatar.rechazada {
+    background-color: hsl(280, 60%, 96%);
+    color: hsl(280, 60%, 45%);
+}
+.status-badge.rechazada {
+    background-color: hsl(280, 60%, 96%);
+    color: hsl(280, 60%, 45%);
 }
 
 /* Status Badge Base */

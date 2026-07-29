@@ -5,12 +5,13 @@ export interface EnumOption {
     label: string;
 }
 
-//Estado de las Órdenes
-export const EstadoOrdenMap: Record<EstadoCita, string> = {
-    [EstadoCita.PENDIENTE]: "Pendiente de Pago",
-    [EstadoCita.PAGADA]: "Pagada",
-    [EstadoCita.REALIZADA]: "Realizada",
-    [EstadoCita.CANCELADA]: "Cancelada"
+//Estado de las Citas
+export const EstadoCitaMap: Record<EstadoCita, string> = {
+    [EstadoCita.PENDIENTE]: "Pendiente",
+    [EstadoCita.ACEPTADA]: "Aceptada",
+    [EstadoCita.RECHAZADA]: "Rechazada",
+    [EstadoCita.CANCELADA]: "Cancelada",
+    [EstadoCita.COMPLETADA]: "Completada"
 };
 
 // Roles
