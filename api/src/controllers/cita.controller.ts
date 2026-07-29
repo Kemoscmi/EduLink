@@ -4,8 +4,65 @@ import { citaService } from "../services/cita.service";
 import { EstadoCita } from "../../generated/prisma/enums";
 import { sendSuccess } from "../utils/http-response";
 import { profesionalService } from "../services/profesional.service";
+import { AppError } from "../utils/app-error";
+import { parseId } from "../utils/parse-id";
 
 export class CitaController {
+
+    misCitas = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const citas = await citaService.misCitas(request.user.id, request.user.role);
+        return sendSuccess(response, citas);
+    };
+
+    historial = async (request: Request, response: Response) => {
+        const id = parseId(request.params.id);
+        const historial = await citaService.historial(id);
+        return sendSuccess(response, historial);
+    };
+
+    aceptar = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const id = parseId(request.params.id);
+        const cita = await citaService.aceptar(id, request.user, request.body.comentarioTutor);
+        return sendSuccess(response, cita, "Cita aceptada correctamente");
+    };
+
+    rechazar = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const id = parseId(request.params.id);
+        const cita = await citaService.rechazar(id, request.user, request.body.motivo);
+        return sendSuccess(response, cita, "Cita rechazada correctamente");
+    };
+
+    cancelar = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const id = parseId(request.params.id);
+        const cita = await citaService.cancelar(id, request.user, request.body.motivo);
+        return sendSuccess(response, cita, "Cita cancelada correctamente");
+    };
+
+    completar = async (request: Request, response: Response) => {
+        if (!request.user) {
+            throw AppError.unauthorized("Debe iniciar sesión para acceder a este recurso");
+        }
+
+        const id = parseId(request.params.id);
+        const cita = await citaService.completar(id, request.user);
+        return sendSuccess(response, cita, "Cita marcada como completada");
+    };
 
     listar = async (request: Request, response: Response, next: NextFunction) => {
         try {

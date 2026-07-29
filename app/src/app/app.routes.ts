@@ -22,6 +22,8 @@ import { ProfesionalesList } from './pages/profesionales/profesionales-list/prof
 import { ProfesionalDetail } from './pages/profesionales/profesionales';
 import { ProfesionalCreatePage } from './pages/profesionales/profesional-create-page/profesional-create-page';
 import { ProfesionalEditPage } from './pages/profesionales/profesional-edit-page/profesional-edit-page';
+import { MisCitas } from './pages/citas/mis-citas/mis-citas';
+import { AgendaProfesional } from './pages/citas/agenda-profesional/agenda-profesional';
 
 export const routes: Routes = [
   {
@@ -76,6 +78,20 @@ export const routes: Routes = [
         canActivate: [authGuard],
       },
       // CITAS (cliente autenticado)
+      {
+        path: 'mis-citas',
+        component: MisCitas,
+        title: 'Mis citas',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['USER'] },
+      },
+      {
+        path: 'agenda',
+        component: AgendaProfesional,
+        title: 'Mi agenda',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['TUTOR', 'ADMIN'] },
+      },
       {
         path: 'citas/:id',
         component: CitaDetail,

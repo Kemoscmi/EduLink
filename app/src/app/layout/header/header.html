@@ -28,10 +28,12 @@
 
       @if (currentUser()) {
         @for (item of clienteMenu(); track item.path) {
-          <a mat-button [routerLink]="item.path" routerLinkActive="active-link">
-            <mat-icon>{{ item.icon }}</mat-icon>
-            {{ item.label }}
-          </a>
+          @if (canShowItem()(item)) {
+            <a mat-button [routerLink]="item.path" routerLinkActive="active-link">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              {{ item.label }}
+            </a>
+          }
         }
       }
 
@@ -106,10 +108,12 @@
 
   @if (currentUser()) {
     @for (item of clienteMenu(); track item.path) {
-      <a mat-menu-item [routerLink]="item.path">
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-      </a>
+      @if (canShowItem()(item)) {
+        <a mat-menu-item [routerLink]="item.path">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
     }
   }
 

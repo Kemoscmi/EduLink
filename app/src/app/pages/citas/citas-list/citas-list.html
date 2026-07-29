@@ -40,10 +40,11 @@
             <mat-icon matPrefix>rule</mat-icon>
             <mat-select [value]="estado()" (selectionChange)="estado.set($event.value)">
                 <mat-option [value]="null">Todos los estados</mat-option>
-                <mat-option value="PENDIENTE">PENDIENTE</mat-option>
-                <mat-option value="PAGADA">PAGADA</mat-option>
-                <mat-option value="REALIZADA">REALIZADA</mat-option>
-                <mat-option value="CANCELADA">CANCELADA</mat-option>
+                <mat-option value="PENDIENTE">Pendiente</mat-option>
+                <mat-option value="ACEPTADA">Aceptada</mat-option>
+                <mat-option value="RECHAZADA">Rechazada</mat-option>
+                <mat-option value="CANCELADA">Cancelada</mat-option>
+                <mat-option value="COMPLETADA">Completada</mat-option>
             </mat-select>
         </mat-form-field>
 

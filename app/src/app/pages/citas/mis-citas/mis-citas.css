@@ -1,0 +1,176 @@
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  margin: 0.25rem 0 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--mat-sys-on-surface);
+}
+
+.page-header p {
+  margin: 0.25rem 0 0;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.eyebrow {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--mat-sys-primary) 14%, transparent);
+  color: var(--mat-sys-primary);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--mat-sys-on-surface-variant);
+  text-align: center;
+}
+
+.state-box.error {
+  color: #d32f2f;
+}
+
+.state-box mat-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+}
+
+.grupo-citas {
+  margin-bottom: 2rem;
+}
+
+.grupo-citas h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--mat-sys-on-surface);
+}
+
+.citas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.glass-card {
+  border: 1px solid color-mix(in srgb, var(--mat-sys-outline) 24%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-surface-container-high) 72%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+}
+
+.cita-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.status-bar {
+  height: 5px;
+  width: 100%;
+}
+
+.cita-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cita-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--mat-sys-on-surface);
+}
+
+.status-badge {
+  flex-shrink: 0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.profesional-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  font-size: 0.9rem;
+}
+
+.profesional-line mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.info-item mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  color: var(--mat-sys-primary);
+}
+
+.button-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cita-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--mat-sys-outline) 16%, transparent);
+}
+
+/* Colores por estado, consistentes con citas-list / cita-detail */
+.status-bar.pendiente { background-color: hsl(38, 92%, 50%); }
+.status-badge.pendiente { background-color: hsl(38, 92%, 95%); color: hsl(38, 92%, 40%); }
+
+.status-bar.aceptada { background-color: hsl(210, 92%, 50%); }
+.status-badge.aceptada { background-color: hsl(210, 92%, 95%); color: hsl(210, 92%, 40%); }
+
+.status-bar.rechazada { background-color: hsl(280, 60%, 55%); }
+.status-badge.rechazada { background-color: hsl(280, 60%, 96%); color: hsl(280, 60%, 45%); }
+
+.status-bar.cancelada { background-color: hsl(350, 80%, 55%); }
+.status-badge.cancelada { background-color: hsl(350, 80%, 96%); color: hsl(350, 80%, 45%); }
+
+.status-bar.completada { background-color: hsl(142, 70%, 45%); }
+.status-badge.completada { background-color: hsl(142, 70%, 95%); color: hsl(142, 70%, 35%); }
