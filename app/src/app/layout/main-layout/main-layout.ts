@@ -1,20 +1,15 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
-
-type Role = 'CLIENTE' | 'ADMIN';
+import { AuthenticationService } from '../../core/services/authentication.service';
+import { Usuario } from '../../core/models/usuario.model';
 
 interface MenuItem {
   label: string;
   path: string;
   icon: string;
-  roles?: Role[];
-}
-
-interface User {
-  nombre: string;
-  role: Role;
+  roles?: Usuario['role'][];
 }
 
 @Component({
@@ -25,12 +20,18 @@ interface User {
   styleUrl: './main-layout.css',
 })
 export class MainLayout {
-  currentUser = signal<User | null>(null);
+  private readonly authService = inject(AuthenticationService);
 
-  publicMenu = signal<MenuItem[]>([
-    { label: 'Inicio', path: '/', icon: 'home' },
+  currentUser = this.authService.usuario;
+  isAdmin = this.authService.esAdmin;
+
+  publicMenu = signal<MenuItem[]>([{ label: 'Inicio', path: '/', icon: 'home' }]);
+
+  clienteMenu = signal<MenuItem[]>([
     { label: 'Servicios', path: '/servicios', icon: 'school' },
     { label: 'Profesionales', path: '/profesionales', icon: 'person_search' },
+    { label: 'Mis citas', path: '/mis-citas', icon: 'event_note', roles: ['USER'] },
+    { label: 'Mi agenda', path: '/agenda', icon: 'calendar_month', roles: ['TUTOR'] },
   ]);
 
   adminMaintenanceMenu = signal<MenuItem[]>([
@@ -43,10 +44,9 @@ export class MainLayout {
   adminManagementMenu = signal<MenuItem[]>([
     { label: 'Usuarios', path: '/admin/usuarios', icon: 'group' },
     { label: 'Citas', path: '/admin/citas', icon: 'event' },
+    { label: 'Agenda', path: '/agenda', icon: 'calendar_month' },
     { label: 'Reportes', path: '/admin/reportes', icon: 'bar_chart' },
   ]);
-
-  isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
 
   canShowItem(item: MenuItem): boolean {
     if (!item.roles) return true;
@@ -54,15 +54,7 @@ export class MainLayout {
     return !!user && item.roles.includes(user.role);
   }
 
-  loginAsClient(): void {
-    this.currentUser.set({ nombre: 'Cliente Demo', role: 'CLIENTE' });
-  }
-
-  loginAsAdmin(): void {
-    this.currentUser.set({ nombre: 'Admin Demo', role: 'ADMIN' });
-  }
-
   logout(): void {
-    this.currentUser.set(null);
+    this.authService.logout();
   }
 }

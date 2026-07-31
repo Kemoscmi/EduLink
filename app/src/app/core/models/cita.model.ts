@@ -1,4 +1,4 @@
-export type EstadoCita = 'PENDIENTE' | 'PAGADA' | 'REALIZADA' | 'CANCELADA';
+export type EstadoCita = 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA' | 'CANCELADA' | 'COMPLETADA';
 export type Modalidad = 'VIRTUAL' | 'PRESENCIAL' | 'MIXTA' ;
 
 import { Usuario } from './usuario.model';
@@ -31,4 +31,34 @@ export interface Cita {
 
     createAt: string;
     updateAt: string;
+}
+
+export interface HistorialCita {
+    id: number;
+    citaId: number;
+    estadoAnterior: EstadoCita | null;
+    estadoNuevo: EstadoCita;
+    motivo: string | null;
+    fecha: string;
+}
+
+export interface AceptarCitaDto {
+    comentarioTutor?: string;
+}
+
+export interface RechazarCitaDto {
+    motivo: string;
+}
+
+export interface CancelarCitaDto {
+    motivo: string;
+}
+
+export interface CitaFiltros {
+    estado?: EstadoCita;
+    tutorId?: number;
+    fechaInicio?: string;
+    fechaFin?: string;
+    page?: number;
+    limit?: number;
 }

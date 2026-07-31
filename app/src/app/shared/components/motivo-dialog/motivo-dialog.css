@@ -1,0 +1,71 @@
+.motivo-dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0.5rem 0.5rem 0;
+  min-width: 320px;
+}
+
+.confirm-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--mat-sys-primary) 16%, transparent);
+  color: var(--mat-sys-primary);
+}
+
+.confirm-icon.danger {
+  background: color-mix(in srgb, #d32f2f 16%, transparent);
+  color: #d32f2f;
+}
+
+.confirm-icon mat-icon {
+  width: 34px;
+  height: 34px;
+  font-size: 34px;
+}
+
+h2[mat-dialog-title] {
+  margin: 0 0 0.25rem;
+  font-weight: 800;
+}
+
+mat-dialog-content {
+  width: 100%;
+}
+
+mat-dialog-content p {
+  margin: 0 0 0.75rem;
+  color: var(--mat-sys-on-surface-variant);
+  line-height: 1.5;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.motivo-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: -0.5rem 0 0.5rem;
+  color: #d32f2f;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.motivo-error mat-icon {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+}
+
+mat-dialog-actions {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}

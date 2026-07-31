@@ -1,0 +1,124 @@
+<section class="page-header">
+  <div>
+    <span class="eyebrow">Mi cuenta</span>
+    <h1>Mis citas</h1>
+    <p>Historial cronológico de sus solicitudes de tutoría.</p>
+  </div>
+</section>
+
+@if (loading()) {
+  <div class="state-box">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando sus citas...</p>
+  </div>
+} @else if (error()) {
+  <div class="state-box error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+    <button mat-stroked-button (click)="cargarCitas()">Reintentar</button>
+  </div>
+} @else if (totalCitas() === 0) {
+  <div class="state-box">
+    <mat-icon>event_busy</mat-icon>
+    <p>Todavía no tiene citas registradas.</p>
+    <a mat-flat-button color="primary" routerLink="/profesionales">
+      <mat-icon>person_search</mat-icon>
+      Buscar un profesional
+    </a>
+  </div>
+} @else {
+  @if (proximas().length > 0) {
+    <section class="grupo-citas">
+      <h2><mat-icon>upcoming</mat-icon> Próximas</h2>
+      <div class="citas-grid">
+        @for (cita of proximas(); track cita.id) {
+          <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
+            <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
+            <mat-card-content>
+              <div class="cita-header">
+                <h3>{{ cita.servicio?.nombre }}</h3>
+                <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+              </div>
+
+              <p class="profesional-line">
+                <mat-icon>school</mat-icon>
+                {{ nombreProfesional(cita) }}
+              </p>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>sell</mat-icon>
+                  <span>₡{{ cita.montoEstimado }}</span>
+                </div>
+              </div>
+
+              @if (puedeCancelar(cita)) {
+                <div class="cita-actions">
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    [disabled]="actualizandoId() === cita.id"
+                    (click)="cancelar(cita)"
+                  >
+                    @if (actualizandoId() === cita.id) {
+                      <span class="button-label"><mat-icon>hourglass_top</mat-icon> Cancelando...</span>
+                    } @else {
+                      <span class="button-label"><mat-icon>event_busy</mat-icon> Cancelar cita</span>
+                    }
+                  </button>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </section>
+  }
+
+  @if (anteriores().length > 0) {
+    <section class="grupo-citas">
+      <h2><mat-icon>history</mat-icon> Historial</h2>
+      <div class="citas-grid">
+        @for (cita of anteriores(); track cita.id) {
+          <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
+            <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
+            <mat-card-content>
+              <div class="cita-header">
+                <h3>{{ cita.servicio?.nombre }}</h3>
+                <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+              </div>
+
+              <p class="profesional-line">
+                <mat-icon>school</mat-icon>
+                {{ nombreProfesional(cita) }}
+              </p>
+
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>sell</mat-icon>
+                  <span>₡{{ cita.montoEstimado }}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </section>
+  }
+}

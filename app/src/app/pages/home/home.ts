@@ -1,9 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-
+import { AuthenticationService } from '../../core/services/authentication.service';
 
 interface ContentCard {
   title: string;
@@ -19,6 +19,11 @@ interface ContentCard {
   styleUrl: './home.css',
 })
 export class Home {
+  private readonly authService = inject(AuthenticationService);
+
+  currentUser = this.authService.usuario;
+  isAdmin = this.authService.esAdmin;
+
   cards = signal<ContentCard[]>([
     {
       title: 'Servicios',

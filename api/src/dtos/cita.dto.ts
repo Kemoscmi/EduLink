@@ -48,5 +48,32 @@ export const createCitaSchema = z.object({
 
 export const updateCitaSchema = createCitaSchema.partial();
 
+export const aceptarCitaSchema = z.object({
+    comentarioTutor: z
+        .string()
+        .trim()
+        .max(255, "El comentario no puede superar 255 caracteres")
+        .optional()
+});
+
+export const rechazarCitaSchema = z.object({
+    motivo: z
+        .string()
+        .trim()
+        .min(5, "El motivo debe tener al menos 5 caracteres")
+        .max(255, "El motivo no puede superar 255 caracteres")
+});
+
+export const cancelarCitaSchema = z.object({
+    motivo: z
+        .string()
+        .trim()
+        .min(5, "El motivo debe tener al menos 5 caracteres")
+        .max(255, "El motivo no puede superar 255 caracteres")
+});
+
 export type CreateCitaDto = z.infer<typeof createCitaSchema>;
 export type UpdateCitaDto = z.infer<typeof updateCitaSchema>;
+export type AceptarCitaDto = z.infer<typeof aceptarCitaSchema>;
+export type RechazarCitaDto = z.infer<typeof rechazarCitaSchema>;
+export type CancelarCitaDto = z.infer<typeof cancelarCitaSchema>;

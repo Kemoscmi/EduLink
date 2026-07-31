@@ -99,13 +99,35 @@
             <ng-container matColumnDef="acciones">
               <th mat-header-cell *matHeaderCellDef>Acciones</th>
               <td mat-cell *matCellDef="let usuario">
-                <mat-slide-toggle
-                  [checked]="usuario.activo"
-                  [disabled]="updatingId() === usuario.id"
-                  (change)="cambiarEstado(usuario)"
-                >
-                  {{ usuario.activo ? 'Activo' : 'Inactivo' }}
-                </mat-slide-toggle>
+                <div class="table-actions-row">
+                  <mat-slide-toggle
+                    [checked]="usuario.activo"
+                    [disabled]="updatingId() === usuario.id"
+                    (change)="cambiarEstado(usuario)"
+                  >
+                    {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+                  </mat-slide-toggle>
+
+                  <button
+                    mat-stroked-button
+                    color="accent"
+                    class="action-btn-sm"
+                    [disabled]="updatingId() === usuario.id"
+                    [matMenuTriggerFor]="rolMenu"
+                    title="Cambiar rol de este usuario"
+                  >
+                    <mat-icon>badge</mat-icon>
+                    Cambiar rol
+                  </button>
+
+                  <mat-menu #rolMenu="matMenu">
+                    @for (rol of rolesDisponibles(usuario); track rol.value) {
+                      <button mat-menu-item (click)="cambiarRol(usuario, rol.value)">
+                        <span>{{ rol.label }}</span>
+                      </button>
+                    }
+                  </mat-menu>
+                </div>
               </td>
             </ng-container>
 
