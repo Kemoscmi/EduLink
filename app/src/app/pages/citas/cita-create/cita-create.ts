@@ -81,7 +81,7 @@ export class CitaCreate {
     comentarioCliente: ''
   });
 
-  // SIGNALS FORM VALIDATIONS
+  // SIGNALS Validaciones de Formulario
   citaForm = form(this.citaModel, (path) => {
     required(path.clienteId, { message: 'El cliente es obligatorio' });
     required(path.tutorId, { message: 'El profesional es obligatorio' });
@@ -95,7 +95,7 @@ export class CitaCreate {
     maxLength(path.comentarioCliente, 200, { message: 'La descripción no puede superar los 200 caracteres' });
   });
 
-  // DYNAMIC FILTERED SERVICES BASED ON PROFESSIONAL
+  // Servicios filtrados dinámicos basados en profesional
   serviciosFiltrados = computed(() => {
     const tutorId = this.citaModel().tutorId;
     if (!tutorId) return [];
@@ -105,7 +105,7 @@ export class CitaCreate {
   constructor() {
     this.cargarDatosFormulario();
 
-    // Reset selected service if it's no longer in the filtered services of the tutor
+    // Restablecer el servicio seleccionado si ya no se encuentra en los servicios filtrados del tutor.
     effect(() => {
       const tutorId = this.citaModel().tutorId;
       const model = untracked(() => this.citaModel());
@@ -115,13 +115,13 @@ export class CitaCreate {
       }
     }, { allowSignalWrites: true });
 
-    // Calculate horaFin and pre-populate modality when horaInicio or servicioId changes
+    // Calcula horaFin y precarga la modalidad cuando cambie horaInicio o servicioId.
     effect(() => {
       // Trigger dependencies
       const horaInicio = this.citaModel().horaInicio;
       const servicioId = this.citaModel().servicioId;
 
-      // Read model untracked to prevent infinite loops when updating modality/horaFin
+      // Leer el modelo sin seguimiento para evitar bucles infinitos al actualizar modality/horaFin
       const model = untracked(() => this.citaModel());
 
       if (!servicioId) {
@@ -135,12 +135,12 @@ export class CitaCreate {
       if (servicio) {
         let updates: Partial<CitaFormModel> = {};
 
-        // Only update modality if it differs and is not MIXTA
+        // Solo actualiza la modalidad si difiere y no es MIXTA.
         if (servicio.modalidad && servicio.modalidad !== 'MIXTA' && model.modalidad !== servicio.modalidad) {
           updates.modalidad = servicio.modalidad;
         }
 
-        // Only update horaFin if it differs
+        //Actualiza horaFin solo si difiere.
         if (horaInicio && servicio.duracion) {
           const calculatedFin = this.calcularHoraFin(horaInicio, servicio.duracion);
           if (model.horaFin !== calculatedFin) {
@@ -170,14 +170,14 @@ export class CitaCreate {
       servicios: this.servicioService.listar()
     }).subscribe({
       next: ({ usuarios, profesionales, servicios }) => {
-        // Filter users to get only clients with active = true and role = USER
+        // Filtrar usuarios para obtener solo clientes con active = true y role = USER
         const clientsOnly = (usuarios.data ?? []).filter(u => u.activo && u.role === 'USER');
         this.clientes.set(clientsOnly);
 
-        // Load all professionals
+        // Carga todos los profesionales
         this.profesionales.set(profesionales ?? []);
 
-        // Save active services
+        // Guardar servicios activos
         const activeServs = (servicios.data ?? []).filter(s => s.activo);
         this.todosLosServicios.set(activeServs);
       },
