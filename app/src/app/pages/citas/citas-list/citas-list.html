@@ -5,7 +5,11 @@
             <h1>Citas Disponibles</h1>
             <p>Listado de citas</p>
         </div>
-        <div class="header-action-btn">
+        <div class="header-action-btn" style="display: flex; gap: 12px; align-items: center;">
+            <button mat-raised-button class="export-btn" (click)="exportarPdf()" [disabled]="citasFiltradas().length === 0">
+                <mat-icon>picture_as_pdf</mat-icon>
+                Exportar PDF
+            </button>
             <a mat-raised-button class="create-btn" routerLink="/admin/citas/nuevo">
                 <mat-icon>add</mat-icon>
                 Registrar Cita

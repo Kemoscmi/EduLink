@@ -153,8 +153,8 @@ export const routes: Routes = [
         path: 'admin/citas',
         component: CitasList,
         title: 'Catálogo de Citas',
-        canActivate: [authGuard, roleGuard],
-        data: { roles: ['ADMIN', 'TUTOR'] },
+        //canActivate: [authGuard, roleGuard],
+        //data: { roles: ['ADMIN', 'TUTOR'] },
       },
       {
         path: 'admin/citas/nuevo',

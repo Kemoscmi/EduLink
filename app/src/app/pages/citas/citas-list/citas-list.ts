@@ -15,6 +15,7 @@ import { Cita, EstadoCita } from '../../../core/models/cita.model';
 import { Profesional } from '../../../core/models/profesional.model';
 import { ProfesionalService } from '../../../core/services/profesional';
 import { RouterLink } from '@angular/router';
+import { PdfService } from '../../../core/services/pdf.service';
 
 
 @Component({
@@ -37,7 +38,8 @@ import { RouterLink } from '@angular/router';
 export class CitasList {
   constructor(
     private citasService: CitaService,
-    private profesionalService: ProfesionalService
+    private profesionalService: ProfesionalService,
+    private pdfService: PdfService
   ) {}
 
   // DATA
@@ -138,5 +140,10 @@ export class CitasList {
         console.error('Error cargando profesionales:', err);
       }
     });
+  }
+
+  // Exportar citas filtradas a PDF
+  exportarPdf() {
+    this.pdfService.exportarCitasPdf(this.citasFiltradas());
   }
 }

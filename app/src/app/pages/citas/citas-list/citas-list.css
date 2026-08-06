@@ -47,6 +47,32 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
+.export-btn {
+    background-color: #dc2626 !important; /* Rojo carmesí corporativo */
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 0.5rem 1.25rem !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.25) !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.export-btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35) !important;
+}
+
+.export-btn:disabled {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
 .header-overlay {
     position: absolute;
     top: 0;
