@@ -32,6 +32,7 @@ export class MainLayout {
     { label: 'Profesionales', path: '/profesionales', icon: 'person_search' },
     { label: 'Mis citas', path: '/mis-citas', icon: 'event_note', roles: ['USER'] },
     { label: 'Mi agenda', path: '/agenda', icon: 'calendar_month', roles: ['TUTOR'] },
+    { label: 'Reportes', path: '/admin/reportes', icon: 'bar_chart', roles: ['TUTOR'] },
   ]);
 
   adminMaintenanceMenu = signal<MenuItem[]>([

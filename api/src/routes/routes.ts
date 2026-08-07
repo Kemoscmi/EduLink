@@ -6,6 +6,7 @@ import { ServicioRoutes } from "./servicio.routes";
 import { CitaRoutes } from "./cita.routes";
 import { ProfesionalRoutes } from "./profesional.routes";
 import { ImageRoutes } from "./image.routes";
+import { ReportesRoutes } from "./reportes.routes";
 
 export class AppRoutes {
   static get routes(): Router {
@@ -18,7 +19,7 @@ export class AppRoutes {
     router.use('/citas', CitaRoutes.routes);
     router.use('/profesionales', ProfesionalRoutes.routes);
     router.use('/images', ImageRoutes.routes) ;    
-
+    router.use('/reportes', ReportesRoutes.routes);
 
     return router;
   }

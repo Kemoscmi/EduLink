@@ -1,0 +1,437 @@
+<div class="reports-container">
+  <!-- Encabezado con degradado -->
+  <header class="reports-header-banner">
+    <div class="banner-content">
+      <div class="header-icon-wrapper">
+        <mat-icon class="header-icon">analytics</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>Centro de Reportes </h1>
+        <p>Monitoreo del estado de citas, rendimiento de profesionales y calificaciones de servicios.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filtros combinables e indicaciones del período -->
+  <section class="filters-card-wrapper">
+    <mat-card class="filters-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>tune</mat-icon> Filtros de Reportes
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filters-grid">
+          <!-- Rango de fecha: Inicio -->
+          <div class="filter-item">
+            <label class="filter-label">Fecha de Inicio</label>
+            <input type="date" class="custom-date-input" [(ngModel)]="fechaInicio" (change)="validarYFiltrar()" />
+          </div>
+
+          <!-- Rango de fecha: Fin -->
+          <div class="filter-item">
+            <label class="filter-label">Fecha de Fin</label>
+            <input type="date" class="custom-date-input" [(ngModel)]="fechaFin" (change)="validarYFiltrar()" />
+          </div>
+
+          <!-- Selección de Profesional (Solo Admin) -->
+          @if (isAdmin()) {
+            <div class="filter-item">
+              <label class="filter-label">Profesional</label>
+              <select class="custom-select" [(ngModel)]="tutorId" (change)="validarYFiltrar()">
+                <option [ngValue]="null">Todos los profesionales</option>
+                @for (profesional of profesionales(); track profesional.id) {
+                  <option [ngValue]="profesional.id">
+                    {{ profesional.usuario?.nombre }} {{ profesional.usuario?.apellidos }}
+                  </option>
+                }
+              </select>
+            </div>
+          } @else {
+            <div class="filter-item disabled-filter">
+              <label class="filter-label">Profesional</label>
+              <div class="locked-badge">
+                <mat-icon>lock</mat-icon>
+                <span>Solo mis datos (Bloqueado)</span>
+              </div>
+            </div>
+          }
+
+          <!-- Selección de Categoría -->
+          <div class="filter-item">
+            <label class="filter-label">Categoría</label>
+            <select class="custom-select" [(ngModel)]="categoriaId" (change)="validarYFiltrar()">
+              <option [ngValue]="null">Todas las categorías</option>
+              @for (categoria of categorias(); track categoria.id) {
+                <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="filters-footer">
+          <div class="period-indicator">
+            <mat-icon>date_range</mat-icon>
+            <span>Período aplicado: <strong>{{ periodoAplicado() }}</strong></span>
+          </div>
+          <button mat-stroked-button color="warn" (click)="limpiarFiltros()">
+            <mat-icon>filter_alt_off</mat-icon> Restablecer Filtros
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <!-- Pestañas de Reportes -->
+  <mat-tab-group class="reports-tabs-group" animationDuration="500ms">
+    
+    <!-- PESTAÑA 1: REPORTE DE CITAS POR ESTADO -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">donut_large</mat-icon>
+        <span>Citas por Estado</span>
+      </ng-template>
+
+      <div class="tab-content-wrapper">
+        @if (citasEstadoLoading()) {
+          <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Cargando reporte de citas por estado...</p>
+          </div>
+        } @else if (citasEstadoError()) {
+          <div class="error-container">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p>{{ citasEstadoError() }}</p>
+            <button mat-flat-button color="primary" (click)="loadCitasEstado()">Reintentar</button>
+          </div>
+        } @else if (citasEstadoReport()) {
+          <!-- Tarjetas de Totales -->
+          <div class="metrics-grid">
+            <div class="metric-card total-general">
+              <div class="metric-info">
+                <span class="metric-label">Total General</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.totalGeneral }}</span>
+              </div>
+              <mat-icon class="metric-card-icon">receipt_long</mat-icon>
+            </div>
+
+            <div class="metric-card completada">
+              <div class="metric-info">
+                <span class="metric-label">Completadas</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.COMPLETADA }}</span>
+                <span class="metric-percentage">{{ citasEstadoReport().porcentajes.COMPLETADA }}%</span>
+              </div>
+              <mat-icon class="metric-card-icon">check_circle</mat-icon>
+            </div>
+
+            <div class="metric-card pendiente">
+              <div class="metric-info">
+                <span class="metric-label">Pendientes</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.PENDIENTE }}</span>
+                <span class="metric-percentage">{{ citasEstadoReport().porcentajes.PENDIENTE }}%</span>
+              </div>
+              <mat-icon class="metric-card-icon">schedule</mat-icon>
+            </div>
+
+            <div class="metric-card aceptada">
+              <div class="metric-info">
+                <span class="metric-label">Aceptadas</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.ACEPTADA }}</span>
+                <span class="metric-percentage">{{ citasEstadoReport().porcentajes.ACEPTADA }}%</span>
+              </div>
+              <mat-icon class="metric-card-icon">thumb_up</mat-icon>
+            </div>
+
+            <div class="metric-card cancelada">
+              <div class="metric-info">
+                <span class="metric-label">Canceladas</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.CANCELADA }}</span>
+                <span class="metric-percentage">{{ citasEstadoReport().porcentajes.CANCELADA }}%</span>
+              </div>
+              <mat-icon class="metric-card-icon">cancel</mat-icon>
+            </div>
+
+            <div class="metric-card rechazada">
+              <div class="metric-info">
+                <span class="metric-label">Rechazadas</span>
+                <span class="metric-value">{{ citasEstadoReport().totales.RECHAZADA }}</span>
+                <span class="metric-percentage">{{ citasEstadoReport().porcentajes.RECHAZADA }}%</span>
+              </div>
+              <mat-icon class="metric-card-icon">block</mat-icon>
+            </div>
+          </div>
+
+
+
+          <!-- Tabla de Datos de Respaldo -->
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Registros de Respaldo (Citas Encontradas)</mat-card-title>
+              <mat-card-subtitle>Listado de citas individuales que componen este reporte.</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @if (citasEstadoReport().citas.length === 0) {
+                <div class="no-records-container">
+                  <mat-icon>search_off</mat-icon>
+                  <p>No se encontraron citas registradas con los filtros seleccionados.</p>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="citasEstadoReport().citas" class="custom-table">
+                    <!-- Fecha -->
+                    <ng-container matColumnDef="fecha">
+                      <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.fechaCita | date: 'dd/MM/yyyy':'UTC' }} </td>
+                    </ng-container>
+
+                    <!-- Hora -->
+                    <ng-container matColumnDef="hora">
+                      <th mat-header-cell *matHeaderCellDef> Hora </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.horaInicio }} - {{ element.horaFin }} </td>
+                    </ng-container>
+
+                    <!-- Cliente -->
+                    <ng-container matColumnDef="cliente">
+                      <th mat-header-cell *matHeaderCellDef> Cliente </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.cliente.nombre }} {{ element.cliente.apellidos }} </td>
+                    </ng-container>
+
+                    <!-- Profesional -->
+                    <ng-container matColumnDef="profesional">
+                      <th mat-header-cell *matHeaderCellDef> Profesional </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.tutor.usuario.nombre }} {{ element.tutor.usuario.apellidos }} </td>
+                    </ng-container>
+
+                    <!-- Servicio -->
+                    <ng-container matColumnDef="servicio">
+                      <th mat-header-cell *matHeaderCellDef> Servicio </th>
+                      <td mat-cell *matCellDef="let element"> 
+                        {{ element.servicio.nombre }}
+                        <span class="category-chip">{{ element.servicio.categoria.nombre }}</span>
+                      </td>
+                    </ng-container>
+
+                    <!-- Estado -->
+                    <ng-container matColumnDef="estado">
+                      <th mat-header-cell *matHeaderCellDef> Estado </th>
+                      <td mat-cell *matCellDef="let element">
+                        <span class="status-badge" [ngClass]="getEstadoClass(element.estado)">
+                          {{ getEstadoLabel(element.estado) }}
+                        </span>
+                      </td>
+                    </ng-container>
+
+                    <!-- Monto -->
+                    <ng-container matColumnDef="monto">
+                      <th mat-header-cell *matHeaderCellDef> Precio Estimado </th>
+                      <td mat-cell *matCellDef="let element"> ₡{{ element.montoEstimado | number:'1.2-2' }} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="citasColumnas"></tr>
+                    <tr mat-row *matRowDef="let row; columns: citasColumnas;"></tr>
+                  </table>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- PESTAÑA 2: REPORTE DE CITAS POR PROFESIONAL -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">badge</mat-icon>
+        <span>Citas por Profesional</span>
+      </ng-template>
+
+      <div class="tab-content-wrapper">
+        @if (citasProfesionalLoading()) {
+          <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Cargando estadísticas de profesionales...</p>
+          </div>
+        } @else if (citasProfesionalError()) {
+          <div class="error-container">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p>{{ citasProfesionalError() }}</p>
+            <button mat-flat-button color="primary" (click)="loadCitasProfesional()">Reintentar</button>
+          </div>
+        } @else {
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Métricas de Finalización de Tutorías</mat-card-title>
+              <mat-card-subtitle>
+                @if (isAdmin()) {
+                  Porcentaje de finalización e historial total de todos los profesionales del sistema.
+                } @else {
+                  Mi reporte de finalización e historial total de citas.
+                }
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @if (citasProfesionalReport().length === 0) {
+                <div class="no-records-container">
+                  <mat-icon>person_off</mat-icon>
+                  <p>No se encontraron datos registrados.</p>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="citasProfesionalReport()" class="custom-table">
+                    <!-- Nombre -->
+                    <ng-container matColumnDef="profesional">
+                      <th mat-header-cell *matHeaderCellDef> Profesional </th>
+                      <td mat-cell *matCellDef="let element" class="bold-text"> {{ element.nombre }} </td>
+                    </ng-container>
+
+                    <!-- Total Citas -->
+                    <ng-container matColumnDef="total">
+                      <th mat-header-cell *matHeaderCellDef> Citas Totales </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.totalCitas }} </td>
+                    </ng-container>
+
+                    <!-- Citas Completadas -->
+                    <ng-container matColumnDef="completadas">
+                      <th mat-header-cell *matHeaderCellDef> Completadas </th>
+                      <td mat-cell *matCellDef="let element">
+                        <span class="count-badge green-badge">{{ element.completadas }}</span>
+                      </td>
+                    </ng-container>
+
+                    <!-- Progreso finalizado -->
+                    <ng-container matColumnDef="progreso">
+                      <th mat-header-cell *matHeaderCellDef> Porcentaje de Finalización </th>
+                      <td mat-cell *matCellDef="let element" class="progress-cell">
+                        <div class="progress-wrapper">
+                          <span class="pct-text">{{ element.porcentajeFinalizacion }}%</span>
+                          <mat-progress-bar mode="determinate" [value]="element.porcentajeFinalizacion" class="custom-progress-bar"></mat-progress-bar>
+                        </div>
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="profesionalesColumnas"></tr>
+                    <tr mat-row *matRowDef="let row; columns: profesionalesColumnas;"></tr>
+                  </table>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- PESTAÑA 3: REPORTE DE CALIFICACIONES -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">grade</mat-icon>
+        <span>Reporte de Calificaciones</span>
+      </ng-template>
+
+      <div class="tab-content-wrapper">
+        @if (calificacionesLoading()) {
+          <div class="spinner-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Cargando reporte de calificaciones y reseñas...</p>
+          </div>
+        } @else if (calificacionesError()) {
+          <div class="error-container">
+            <mat-icon class="error-icon">error</mat-icon>
+            <p>{{ calificacionesError() }}</p>
+            <button mat-flat-button color="primary" (click)="loadCalificaciones()">Reintentar</button>
+          </div>
+        } @else {
+          <mat-card class="table-card">
+            <mat-card-header>
+              <mat-card-title>Calificaciones y Alertas de Calidad de Tutorías</mat-card-title>
+              <mat-card-subtitle>
+                Promedio acumulado de puntuaciones, mejor servicio y servicios con baja calificación (< 3.0 ★)
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @if (calificacionesReport().length === 0) {
+                <div class="no-records-container">
+                  <mat-icon>star_border</mat-icon>
+                  <p>No se encontraron profesionales registrados.</p>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table mat-table [dataSource]="calificacionesReport()" class="custom-table">
+                    <!-- Profesional -->
+                    <ng-container matColumnDef="profesional">
+                      <th mat-header-cell *matHeaderCellDef> Profesional </th>
+                      <td mat-cell *matCellDef="let element" class="bold-text"> {{ element.nombre }} </td>
+                    </ng-container>
+
+                    <!-- Promedio Calificación -->
+                    <ng-container matColumnDef="promedio">
+                      <th mat-header-cell *matHeaderCellDef> Calificación Promedio </th>
+                      <td mat-cell *matCellDef="let element">
+                        <div class="stars-cell-wrapper">
+                          @if (element.cantidadResenas === 0) {
+                            <span class="sin-calificaciones-text">Sin calificaciones</span>
+                          } @else {
+                            <div class="stars-row">
+                              @for (iconName of getStars(element.promedioCalificacion); track $index) {
+                                <mat-icon class="star-icon">{{ iconName }}</mat-icon>
+                              }
+                            </div>
+                            <span class="average-num-badge">{{ element.promedioCalificacion | number:'1.1-2' }}</span>
+                          }
+                        </div>
+                      </td>
+                    </ng-container>
+
+                    <!-- Cantidad Reseñas -->
+                    <ng-container matColumnDef="cantidad">
+                      <th mat-header-cell *matHeaderCellDef> Cantidad de Reseñas </th>
+                      <td mat-cell *matCellDef="let element"> {{ element.cantidadResenas }} </td>
+                    </ng-container>
+
+                    <!-- Mejor servicio calificado -->
+                    <ng-container matColumnDef="mejor">
+                      <th mat-header-cell *matHeaderCellDef> Mejor Servicio Calificado </th>
+                      <td mat-cell *matCellDef="let element">
+                        @if (element.cantidadResenas === 0) {
+                          <span class="muted-text">N/A</span>
+                        } @else {
+                          <div class="top-service-display">
+                            <mat-icon class="trophy-icon">workspace_premium</mat-icon>
+                            <span>{{ element.mejorServicio }}</span>
+                          </div>
+                        }
+                      </td>
+                    </ng-container>
+
+                    <!-- Servicios con baja calificación (< 3.0) -->
+                    <ng-container matColumnDef="bajas">
+                      <th mat-header-cell *matHeaderCellDef> Alertas de Calidad (< 3.0 ★) </th>
+                      <td mat-cell *matCellDef="let element">
+                        @if (element.serviciosBajaCalificacion && element.serviciosBajaCalificacion.length > 0) {
+                          <div class="alert-list-wrapper">
+                            @for (baja of element.serviciosBajaCalificacion; track baja.nombre) {
+                              <span class="baja-rating-badge">
+                                <mat-icon>warning</mat-icon>
+                                <strong>{{ baja.nombre }}</strong>: {{ baja.promedio }} ★ ({{ baja.cantidadResenas }} reseña/s)
+                              </span>
+                            }
+                          </div>
+                        } @else {
+                          <span class="ok-chip">
+                            <mat-icon>check</mat-icon> Excelente
+                          </span>
+                        }
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="calificacionesColumnas"></tr>
+                    <tr mat-row *matRowDef="let row; columns: calificacionesColumnas;"></tr>
+                  </table>
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

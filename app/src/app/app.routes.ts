@@ -24,6 +24,7 @@ import { ProfesionalCreatePage } from './pages/profesionales/profesional-create-
 import { ProfesionalEditPage } from './pages/profesionales/profesional-edit-page/profesional-edit-page';
 import { MisCitas } from './pages/citas/mis-citas/mis-citas';
 import { AgendaProfesional } from './pages/citas/agenda-profesional/agenda-profesional';
+import { ReportesPage } from './pages/reportes/reportes-page/reportes-page';
 
 export const routes: Routes = [
   {
@@ -107,6 +108,13 @@ export const routes: Routes = [
         data: { roles: ['ADMIN'] },
       },
       {
+        path: 'admin/reportes',
+        component: ReportesPage,
+        title: 'Reportes y Estadísticas',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN', 'TUTOR'] },
+      },
+      {
         path: 'admin/categorias',
         component: CategoriasList,
         title: 'Gestión de Categorías',
@@ -153,8 +161,8 @@ export const routes: Routes = [
         path: 'admin/citas',
         component: CitasList,
         title: 'Catálogo de Citas',
-        //canActivate: [authGuard, roleGuard],
-        //data: { roles: ['ADMIN', 'TUTOR'] },
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN', 'TUTOR'] },
       },
       {
         path: 'admin/citas/nuevo',
