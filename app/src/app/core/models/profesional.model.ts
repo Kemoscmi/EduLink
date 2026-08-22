@@ -26,6 +26,8 @@ export interface Profesional {
     tutorEspecialidads?: TutorEspecialidad[];
     citas?: Cita[];
     resenas?: Resena[];
+    promedioCalificacion?: number;
+    cantidadResenas?: number;
 
     createAt: string;
     updateAt: string;

@@ -149,7 +149,7 @@ export class CitaController {
                 citaId,
                 request.user.id,
                 Number(puntuacion),
-                comentario
+                comentario ? String(comentario).trim() : ""
             );
 
             return sendSuccess(

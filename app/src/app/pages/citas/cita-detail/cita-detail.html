@@ -89,13 +89,20 @@
                 <!-- Display review detail if already reviewed -->
                 @if (c.resenas && c.resenas.length > 0) {
                     <div class="resena-info-box" style="margin-top: 8px; padding: 16px; border: 1px solid #fef08a; border-radius: 8px; background-color: #fef9c3; display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 4px; color: #a16207; font-weight: 600;">
+                        <div style="display: flex; align-items: center; gap: 4px; color: #a16207; font-weight: 600; width: 100%;">
                             <mat-icon style="color: #eab308; margin-right: 0;">star</mat-icon>
                             <span>Servicio Calificado: {{ c.resenas[0].puntuacion }} / 5 estrellas</span>
+                            <span style="font-size: 12px; color: #a16207; font-weight: 400; margin-left: auto;">{{ c.resenas[0].createAt | date:'dd/MM/yyyy HH:mm' }}</span>
                         </div>
-                        <p style="margin: 0; font-style: italic; color: #713f12; font-size: 14px;">
-                            "{{ c.resenas[0].comentario }}"
-                        </p>
+                        @if (c.resenas[0].comentario && c.resenas[0].comentario.trim() !== '') {
+                            <p style="margin: 0; font-style: italic; color: #713f12; font-size: 14px;">
+                                "{{ c.resenas[0].comentario }}"
+                            </p>
+                        } @else {
+                            <p style="margin: 0; font-style: italic; color: #94a3b8; font-size: 13px;">
+                                Sin comentario escrito.
+                            </p>
+                        }
                     </div>
                 }
 

@@ -48,68 +48,116 @@ export const profesionalService = {
         const [totalItems, data] = await Promise.all([
             prisma.perfilTutor.count({ where }),
 
-            prisma.perfilTutor.findMany({
-                where,
-                skip,
-                take,
+             prisma.perfilTutor.findMany({
+                 where,
+                 skip,
+                 take,
+ 
+                 select: {
+                     id: true,
+ 
+                     tituloProfesional: true,
+                     descripcion: true,
+                     modalidad: true,
+                     tarifaBase: true,
+                     disponible: true,
+                     imagenPerfil: true,
+ 
+                     usuario: {
+                         select: {
+                             nombre: true,
+                             apellidos: true
+                         }
+                     },
+                     resenas: {
+                         select: {
+                             puntuacion: true
+                         }
+                     }
+                 },
+ 
+                 orderBy: {
+                     usuarioId: "asc"
+                 }
+             })
+         ]);
+ 
+         const totalPages = paginar
+             ? Math.ceil(totalItems / limit)
+             : 1;
 
-                select: {
-                    id: true,
+         const resultData = data.map(p => {
+             const sum = p.resenas.reduce((acc, r) => acc + r.puntuacion, 0);
+             const count = p.resenas.length;
+             const promedio = count > 0 ? Number((sum / count).toFixed(2)) : 0;
+             return {
+                 id: p.id,
+                 tituloProfesional: p.tituloProfesional,
+                 descripcion: p.descripcion,
+                 modalidad: p.modalidad,
+                 tarifaBase: p.tarifaBase,
+                 disponible: p.disponible,
+                 imagenPerfil: p.imagenPerfil,
+                 usuario: p.usuario,
+                 promedioCalificacion: promedio,
+                 cantidadResenas: count
+             };
+         });
+ 
+         return {
+             meta: {
+                 totalItems,
+                 totalPages,
+                 currentPage: paginar ? page : 1,
+                 limit: paginar ? limit : totalItems
+             },
+             data: resultData
+         };
+     },
+     async obtenerPorId(id: number) {
+ 
+         const tutor = await prisma.perfilTutor.findUnique({
+             where: { id },
+ 
+             include: {
+                 usuario: true,
+ 
+                 servicios: true,
 
-                    tituloProfesional: true,
-                    descripcion: true,
-                    modalidad: true,
-                    tarifaBase: true,
-                    disponible: true,
-                    imagenPerfil: true,
+                 resenas: {
+                     include: {
+                         cliente: {
+                             select: {
+                                 nombre: true,
+                                 apellidos: true
+                             }
+                         }
+                     },
+                     orderBy: {
+                         createAt: 'desc'
+                     }
+                 },
+ 
+                 tutorEspecialidads: {
+                     include: {
+                         especialidad: true
+                     }
+                 }
+             }
+         });
 
-                    usuario: {
-                        select: {
-                            nombre: true,
-                            apellidos: true
-                        }
-                    }
-                },
+         if (!tutor) return null;
 
-                orderBy: {
-                    usuarioId: "asc"
-                }
-            })
-        ]);
+         const sum = tutor.resenas.reduce((acc, r) => acc + r.puntuacion, 0);
+         const count = tutor.resenas.length;
+         const promedio = count > 0 ? Number((sum / count).toFixed(2)) : 0;
 
-        const totalPages = paginar
-            ? Math.ceil(totalItems / limit)
-            : 1;
-
-        return {
-            meta: {
-                totalItems,
-                totalPages,
-                currentPage: paginar ? page : 1,
-                limit: paginar ? limit : totalItems
-            },
-            data
-        };
-    },
-    async obtenerPorId(id: number) {
-
-        return prisma.perfilTutor.findUnique({
-            where: { id },
-
-            include: {
-                usuario: true,
-
-                servicios: true,
-
-                tutorEspecialidads: {
-                    include: {
-                        especialidad: true
-                    }
-                }
-            }
-        });
-
-    },
+         return {
+             ...tutor,
+             promedioCalificacion: promedio,
+             cantidadResenas: count
+         };
+     },
     async crear(data: CreateProfesionalDto) {
 
         await this.validateEmail(data.email);

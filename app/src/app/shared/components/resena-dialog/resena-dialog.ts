@@ -42,7 +42,7 @@ export class ResenaDialog {
   confirmar(): void {
     this.intentoEnviar.set(true);
     const commentVal = this.comentario().trim();
-    if (commentVal.length < 5 || commentVal.length > 355) {
+    if (commentVal.length > 355) {
       return;
     }
     this.dialogRef.close({

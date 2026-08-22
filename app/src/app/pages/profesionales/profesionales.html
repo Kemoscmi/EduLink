@@ -45,10 +45,24 @@
                         </span>
                     </div>
                     <p class="professional-title">{{ p.tituloProfesional }}</p>
-                    <p class="experience-tag">
-                        <mat-icon>star</mat-icon>
-                        <span>{{ p.aniosExperiencia }} años de experiencia</span>
-                    </p>
+                    <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+                      <p class="experience-tag" style="margin: 0;">
+                          <mat-icon style="color: #64748b;">business_center</mat-icon>
+                          <span>{{ p.aniosExperiencia }} años de experiencia</span>
+                      </p>
+                      
+                      @if (p.cantidadResenas && p.cantidadResenas > 0) {
+                        <p class="rating-tag" style="margin: 0; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: #eab308;">
+                          <mat-icon style="color: #eab308; margin-right: 0;">star</mat-icon>
+                          <span>{{ p.promedioCalificacion }} ★ ({{ p.cantidadResenas }} opiniones)</span>
+                        </p>
+                      } @else {
+                        <p class="rating-tag" style="margin: 0; display: inline-flex; align-items: center; gap: 4px; font-weight: 500; color: #94a3b8;">
+                          <mat-icon style="color: #cbd5e1; margin-right: 0;">star_border</mat-icon>
+                          <span>Sin calificaciones</span>
+                        </p>
+                      }
+                    </div>
                 </div>
             </div>
 
@@ -218,6 +232,56 @@
                                     </div>
                                 </div>
                             }
+                        }
+                    </div>
+                }
+            </mat-card-content>
+        </mat-card>
+
+        <!-- ⭐ RESEÑAS DE CLIENTES -->
+        <mat-card class="detail-card reviews-list-card" style="grid-column: 1 / -1; margin-top: 16px;">
+            <mat-card-header>
+                <div mat-card-avatar class="avatar-circle-icon" style="background-color: #fef9c3; color: #eab308; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                    <mat-icon>star</mat-icon>
+                </div>
+                <mat-card-title style="font-weight: 600;">Opiniones y Reseñas</mat-card-title>
+                <mat-card-subtitle>Calificaciones recibidas de estudiantes reales</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="padding-top: 16px;">
+                @if (!p.resenas || p.resenas.length === 0) {
+                    <p style="color: #64748b; font-style: italic; text-align: center; margin: 16px 0;">Este profesional aún no cuenta con reseñas de tutorías realizadas.</p>
+                } @else {
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        @for (r of p.resenas; track r.id) {
+                            <div class="review-item" style="padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background-color: #f8fafc; display: flex; flex-direction: column; gap: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                                    <span style="font-weight: 600; color: #1e293b;">
+                                        {{ r.cliente?.nombre }} {{ r.cliente?.apellidos }}
+                                    </span>
+                                    <span style="font-size: 12px; color: #94a3b8;">
+                                        {{ r.createAt | date:'dd/MM/yyyy' }}
+                                    </span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 4px; color: #eab308;">
+                                    @for (star of [1,2,3,4,5]; track star) {
+                                        <mat-icon style="font-size: 16px; width: 16px; height: 16px; margin: 0;">
+                                            {{ r.puntuacion >= star ? 'star' : 'star_border' }}
+                                        </mat-icon>
+                                    }
+                                    <span style="font-weight: 500; font-size: 13px; color: #64748b; margin-left: 4px;">
+                                        {{ r.puntuacion }} / 5
+                                    </span>
+                                </div>
+                                @if (r.comentario && r.comentario.trim() !== '') {
+                                    <p style="margin: 0; color: #475569; font-style: italic; font-size: 13.5px; border-left: 3px solid #cbd5e1; padding-left: 8px;">
+                                        "{{ r.comentario }}"
+                                    </p>
+                                } @else {
+                                    <p style="margin: 0; color: #94a3b8; font-style: italic; font-size: 12px;">
+                                        Sin comentario escrito.
+                                    </p>
+                                }
+                            </div>
                         }
                     </div>
                 }

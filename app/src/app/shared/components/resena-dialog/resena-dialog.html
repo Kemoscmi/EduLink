@@ -31,27 +31,18 @@
 
     <!-- Comment -->
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Tu Comentario / Reseña</mat-label>
+      <mat-label>Tu Comentario / Reseña (Opcional)</mat-label>
       <textarea
         matInput
         rows="3"
         name="comentario"
-        required
-        minlength="5"
         maxlength="355"
         [ngModel]="comentario()"
         (ngModelChange)="comentario.set($event)"
-        placeholder="Cuéntanos qué te pareció la tutoría..."
+        placeholder="Cuéntanos qué te pareció la tutoría (opcional)..."
       ></textarea>
       <mat-hint align="end">{{ comentario().trim().length }}/355</mat-hint>
     </mat-form-field>
-
-    @if (intentoEnviar() && (comentario().trim().length < 5)) {
-      <p class="resena-error">
-        <mat-icon>error_outline</mat-icon>
-        Ingrese un comentario de al menos 5 caracteres.
-      </p>
-    }
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">

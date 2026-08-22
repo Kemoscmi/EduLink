@@ -81,8 +81,8 @@ export const createResenaSchema = z.object({
     comentario: z
         .string()
         .trim()
-        .min(5, "El comentario debe tener al menos 5 caracteres")
         .max(355, "El comentario no puede superar los 355 caracteres")
+        .optional()
 });
 
 export type CreateCitaDto = z.infer<typeof createCitaSchema>;
