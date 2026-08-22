@@ -4,7 +4,8 @@ import {
     createCitaSchema,
     aceptarCitaSchema,
     rechazarCitaSchema,
-    cancelarCitaSchema
+    cancelarCitaSchema,
+    createResenaSchema
 } from "../dtos/cita.dto";
 import { validateRequest } from "../middlewares/validate-request.middleware";
 import { asyncHandler } from "../middlewares/async-handler.middleware";
@@ -62,6 +63,13 @@ export class CitaRoutes {
         router.patch('/:id/completar',
             authMiddleware,
             asyncHandler(controller.completar)
+        );
+
+        // Registrar reseña (Completada, cliente dueño, una única reseña)
+        router.post('/:id/resena',
+            authMiddleware,
+            validateRequest(createResenaSchema),
+            asyncHandler(controller.crearResena)
         );
 
         return router;

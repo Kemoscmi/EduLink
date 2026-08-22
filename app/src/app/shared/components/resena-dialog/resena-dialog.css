@@ -1,0 +1,70 @@
+.resena-dialog {
+  padding: 16px;
+  text-align: center;
+}
+
+.header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: rgba(250, 204, 21, 0.15); /* Yellow */
+  color: #eab308;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+}
+
+.header-icon mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0 8px 0;
+}
+
+.star-btn {
+  color: #eab308;
+}
+
+.star-btn mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.rating-text {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 24px;
+  color: #64748b;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.resena-error {
+  color: #ef4444;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.resena-error mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+mat-dialog-actions {
+  margin-top: 16px;
+}

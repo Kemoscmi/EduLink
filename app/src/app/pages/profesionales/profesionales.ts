@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment.development';
 
 import { MatCardModule } from '@angular/material/card';
@@ -19,7 +19,8 @@ import { Profesional } from '../../core/models/profesional.model';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    RouterLink
   ],
   templateUrl: './profesionales.html',
   styleUrl: './profesionales.css',
@@ -28,6 +29,8 @@ export class ProfesionalDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly profesionalService = inject(ProfesionalService);
+
+  isAdminMode = computed(() => this.router.url.includes('/admin'));
 
   readonly imageUrl = environment.imageUrl;
 

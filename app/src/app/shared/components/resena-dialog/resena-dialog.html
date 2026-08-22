@@ -1,0 +1,65 @@
+<div class="resena-dialog">
+  <div class="header-icon">
+    <mat-icon>star</mat-icon>
+  </div>
+
+  <h2 mat-dialog-title>Calificar Servicio</h2>
+
+  <mat-dialog-content>
+    <p>
+      ¿Cómo calificarías tu tutoría de <strong>{{ data.servicioNombre }}</strong> con
+      <strong>{{ data.tutorNombre }}</strong>?
+    </p>
+
+    <!-- Star rating selector -->
+    <div class="stars-container">
+      @for (star of [1, 2, 3, 4, 5]; track star) {
+        <button
+          type="button"
+          mat-icon-button
+          class="star-btn"
+          (click)="setRating(star)"
+          [title]="star + ' estrellas'"
+        >
+          <mat-icon>{{ puntuacion() >= star ? 'star' : 'star_border' }}</mat-icon>
+        </button>
+      }
+    </div>
+    <div class="rating-text">
+      {{ puntuacion() }} de 5 estrellas
+    </div>
+
+    <!-- Comment -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tu Comentario / Reseña</mat-label>
+      <textarea
+        matInput
+        rows="3"
+        name="comentario"
+        required
+        minlength="5"
+        maxlength="355"
+        [ngModel]="comentario()"
+        (ngModelChange)="comentario.set($event)"
+        placeholder="Cuéntanos qué te pareció la tutoría..."
+      ></textarea>
+      <mat-hint align="end">{{ comentario().trim().length }}/355</mat-hint>
+    </mat-form-field>
+
+    @if (intentoEnviar() && (comentario().trim().length < 5)) {
+      <p class="resena-error">
+        <mat-icon>error_outline</mat-icon>
+        Ingrese un comentario de al menos 5 caracteres.
+      </p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button (click)="cancelar()">
+      Cancelar
+    </button>
+    <button mat-flat-button color="primary" (click)="confirmar()">
+      Guardar Reseña
+    </button>
+  </mat-dialog-actions>
+</div>

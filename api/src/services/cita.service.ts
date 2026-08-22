@@ -40,6 +40,14 @@ const citaResumenSelect = {
         select: {
             nombre: true
         }
+    },
+
+    resenas: {
+        select: {
+            id: true,
+            puntuacion: true,
+            comentario: true
+        }
     }
 } as const;
 
@@ -206,6 +214,14 @@ export const citaService = {
                         id: true,
                         nombre: true,
                         descripcion: true
+                    }
+                },
+
+                resenas: {
+                    select: {
+                        id: true,
+                        puntuacion: true,
+                        comentario: true
                     }
                 }
             }
@@ -384,6 +400,10 @@ export const citaService = {
             throw AppError.conflict("Solo se pueden cancelar citas en estado Pendiente o Aceptada");
         }
 
+        if (cita.estado === EstadoCita.PENDIENTE && actor.role === Role.TUTOR) {
+            throw AppError.forbidden("El profesional no puede cancelar una cita Pendiente. Debe rechazarla.");
+        }
+
         await this.verificarClienteOTutorPropietario(cita, actor);
 
         const actualizada = await prisma.cita.update({
@@ -426,6 +446,36 @@ export const citaService = {
         await this.registrarHistorial(id, cita.estado, EstadoCita.COMPLETADA, "Sesión realizada.");
 
         return actualizada;
+    },
+
+    async crearResena(citaId: number, clienteId: number, puntuacion: number, comentario: string) {
+        const cita = await this.obtenerCitaOFallar(citaId);
+
+        if (cita.estado !== EstadoCita.COMPLETADA) {
+            throw AppError.badRequest("Solo se pueden calificar citas en estado Completada");
+        }
+
+        if (cita.clienteId !== clienteId) {
+            throw AppError.forbidden("Solo el cliente que solicitó la cita puede calificarla");
+        }
+
+        const resenaExistente = await prisma.resena.findFirst({
+            where: { citaId }
+        });
+
+        if (resenaExistente) {
+            throw AppError.conflict("Esta cita ya ha sido calificada");
+        }
+
+        return await prisma.resena.create({
+            data: {
+                citaId,
+                clienteId,
+                tutorId: cita.tutorId,
+                puntuacion,
+                comentario
+            }
+        });
     },
 
     async historial(id: number) {

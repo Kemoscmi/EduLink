@@ -28,6 +28,7 @@ export interface Cita {
     cliente?: Usuario;
     tutor?: Profesional;
     servicio?: Servicio;
+    resenas?: any[];
 
     createAt: string;
     updateAt: string;

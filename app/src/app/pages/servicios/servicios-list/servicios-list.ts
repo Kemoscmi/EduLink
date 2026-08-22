@@ -76,8 +76,14 @@ export class ServiciosList {
     const modalidad = this.modalidadFilter();
     const min = this.precioMin();
     const max = this.precioMax();
+    const isAdmin = this.isAdminMode();
 
     return this.servicios().filter((servicio) => {
+      // Si no es administrador, no mostrar servicios inactivos
+      if (!isAdmin && !servicio.activo) {
+        return false;
+      }
+
       const nombre = servicio.nombre?.toLowerCase() ?? '';
       const descripcion = servicio.descripcion?.toLowerCase() ?? '';
       const categoriaNombre = servicio.categoria?.nombre?.toLowerCase() ?? '';

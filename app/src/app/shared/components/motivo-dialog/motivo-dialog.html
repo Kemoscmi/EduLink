@@ -14,7 +14,7 @@
         matInput
         rows="3"
         name="motivo"
-        required
+        [required]="!isOptional"
         [minlength]="minLength"
         [ngModel]="motivo()"
         (ngModelChange)="motivo.set($event)"

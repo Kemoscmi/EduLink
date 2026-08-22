@@ -15,6 +15,7 @@ export interface MotivoDialogData {
   icon?: string;
   danger?: boolean;
   minLength?: number;
+  optional?: boolean;
 }
 
 @Component({
@@ -35,7 +36,8 @@ export class MotivoDialog {
   private readonly dialogRef = inject(MatDialogRef<MotivoDialog>);
   readonly data = inject<MotivoDialogData>(MAT_DIALOG_DATA);
 
-  readonly minLength = this.data.minLength ?? 5;
+  readonly isOptional = this.data.optional ?? false;
+  readonly minLength = this.isOptional ? 0 : (this.data.minLength ?? 5);
 
   motivo = signal('');
   intentoEnviar = signal(false);

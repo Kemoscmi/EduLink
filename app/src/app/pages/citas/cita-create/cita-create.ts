@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
 import { FormField, form, required, minLength, maxLength } from '@angular/forms/signals';
@@ -12,12 +12,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { CitaService } from '../../../core/services/cita-service';
 import { UsuarioService } from '../../../core/services/usuario';
 import { ProfesionalService } from '../../../core/services/profesional';
 import { ServicioService } from '../../../core/services/servicio';
 import { NotificationService } from '../../../core/services/notification.service';
+import { AuthenticationService } from '../../../core/services/authentication.service';
 
 import { Usuario } from '../../../core/models/usuario.model';
 import { Profesional } from '../../../core/models/profesional.model';
@@ -47,18 +49,23 @@ export interface CitaFormModel {
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatChipsModule
   ],
   templateUrl: './cita-create.html',
   styleUrl: './cita-create.css'
 })
 export class CitaCreate {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly citaService = inject(CitaService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly profesionalService = inject(ProfesionalService);
   private readonly servicioService = inject(ServicioService);
   private readonly notification = inject(NotificationService);
+  readonly authService = inject(AuthenticationService);
+
+  esCliente = computed(() => this.authService.rol() === 'USER');
 
   // DATA SIGNALS
   clientes = signal<Usuario[]>([]);
@@ -68,6 +75,10 @@ export class CitaCreate {
   loading = signal(true);
   saving = signal(false);
   error = signal<string | null>(null);
+
+  // DISPONIBILIDAD SIGNALS
+  citasExistentes = signal<any[]>([]);
+  loadingDisponibilidad = signal(false);
 
   // FORM MODEL SIGNAL
   citaModel = signal<CitaFormModel>({
@@ -93,6 +104,34 @@ export class CitaCreate {
     required(path.comentarioCliente, { message: 'La descripción es obligatoria' });
     minLength(path.comentarioCliente, 5, { message: 'La descripción debe tener al menos 5 caracteres' });
     maxLength(path.comentarioCliente, 200, { message: 'La descripción no puede superar los 200 caracteres' });
+  });
+
+  servicioSeleccionado = computed(() => {
+    const sId = this.citaModel().servicioId;
+    if (!sId) return null;
+    return this.todosLosServicios().find(s => s.id === sId) ?? null;
+  });
+
+  hayTraslapeCliente = computed(() => {
+    const horaInicio = this.citaModel().horaInicio;
+    const horaFin = this.citaModel().horaFin;
+    const existentes = this.citasExistentes();
+
+    if (!horaInicio || !horaFin || existentes.length === 0) return false;
+
+    const minutes = (h: string) => {
+      const [hrs, mins] = h.split(':').map(Number);
+      return hrs * 60 + mins;
+    };
+
+    const startNew = minutes(horaInicio);
+    const endNew = minutes(horaFin);
+
+    return existentes.some((cita: any) => {
+      const startExist = minutes(cita.horaInicio);
+      const endExist = minutes(cita.horaFin);
+      return startNew < endExist && endNew > startExist;
+    });
   });
 
   // Servicios filtrados dinámicos basados en profesional
@@ -158,6 +197,35 @@ export class CitaCreate {
         }
       }
     }, { allowSignalWrites: true });
+
+    // Consultar disponibilidad (citas del profesional en el día seleccionado)
+    effect(() => {
+      const tutorId = this.citaModel().tutorId;
+      const fecha = this.citaModel().fechaCita;
+
+      if (tutorId && fecha) {
+        untracked(() => {
+          this.loadingDisponibilidad.set(true);
+          const dateObj = new Date(fecha);
+          const isoStart = new Date(Date.UTC(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate(), 0, 0, 0)).toISOString();
+          const isoEnd = new Date(Date.UTC(dateObj.getUTCFullYear(), dateObj.getUTCMonth(), dateObj.getUTCDate(), 23, 59, 59)).toISOString();
+
+          this.citaService.listar({ tutorId, fechaInicio: isoStart, fechaFin: isoEnd }).subscribe({
+            next: (res) => {
+              const list = (res.data?.data || []).filter((c: any) => c.estado === 'PENDIENTE' || c.estado === 'ACEPTADA');
+              this.citasExistentes.set(list);
+              this.loadingDisponibilidad.set(false);
+            },
+            error: () => {
+              this.citasExistentes.set([]);
+              this.loadingDisponibilidad.set(false);
+            }
+          });
+        });
+      } else {
+        this.citasExistentes.set([]);
+      }
+    }, { allowSignalWrites: true });
   }
 
   cargarDatosFormulario(): void {
@@ -174,12 +242,46 @@ export class CitaCreate {
         const clientsOnly = (usuarios.data ?? []).filter(u => u.activo && u.role === 'USER');
         this.clientes.set(clientsOnly);
 
-        // Carga todos los profesionales
-        this.profesionales.set(profesionales ?? []);
+        // Carga profesionales disponibles únicamente (Regla de negocio)
+        const disponiblesOnly = (profesionales ?? []).filter(p => p.disponible);
+        this.profesionales.set(disponiblesOnly);
 
-        // Guardar servicios activos
-        const activeServs = (servicios.data ?? []).filter(s => s.activo);
+        // Guardar servicios activos de tutores disponibles únicamente (Regla de negocio)
+        const activeServs = (servicios.data ?? []).filter(s => s.activo && (profesionales ?? []).some(p => p.id === s.tutorId && p.disponible));
         this.todosLosServicios.set(activeServs);
+
+        // Pre-cargar cliente si es un rol de cliente
+        if (this.esCliente()) {
+          this.citaModel.update(m => ({ ...m, clienteId: this.authService.usuario()?.id ?? null }));
+        }
+
+        // Cargar query params para tutorId y servicioId pre-seleccionados
+        const queryParams = this.route.snapshot.queryParams;
+        let pTutorId = queryParams['tutorId'] ? Number(queryParams['tutorId']) : null;
+        let pServicioId = queryParams['servicioId'] ? Number(queryParams['servicioId']) : null;
+
+        if (pTutorId) {
+          const tutor = (profesionales ?? []).find(p => p.id === pTutorId);
+          if (tutor && !tutor.disponible) {
+            this.notification.warning('El profesional seleccionado no está disponible actualmente.');
+            pTutorId = null;
+            pServicioId = null;
+          }
+        }
+
+        if (pServicioId) {
+          const serv = (servicios.data ?? []).find(s => s.id === pServicioId);
+          if (serv && !serv.activo) {
+            this.notification.warning('El servicio seleccionado no está activo actualmente.');
+            pServicioId = null;
+          }
+        }
+
+        this.citaModel.update(m => ({
+          ...m,
+          tutorId: pTutorId,
+          servicioId: pServicioId
+        }));
       },
       error: (err) => {
         console.error('Error al cargar datos de catálogos:', err);
@@ -253,6 +355,12 @@ export class CitaCreate {
       return;
     }
 
+    // Validar traslape local en tiempo real
+    if (this.hayTraslapeCliente()) {
+      this.notification.error('El horario seleccionado se traslapa con otra cita ocupada del profesional.');
+      return;
+    }
+
     // Validar que el cliente no sea el mismo que el profesional asignado
     const selectedPro = this.profesionales().find(p => p.id === val.tutorId);
     if (selectedPro && selectedPro.usuarioId === val.clienteId) {
@@ -276,7 +384,11 @@ export class CitaCreate {
     this.citaService.crear(dto).subscribe({
       next: (response) => {
         this.notification.success(response.message ?? 'Cita registrada correctamente');
-        this.router.navigate(['/admin/citas']);
+        if (this.esCliente()) {
+          this.router.navigate(['/mis-citas']);
+        } else {
+          this.router.navigate(['/admin/citas']);
+        }
       },
       error: (err) => {
         console.error('Error al registrar cita:', err);
@@ -288,6 +400,10 @@ export class CitaCreate {
   }
 
   cancelar(): void {
-    this.router.navigate(['/admin/citas']);
+    if (this.esCliente()) {
+      this.router.navigate(['/mis-citas']);
+    } else {
+      this.router.navigate(['/admin/citas']);
+    }
   }
 }

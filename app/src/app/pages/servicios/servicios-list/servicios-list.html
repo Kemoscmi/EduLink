@@ -154,11 +154,11 @@
 
             <mat-card-actions>
               <div class="card-actions-top">
-                <span class="status-badge" [class.activo]="servicio.activo">
-                  {{ servicio.activo ? 'Activo' : 'Inactivo' }}
-                </span>
-
                 @if (isAdminMode()) {
+                  <span class="status-badge" [class.activo]="servicio.activo">
+                    {{ servicio.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+
                   <mat-slide-toggle
                     [checked]="servicio.activo"
                     [disabled]="updatingId() === servicio.id"
@@ -175,6 +175,15 @@
                   </a>
                   <a mat-stroked-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="action-btn-sm">
                     <mat-icon>edit</mat-icon> Editar
+                  </a>
+                </div>
+              } @else {
+                <div class="card-actions-buttons">
+                  <a mat-stroked-button color="primary" [routerLink]="['/servicios', servicio.id]" class="action-btn-sm">
+                    <mat-icon>visibility</mat-icon> Detalle
+                  </a>
+                  <a mat-flat-button color="accent" [routerLink]="['/solicitar-cita']" [queryParams]="{ tutorId: servicio.tutorId, servicioId: servicio.id }" class="action-btn-sm">
+                    <mat-icon>event</mat-icon> Solicitar Cita
                   </a>
                 </div>
               }

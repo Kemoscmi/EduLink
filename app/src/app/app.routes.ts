@@ -65,6 +65,12 @@ export const routes: Routes = [
         title: 'Catálogo de Servicios',
         canActivate: [authGuard],
       },
+      {
+        path: 'servicios/:id',
+        component: ServicioDetailPage,
+        title: 'Detalle de Servicio',
+        canActivate: [authGuard],
+      },
       // PROFESIONALES (catálogo — requiere sesión iniciada)
       {
         path: 'profesionales',
@@ -85,6 +91,12 @@ export const routes: Routes = [
         title: 'Mis citas',
         canActivate: [authGuard, roleGuard],
         data: { roles: ['USER'] },
+      },
+      {
+        path: 'solicitar-cita',
+        component: CitaCreate,
+        title: 'Solicitar Cita',
+        canActivate: [authGuard],
       },
       {
         path: 'agenda',

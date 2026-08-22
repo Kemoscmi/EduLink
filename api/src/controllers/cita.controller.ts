@@ -137,4 +137,31 @@ export class CitaController {
         }
     };
 
+    crearResena = async (request: Request, response: Response, next: NextFunction) => {
+        try {
+            if (!request.user) {
+                throw AppError.unauthorized("Debe iniciar sesión para realizar esta acción");
+            }
+            const citaId = parseId(request.params.id);
+            const { puntuacion, comentario } = request.body;
+
+            const resena = await citaService.crearResena(
+                citaId,
+                request.user.id,
+                Number(puntuacion),
+                comentario
+            );
+
+            return sendSuccess(
+                response,
+                resena,
+                "Reseña registrada correctamente",
+                StatusCodes.CREATED
+            );
+        } catch (error) {
+            console.error(error);
+            next(error);
+        }
+    };
+
 }

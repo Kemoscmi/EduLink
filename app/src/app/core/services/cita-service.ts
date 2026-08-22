@@ -82,4 +82,8 @@ export class CitaService {
   completar(id: number): Observable<ApiResponse<Cita>> {
     return this.http.patch<ApiResponse<Cita>>(`${this.apiUrl}/${id}/completar`, {});
   }
+
+  crearResena(citaId: number, datos: { puntuacion: number; comentario: string }): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${citaId}/resena`, datos);
+  }
 }

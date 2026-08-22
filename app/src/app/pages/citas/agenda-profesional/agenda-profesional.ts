@@ -183,16 +183,22 @@ export class AgendaProfesional {
   }
 
   aceptar(cita: Cita): void {
-    this.confirmDialog
-      .confirm({
+    this.motivoDialog
+      .solicitar({
         title: 'Aceptar cita',
-        message: `¿Desea aceptar la cita de "${cita.servicio?.nombre}" con ${this.nombreCliente(cita)}?`,
+        message: `¿Desea aceptar la cita de "${cita.servicio?.nombre}" con ${this.nombreCliente(cita)}? Ingrese un comentario opcional si lo desea.`,
+        motivoLabel: 'Comentario opcional',
         icon: 'event_available',
         confirmLabel: 'Aceptar',
+        optional: true,
+        minLength: 0,
       })
-      .subscribe((confirmado: boolean) => {
-        if (!confirmado) return;
-        this.ejecutar(this.citaService.aceptar(cita.id, {}), 'Cita aceptada correctamente');
+      .subscribe((comentario: string | null) => {
+        if (comentario === null) return;
+        this.ejecutar(
+          this.citaService.aceptar(cita.id, { comentarioTutor: comentario }),
+          'Cita aceptada correctamente'
+        );
       });
   }
 

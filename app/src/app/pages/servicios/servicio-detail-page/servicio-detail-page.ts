@@ -1,5 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,7 +25,10 @@ import { Servicio } from '../../../core/models/servicio.model';
 })
 export class ServicioDetailPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly servicioService = inject(ServicioService);
+
+  isAdminMode = computed(() => this.router.url.includes('/admin'));
 
   servicio = signal<Servicio | null>(null);
   loading = signal(false);

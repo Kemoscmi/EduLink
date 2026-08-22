@@ -1,5 +1,5 @@
 <section class="detail-header">
-  <a mat-stroked-button routerLink="/admin/servicios" class="back-btn">
+  <a mat-stroked-button [routerLink]="isAdminMode() ? '/admin/servicios' : '/servicios'" class="back-btn">
     <mat-icon>arrow_back</mat-icon> Volver al listado
   </a>
   <div class="header-title">
@@ -18,7 +18,7 @@
     <mat-icon class="error-icon">error</mat-icon>
     <h2>Error al cargar</h2>
     <p>{{ error() }}</p>
-    <a mat-flat-button color="primary" routerLink="/admin/servicios">Regresar</a>
+    <a mat-flat-button color="primary" [routerLink]="isAdminMode() ? '/admin/servicios' : '/servicios'">Regresar</a>
   </div>
 } @else if (servicio(); as servicio) {
   <div class="detail-grid">
@@ -45,10 +45,17 @@
           </p>
         </div>
 
-        <a mat-flat-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="edit-btn">
-          <mat-icon>edit</mat-icon>
-          Editar
-        </a>
+        @if (isAdminMode()) {
+          <a mat-flat-button color="accent" [routerLink]="['/admin/servicios', servicio.id, 'editar']" class="edit-btn">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </a>
+        } @else {
+          <a mat-flat-button color="accent" [routerLink]="['/solicitar-cita']" [queryParams]="{ tutorId: servicio.tutorId, servicioId: servicio.id }" class="edit-btn">
+            <mat-icon>event</mat-icon>
+            Solicitar Cita
+          </a>
+        }
       </div>
 
       <mat-card-content>

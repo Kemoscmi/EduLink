@@ -71,11 +71,59 @@
                 </div>
             </mat-card-content>
 
-            <mat-card-actions>
-                <div class="status-wrapper">
-                    <span class="status-title">Estado actual:</span>
-                    <span class="status-badge" [class]="c.estado.toLowerCase()">{{ c.estado }}</span>
+            <mat-card-actions style="display: flex; flex-direction: column; align-items: stretch; gap: 16px;">
+                <div class="status-wrapper" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div>
+                        <span class="status-title" style="font-weight: 500; color: #64748b; margin-right: 8px;">Estado actual:</span>
+                        <span class="status-badge" [class]="c.estado.toLowerCase()">{{ c.estado }}</span>
+                    </div>
+
+                    <!-- Client-facing Calificar button if completed and not reviewed yet -->
+                    @if (c.estado === 'COMPLETADA' && esCliente() && (!c.resenas || c.resenas.length === 0)) {
+                        <button mat-flat-button color="accent" (click)="calificar(c)" [disabled]="procesando()">
+                            <mat-icon>star</mat-icon> Calificar Servicio
+                        </button>
+                    }
                 </div>
+
+                <!-- Display review detail if already reviewed -->
+                @if (c.resenas && c.resenas.length > 0) {
+                    <div class="resena-info-box" style="margin-top: 8px; padding: 16px; border: 1px solid #fef08a; border-radius: 8px; background-color: #fef9c3; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 4px; color: #a16207; font-weight: 600;">
+                            <mat-icon style="color: #eab308; margin-right: 0;">star</mat-icon>
+                            <span>Servicio Calificado: {{ c.resenas[0].puntuacion }} / 5 estrellas</span>
+                        </div>
+                        <p style="margin: 0; font-style: italic; color: #713f12; font-size: 14px;">
+                            "{{ c.resenas[0].comentario }}"
+                        </p>
+                    </div>
+                }
+
+                <!-- Action buttons for transition of states (Regla de negocio) -->
+                @if (puedeAceptarORechazar(c) || puedeCancelar(c) || puedeCompletar(c)) {
+                    <div class="detail-actions-row" style="display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap;">
+                        @if (puedeAceptarORechazar(c)) {
+                            <button mat-flat-button color="primary" (click)="aceptar(c)" [disabled]="procesando()">
+                                <mat-icon>check</mat-icon> Aceptar Cita
+                            </button>
+                            <button mat-stroked-button color="warn" (click)="rechazar(c)" [disabled]="procesando()">
+                                <mat-icon>close</mat-icon> Rechazar Cita
+                            </button>
+                        }
+
+                        @if (puedeCancelar(c)) {
+                            <button mat-stroked-button color="warn" (click)="cancelarAccion(c)" [disabled]="procesando()">
+                                <mat-icon>event_busy</mat-icon> Cancelar Cita
+                            </button>
+                        }
+
+                        @if (puedeCompletar(c)) {
+                            <button mat-flat-button color="primary" (click)="completar(c)" [disabled]="procesando()">
+                                <mat-icon>done_all</mat-icon> Marcar como Completada
+                            </button>
+                        }
+                    </div>
+                }
             </mat-card-actions>
         </mat-card>
 
@@ -198,6 +246,52 @@
                         </div>
                     </div>
                 </div>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- 🕒 HISTORIAL DE ESTADOS -->
+        <mat-card class="detail-card history-timeline-card" style="grid-column: 1 / -1; margin-top: 8px;">
+            <mat-card-header>
+                <div mat-card-avatar class="avatar-circle history" style="background-color: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
+                    <mat-icon>history</mat-icon>
+                </div>
+                <mat-card-title>Historial de Estados de la Cita</mat-card-title>
+                <mat-card-subtitle>Bitácora cronológica de transiciones e incidencias</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content style="padding-top: 16px;">
+                @if (historial().length === 0) {
+                    <p style="color: #64748b; font-style: italic; text-align: center; margin: 16px 0;">No se registran cambios de estado en el historial de esta cita.</p>
+                } @else {
+                    <div class="timeline-container" style="display: flex; flex-direction: column; gap: 16px; position: relative; padding-left: 24px; border-left: 2px solid #cbd5e1; margin-left: 12px; margin-top: 8px;">
+                        @for (h of historial(); track h.id) {
+                            <div class="timeline-item" style="position: relative;">
+                                <!-- Bullet dot -->
+                                <div style="position: absolute; left: -31px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background-color: #cbd5e1; border: 2px solid #fff; box-shadow: 0 0 0 2px #e2e8f0;" [class]="h.estadoNuevo.toLowerCase()"></div>
+                                
+                                <div class="timeline-content" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                        @if (h.estadoAnterior) {
+                                            <span class="status-badge-sm" [class]="h.estadoAnterior.toLowerCase()" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 500; text-transform: uppercase;">{{ h.estadoAnterior }}</span>
+                                            <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #94a3b8; margin: 0;">arrow_forward</mat-icon>
+                                        } @else {
+                                            <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 500; background-color: #f1f5f9; color: #475569; text-transform: uppercase;">CREACIÓN</span>
+                                            <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #94a3b8; margin: 0;">arrow_forward</mat-icon>
+                                        }
+                                        <span class="status-badge-sm" [class]="h.estadoNuevo.toLowerCase()" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 500; text-transform: uppercase;">{{ h.estadoNuevo }}</span>
+                                        
+                                        <span style="font-size: 12px; color: #94a3b8; margin-left: auto;">{{ h.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                                    </div>
+                                    
+                                    @if (h.motivo) {
+                                        <p style="margin: 0; font-size: 13px; color: #475569; padding-left: 8px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px;">
+                                            Motivo/Observación: "{{ h.motivo }}"
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </mat-card-content>
         </mat-card>
     </div>
