@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ServicioService } from '../../../core/services/servicio';
 import { Servicio } from '../../../core/models/servicio.model';
+import { AuthenticationService } from '../../../core/services/authentication.service';
 
 @Component({
   selector: 'app-servicio-detail-page',
@@ -27,8 +28,10 @@ export class ServicioDetailPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly servicioService = inject(ServicioService);
+  private readonly authService = inject(AuthenticationService);
 
   isAdminMode = computed(() => this.router.url.includes('/admin'));
+  esCliente = this.authService.esCliente;
 
   servicio = signal<Servicio | null>(null);
   loading = signal(false);

@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ProfesionalService } from '../../core/services/profesional';
 import { Profesional } from '../../core/models/profesional.model';
+import { AuthenticationService } from '../../core/services/authentication.service';
 
 @Component({
   selector: 'app-profesional-detail',
@@ -29,8 +30,10 @@ export class ProfesionalDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly profesionalService = inject(ProfesionalService);
+  private readonly authService = inject(AuthenticationService);
 
   isAdminMode = computed(() => this.router.url.includes('/admin'));
+  esCliente = this.authService.esCliente;
 
   readonly imageUrl = environment.imageUrl;
 
