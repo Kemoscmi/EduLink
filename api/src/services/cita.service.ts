@@ -124,7 +124,9 @@ export const citaService = {
                     fechaCita: true,
                     horaInicio: true,
                     horaFin: true,
+                    modalidad: true,
                     estado: true,
+                    montoEstimado: true,
 
                     cliente: {
                         select: {
@@ -146,7 +148,9 @@ export const citaService = {
 
                     servicio: {
                         select: {
-                            nombre: true
+                            nombre: true,
+                            modalidad: true,
+                            precio: true
                         }
                     }
                 },
@@ -539,19 +543,9 @@ export const citaService = {
         });
     },
 
-    // Usa los componentes UTC de fecha (no horas locales) para evitar que el
-    // resultado caiga en un día distinto según la zona horaria del servidor.
     combinarFechaHora(fecha: Date, hora: string): Date {
         const [horas, minutos] = hora.split(":").map(Number);
-        return new Date(Date.UTC(
-            fecha.getUTCFullYear(),
-            fecha.getUTCMonth(),
-            fecha.getUTCDate(),
-            horas || 0,
-            minutos || 0,
-            0,
-            0
-        ));
+        return new Date(`${fecha.toISOString().slice(0, 10)}T${String(horas || 0).padStart(2, "0")}:${String(minutos || 0).padStart(2, "0")}:00-06:00`);
     },
 
     async validateCliente(clienteId: number) {

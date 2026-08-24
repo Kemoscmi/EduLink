@@ -56,7 +56,7 @@
                         <div class="item-content">
                             <span class="item-label">Modalidad</span>
                             <span class="item-value badge-modalidad" [class]="c.modalidad.toLowerCase()">
-                                {{ c.modalidad }}
+                                {{ modalidadLabel(c.modalidad) }}
                             </span>
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                         <mat-icon>payments</mat-icon>
                         <div class="item-content">
                             <span class="item-label">Monto Estimado</span>
-                            <span class="item-value price-tag">₡{{ c.montoEstimado | number:'1.0-0' }}</span>
+                            <span class="item-value price-tag">{{ precioLabel(c.montoEstimado) }}</span>
                         </div>
                     </div>
                 </div>

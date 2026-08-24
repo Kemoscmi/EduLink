@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -17,10 +18,12 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { CitaService } from '../../../core/services/cita-service';
 import { Cita, EstadoCita } from '../../../core/models/cita.model';
+import { Profesional } from '../../../core/models/profesional.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { MotivoDialogService } from '../../../core/services/motivo-dialog.service';
 import { AuthenticationService } from '../../../core/services/authentication.service';
+import { ProfesionalService } from '../../../core/services/profesional';
 
 const COLOR_ESTADO: Record<EstadoCita, string> = {
   PENDIENTE: '#f59e0b',
@@ -58,6 +61,7 @@ export class AgendaProfesional {
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly motivoDialog = inject(MotivoDialogService);
   private readonly authService = inject(AuthenticationService);
+  private readonly profesionalService = inject(ProfesionalService);
 
   esAdmin = this.authService.esAdmin;
 
@@ -67,6 +71,8 @@ export class AgendaProfesional {
   citaSeleccionada = signal<Cita | null>(null);
   procesando = signal(false);
   filtroEstado = signal<EstadoCita | null>(null);
+  filtroProfesional = signal<number | null>(null);
+  profesionales = signal<Profesional[]>([]);
 
   estados: EstadoOption[] = [
     { value: 'PENDIENTE', label: 'Pendiente' },
@@ -77,11 +83,15 @@ export class AgendaProfesional {
   ];
 
   citasFiltradas = computed(() => {
-    const filtro = this.filtroEstado();
-    return this.citas().filter((c) => !filtro || c.estado === filtro);
+    const filtroEstado = this.filtroEstado();
+    const filtroProfesional = this.filtroProfesional();
+    return this.citas().filter((c) =>
+      (!filtroEstado || c.estado === filtroEstado) &&
+      (!filtroProfesional || c.tutorId === filtroProfesional)
+    );
   });
 
-  totalCitas = computed(() => this.citas().length);
+  totalCitas = computed(() => this.citasFiltradas().length);
 
   eventosCalendario = computed<EventInput[]>(() =>
     this.citasFiltradas().map((cita) => ({
@@ -121,9 +131,10 @@ export class AgendaProfesional {
     this.error.set(null);
 
     if (this.esAdmin()) {
-      this.citaService.getAll().subscribe({
-        next: (citas) => {
+      forkJoin({ citas: this.citaService.getAll(), profesionales: this.profesionalService.listar() }).subscribe({
+        next: ({ citas, profesionales }) => {
           this.citas.set(citas ?? []);
+          this.profesionales.set(profesionales ?? []);
           this.loading.set(false);
         },
         error: () => {
@@ -158,6 +169,32 @@ export class AgendaProfesional {
   nombreCliente(cita: Cita): string {
     const cliente = cita.cliente;
     return cliente ? `${cliente.nombre} ${cliente.apellidos}` : 'Cliente';
+  }
+
+  modalidadLabel(modalidad: Cita['modalidad'] | undefined): string {
+    if (!modalidad) return 'No indicada';
+
+    return {
+      PRESENCIAL: 'Presencial',
+      VIRTUAL: 'Virtual',
+      MIXTA: 'Mixta',
+    }[modalidad] ?? modalidad;
+  }
+
+  precioLabel(precio: number | string | undefined): string {
+    return new Intl.NumberFormat('es-CR', {
+      style: 'currency',
+      currency: 'CRC',
+      maximumFractionDigits: 0,
+    }).format(Number(precio));
+  }
+
+  modalidadCita(cita: Cita): string {
+    return this.modalidadLabel(cita.modalidad ?? cita.servicio?.modalidad);
+  }
+
+  precioCita(cita: Cita): string {
+    return this.precioLabel(cita.montoEstimado ?? cita.servicio?.precio);
   }
 
   estadoLabel(estado: EstadoCita): string {
@@ -265,6 +302,7 @@ export class AgendaProfesional {
 
   clearFiltro(): void {
     this.filtroEstado.set(null);
+    this.filtroProfesional.set(null);
   }
 
   private combinarFechaHora(fecha: string, hora: string): string {
@@ -273,6 +311,6 @@ export class AgendaProfesional {
     const yyyy = base.getUTCFullYear();
     const mm = String(base.getUTCMonth() + 1).padStart(2, '0');
     const dd = String(base.getUTCDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}T${horas}:${minutos}:00`;
+    return `${yyyy}-${mm}-${dd}T${horas}:${minutos}:00-06:00`;
   }
 }

@@ -110,6 +110,22 @@ export class CitaDetail {
     return usuario ? `${usuario.nombre} ${usuario.apellidos}` : 'Profesional';
   }
 
+  modalidadLabel(modalidad: Cita['modalidad']): string {
+    return {
+      PRESENCIAL: 'Presencial',
+      VIRTUAL: 'Virtual',
+      MIXTA: 'Mixta',
+    }[modalidad] ?? modalidad;
+  }
+
+  precioLabel(precio: number): string {
+    return new Intl.NumberFormat('es-CR', {
+      style: 'currency',
+      currency: 'CRC',
+      maximumFractionDigits: 0,
+    }).format(Number(precio));
+  }
+
   puedeAceptarORechazar(cita: Cita): boolean {
     return cita.estado === 'PENDIENTE' && (this.esTutor() || this.esAdmin());
   }
@@ -246,10 +262,7 @@ export class CitaDetail {
 
   private combinarFechaHora(fecha: string, hora: string): Date {
     const [horas, minutos] = hora.split(':').map(Number);
-    const base = new Date(fecha);
-    return new Date(
-      Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate(), horas || 0, minutos || 0)
-    );
+    return new Date(`${fecha.substring(0, 10)}T${String(horas || 0).padStart(2, '0')}:${String(minutos || 0).padStart(2, '0')}:00-06:00`);
   }
 
   volver(): void {

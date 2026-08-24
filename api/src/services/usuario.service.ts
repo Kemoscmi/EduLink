@@ -16,10 +16,12 @@ const perfilPublico = {
     createAt: true,
 };
 
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me-in-production";
+
 function generarToken(usuario: { id: number; email: string; role: Role }) {
     return jwt.sign(
         { id: usuario.id, email: usuario.email, role: usuario.role },
-        process.env.JWT_SECRET as string,
+        JWT_SECRET,
         { expiresIn: "1d" }
     );
 }
