@@ -16,6 +16,7 @@ import { Servicio } from '../../../core/models/servicio.model';
 import { Categoria } from '../../../core/models/categoria.model';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { AuthenticationService } from '../../../core/services/authentication.service';
 
 type Modalidad = 'VIRTUAL' | 'PRESENCIAL' | 'MIXTA';
 
@@ -42,8 +43,10 @@ export class ServiciosList {
   private readonly notification = inject(NotificationService);
   private readonly confirmDialog = inject(ConfirmDialogService);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthenticationService);
 
   isAdminMode = computed(() => this.router.url.includes('/admin'));
+  esCliente = this.authService.esCliente;
 
   servicios = signal<Servicio[]>([]);
   loading = signal(false);

@@ -54,6 +54,7 @@ export class AuthenticationService {
   readonly autenticado = computed(() => !!this._token() && !!this._usuario());
   readonly rol = computed<Usuario['role'] | null>(() => this._usuario()?.role ?? null);
   readonly esAdmin = computed(() => this.rol() === 'ADMIN');
+  readonly esCliente = computed(() => this.rol() === 'USER');
 
   login(credenciales: CredencialesLogin): Observable<Usuario> {
     this._cargandoSesion.set(true);
