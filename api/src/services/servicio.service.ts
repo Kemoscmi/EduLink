@@ -1,3 +1,4 @@
+import { Role } from "../../generated/prisma/enums";
 import { prisma } from "../config/prisma";
 import { AppError } from "../utils/app-error";
 import { CreateServicioDto, UpdateServicioDto } from "../dtos/servicio.dto";
@@ -17,8 +18,14 @@ const includeRelations = {
 };
 
 export const servicioService = {
-  async listar() {
+  async listar(usuarioId?: number, role?: Role) {
+    const where: any = {};
+    if (role === Role.TUTOR && usuarioId) {
+      where.tutor = { usuarioId };
+    }
+
     return await prisma.servicio.findMany({
+      where,
       include: includeRelations,
       orderBy: {
         id: "asc",
@@ -26,11 +33,17 @@ export const servicioService = {
     });
   },
 
-  async obtenerPorId(id: number) {
-    return await prisma.servicio.findUnique({
+  async obtenerPorId(id: number, tutorIdForzado?: number) {
+    const servicio = await prisma.servicio.findUnique({
       where: { id },
       include: includeRelations,
     });
+
+    if (servicio && tutorIdForzado !== undefined && servicio.tutorId !== tutorIdForzado) {
+      throw AppError.forbidden("No tiene permiso para acceder a este servicio");
+    }
+
+    return servicio;
   },
 
   async validateTutor(tutorId: number) {
@@ -67,8 +80,9 @@ export const servicioService = {
     }
   },
 
-  async crear(data: CreateServicioDto) {
-    await this.validateTutor(data.tutorId);
+  async crear(data: CreateServicioDto, tutorIdForzado?: number) {
+    const tutorId = tutorIdForzado ?? data.tutorId;
+    await this.validateTutor(tutorId);
     await this.validateCategoria(data.categoriaId);
     await this.validateNombreUnico(data.nombre);
 
@@ -78,7 +92,7 @@ export const servicioService = {
 
     return prisma.servicio.create({
       data: {
-        tutorId: data.tutorId,
+        tutorId: tutorId,
         categoriaId: data.categoriaId,
         nombre: data.nombre,
         descripcion: data.descripcion,
@@ -96,11 +110,15 @@ export const servicioService = {
     });
   },
 
-  async editar(id: number, data: UpdateServicioDto) {
+  async editar(id: number, data: UpdateServicioDto, tutorIdForzado?: number) {
     const servicio = await prisma.servicio.findUnique({ where: { id } });
 
     if (!servicio) {
       throw AppError.notFound("Servicio no encontrado");
+    }
+
+    if (tutorIdForzado !== undefined && servicio.tutorId !== tutorIdForzado) {
+      throw AppError.forbidden("No tiene permiso para editar este servicio");
     }
 
     if (data.tutorId !== undefined) {
@@ -141,11 +159,15 @@ export const servicioService = {
     });
   },
 
-  async cambiarEstado(id: number) {
+  async cambiarEstado(id: number, tutorIdForzado?: number) {
     const servicio = await prisma.servicio.findUnique({ where: { id } });
 
     if (!servicio) {
       throw AppError.notFound("Servicio no encontrado");
+    }
+
+    if (tutorIdForzado !== undefined && servicio.tutorId !== tutorIdForzado) {
+      throw AppError.forbidden("No tiene permiso para cambiar el estado de este servicio");
     }
 
     return prisma.servicio.update({

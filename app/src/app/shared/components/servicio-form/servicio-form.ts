@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormField,
@@ -26,6 +26,8 @@ import {
 import { Categoria } from '../../../core/models/categoria.model';
 import { Profesional } from '../../../core/models/profesional.model';
 import { Especialidad } from '../../../core/models/especialidad.model';
+import { AuthenticationService } from '../../../core/services/authentication.service';
+import { untracked } from '@angular/core';
 
 @Component({
   selector: 'app-servicio-form',
@@ -45,6 +47,8 @@ import { Especialidad } from '../../../core/models/especialidad.model';
   styleUrl: './servicio-form.css',
 })
 export class ServicioForm {
+  private readonly authService = inject(AuthenticationService);
+
   servicio = input<Servicio | null>(null);
   categorias = input<Categoria[]>([]);
   profesionales = input<Profesional[]>([]);
@@ -53,6 +57,8 @@ export class ServicioForm {
 
   guardar = output<ServicioCreateDto | ServicioUpdateDto>();
   cancelar = output<void>();
+
+  esTutor = computed(() => this.authService.rol() === 'TUTOR');
 
   servicioModel = signal<ServicioFormModel>({
     tutorId: null,
@@ -111,6 +117,24 @@ export class ServicioForm {
           servicio.servicioEspecialidades?.map((item) => item.especialidadId) ?? [],
       });
     });
+
+    // Autocompletar tutorId si el usuario autenticado es un Profesional (TUTOR)
+    effect(() => {
+      const user = this.authService.usuario();
+      const profs = this.profesionales();
+      
+      if (user && user.role === 'TUTOR' && profs.length > 0) {
+        const matchingTutor = profs.find(p => p.usuarioId === user.id);
+        if (matchingTutor) {
+          untracked(() => {
+            const currentTutorId = this.servicioModel().tutorId;
+            if (currentTutorId !== matchingTutor.id) {
+              this.servicioModel.update(m => ({ ...m, tutorId: matchingTutor.id }));
+            }
+          });
+        }
+      }
+    }, { allowSignalWrites: true });
   }
 
   toggleEspecialidad(id: number, checked: boolean): void {

@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { Profesional, Modalidad } from '../../../core/models/profesional.model';
+import { Especialidad } from '../../../core/models/especialidad.model';
 import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { ImageService } from '../../../core/services/image.service';
 
@@ -35,6 +36,7 @@ export interface ProfesionalFormModel {
   tarifaBase: number;
   disponible: boolean;
   imagenPerfil: string;
+  especialidadesIds: number[];
 }
 
 @Component({
@@ -68,6 +70,10 @@ export class ProfesionalForm {
   guardar = output<any>();
   cancelar = output<void>();
 
+  especialidades = input<Especialidad[]>([]);
+
+  provincias = ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón'];
+
   profesionalModel = signal<ProfesionalFormModel>({
     nombre: '',
     apellidos: '',
@@ -81,6 +87,7 @@ export class ProfesionalForm {
     tarifaBase: 5000,
     disponible: true,
     imagenPerfil: '',
+    especialidadesIds: [],
   });
 
   profesionalForm = form(this.profesionalModel, (path) => {
@@ -143,6 +150,8 @@ export class ProfesionalForm {
         tarifaBase: Number(p.tarifaBase ?? 0),
         disponible: p.disponible ?? true,
         imagenPerfil: p.imagenPerfil ?? '',
+        especialidadesIds:
+          p.tutorEspecialidads?.map((item) => item.especialidadId) ?? [],
       });
       this.selectedImageFile.set(null)
       this.imagePreview.set(
@@ -165,9 +174,23 @@ export class ProfesionalForm {
       tarifaBase: 5000,
       disponible: true,
       imagenPerfil: '',
+      especialidadesIds: [],
     });
     this.selectedImageFile.set(null)
     this.imagePreview.set(null)
+  }
+
+  toggleEspecialidad(id: number, checked: boolean): void {
+    this.profesionalModel.update((value) => ({
+      ...value,
+      especialidadesIds: checked
+        ? Array.from(new Set([...value.especialidadesIds, id]))
+        : value.especialidadesIds.filter((item) => item !== id),
+    }));
+  }
+
+  isEspecialidadSelected(id: number): boolean {
+    return this.profesionalModel().especialidadesIds.includes(id);
   }
 
   private subirImagenYGuardar(file: File) {
@@ -242,6 +265,7 @@ export class ProfesionalForm {
       tarifaBase: Number(value.tarifaBase),
       disponible: value.disponible,
       imagenPerfil: value.imagenPerfil,
+      especialidadesIds: value.especialidadesIds,
     };
   }
   onImageSelected(event: Event) {

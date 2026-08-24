@@ -96,7 +96,8 @@ export const routes: Routes = [
         path: 'solicitar-cita',
         component: CitaCreate,
         title: 'Solicitar Cita',
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['USER'] },
       },
       {
         path: 'agenda',

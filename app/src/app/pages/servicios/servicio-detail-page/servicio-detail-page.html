@@ -50,7 +50,7 @@
             <mat-icon>edit</mat-icon>
             Editar
           </a>
-        } @else {
+        } @else if (esCliente()) {
           <a mat-flat-button color="accent" [routerLink]="['/solicitar-cita']" [queryParams]="{ tutorId: servicio.tutorId, servicioId: servicio.id }" class="edit-btn">
             <mat-icon>event</mat-icon>
             Solicitar Cita

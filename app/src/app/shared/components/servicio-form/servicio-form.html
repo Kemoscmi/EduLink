@@ -63,20 +63,22 @@
         </div>
 
         <div class="form-grid two-columns">
-          <mat-form-field appearance="outline">
-            <mat-label>Profesional</mat-label>
-            <mat-select [formField]="servicioForm.tutorId">
-              <mat-option [value]="null">Seleccione un profesional</mat-option>
-              @for (profesional of profesionales(); track profesional.id) {
-                <mat-option [value]="profesional.id">
-                  {{ profesional.usuario?.nombre }} {{ profesional.usuario?.apellidos }} — {{ profesional.tituloProfesional }}
-                </mat-option>
+          @if (!esTutor()) {
+            <mat-form-field appearance="outline">
+              <mat-label>Profesional</mat-label>
+              <mat-select [formField]="servicioForm.tutorId">
+                <mat-option [value]="null">Seleccione un profesional</mat-option>
+                @for (profesional of profesionales(); track profesional.id) {
+                  <mat-option [value]="profesional.id">
+                    {{ profesional.usuario?.nombre }} {{ profesional.usuario?.apellidos }} — {{ profesional.tituloProfesional }}
+                  </mat-option>
+                }
+              </mat-select>
+              @if (servicioForm.tutorId().touched() && servicioForm.tutorId().invalid()) {
+                <mat-error>{{ servicioForm.tutorId().errors()[0].message }}</mat-error>
               }
-            </mat-select>
-            @if (servicioForm.tutorId().touched() && servicioForm.tutorId().invalid()) {
-              <mat-error>{{ servicioForm.tutorId().errors()[0].message }}</mat-error>
-            }
-          </mat-form-field>
+            </mat-form-field>
+          }
 
           <mat-form-field appearance="outline">
             <mat-label>Categoría</mat-label>

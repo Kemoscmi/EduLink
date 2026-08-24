@@ -58,6 +58,10 @@ export const createProfesionalSchema = z.object({
 
     imagenPerfil: z
         .string()
+        .optional(),
+
+    especialidadesIds: z
+        .array(z.number())
         .optional()
 
 });

@@ -163,6 +163,9 @@ export class AuthenticationService {
   }
 
   private obtenerErrorAutenticacion(error: HttpErrorResponse): Error {
+    if (error.status === 0) {
+      return new Error('No se pudo conectar con el servidor. Verifique su conexión de red.');
+    }
     const mensaje = error.error?.message ?? 'No se pudo completar la operación. Intente nuevamente.';
     return new Error(mensaje);
   }

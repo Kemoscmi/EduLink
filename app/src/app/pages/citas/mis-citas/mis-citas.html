@@ -27,123 +27,175 @@
     </a>
   </div>
 } @else {
-  @if (proximas().length > 0) {
-    <section class="grupo-citas">
-      <h2><mat-icon>upcoming</mat-icon> Próximas</h2>
-      <div class="citas-grid">
-        @for (cita of proximas(); track cita.id) {
-          <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
-            <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
-            <mat-card-content>
-              <div class="cita-header">
-                <a [routerLink]="['/citas', cita.id]" style="text-decoration: none; color: inherit;">
-                  <h3 style="margin: 0; color: #1e3a8a; cursor: pointer;">{{ cita.servicio?.nombre }}</h3>
-                </a>
-                <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
-              </div>
+  <div class="citas-layout">
+    <!-- PANEL PARA FILTROS -->
+    <aside class="filters-sidebar">
+      <h2><mat-icon>filter_list</mat-icon> Filtros de Búsqueda</h2>
 
-              <p class="profesional-line">
-                <mat-icon>school</mat-icon>
-                {{ nombreProfesional(cita) }}
-              </p>
+      <!-- Estado -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Estado de Cita</mat-label>
+        <mat-icon matPrefix>rule</mat-icon>
+        <mat-select [value]="estado()" (selectionChange)="estado.set($event.value)">
+          <mat-option [value]="null">Todos los estados</mat-option>
+          <mat-option value="PENDIENTE">Pendiente</mat-option>
+          <mat-option value="ACEPTADA">Aceptada</mat-option>
+          <mat-option value="RECHAZADA">Rechazada</mat-option>
+          <mat-option value="CANCELADA">Cancelada</mat-option>
+          <mat-option value="COMPLETADA">Completada</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-              <div class="info-grid">
-                <div class="info-item">
-                  <mat-icon>calendar_today</mat-icon>
-                  <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
-                </div>
-                <div class="info-item">
-                  <mat-icon>schedule</mat-icon>
-                  <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
-                </div>
-                <div class="info-item">
-                  <mat-icon>sell</mat-icon>
-                  <span>₡{{ cita.montoEstimado }}</span>
-                </div>
-              </div>
+      <!-- Rango de Fechas -->
+      <div class="date-group">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Fecha de inicio</mat-label>
+          <input matInput type="date" [value]="fechaInicio()" (input)="fechaInicio.set($any($event.target).value)" />
+        </mat-form-field>
 
-              @if (puedeCancelar(cita)) {
-                <div class="cita-actions">
-                  <button
-                    mat-stroked-button
-                    color="warn"
-                    [disabled]="actualizandoId() === cita.id"
-                    (click)="cancelar(cita)"
-                  >
-                    @if (actualizandoId() === cita.id) {
-                      <span class="button-label"><mat-icon>hourglass_top</mat-icon> Cancelando...</span>
-                    } @else {
-                      <span class="button-label"><mat-icon>event_busy</mat-icon> Cancelar cita</span>
-                    }
-                  </button>
-                </div>
-              }
-            </mat-card-content>
-          </mat-card>
-        }
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Fecha de fin</mat-label>
+          <input matInput type="date" [value]="fechaFin()" (input)="fechaFin.set($any($event.target).value)" />
+        </mat-form-field>
       </div>
-    </section>
-  }
 
-  @if (anteriores().length > 0) {
-    <section class="grupo-citas">
-      <h2><mat-icon>history</mat-icon> Historial</h2>
-      <div class="citas-grid">
-        @for (cita of anteriores(); track cita.id) {
-          <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
-            <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
-            <mat-card-content>
-              <div class="cita-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                  <a [routerLink]="['/citas', cita.id]" style="text-decoration: none; color: inherit;">
-                    <h3 style="margin: 0; color: #1e3a8a; cursor: pointer;">{{ cita.servicio?.nombre }}</h3>
-                  </a>
-                  <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
-                </div>
-                
-                @if (cita.estado === 'COMPLETADA') {
-                  <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-                    @if (cita.resenas && cita.resenas.length > 0) {
-                      <span class="badge-resena calificada" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
-                        <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #10b981; margin-right: 0;">star</mat-icon> 
-                        Calificada ({{ cita.resenas[0].puntuacion }} ★)
-                      </span>
-                    } @else {
-                      <span class="badge-resena pendiente" style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
-                        <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #f97316; margin-right: 0;">star_border</mat-icon> 
-                        Sin calificar
-                      </span>
-                      <a mat-button color="accent" [routerLink]="['/citas', cita.id]" style="font-size: 11px; height: 24px; line-height: 24px; padding: 0 8px; min-width: auto;">
-                        Calificar ahora
+      <!-- Botón Limpiar -->
+      <button mat-flat-button class="clear-btn" (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar filtros
+      </button>
+    </aside>
+
+    <!-- LISTADO DE CITAS -->
+    <main class="citas-content">
+      @if (totalFiltradas() === 0) {
+        <div class="state empty-state">
+          <mat-icon class="empty-icon">search_off</mat-icon>
+          <h3>Sin resultados</h3>
+          <p>No se encontraron citas que coincidan con los filtros seleccionados.</p>
+          <button mat-button color="primary" (click)="clearFilters()">Ver todas las citas</button>
+        </div>
+      } @else {
+        @if (proximas().length > 0) {
+          <section class="grupo-citas">
+            <h2><mat-icon>upcoming</mat-icon> Próximas</h2>
+            <div class="citas-grid">
+              @for (cita of proximas(); track cita.id) {
+                <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
+                  <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
+                  <mat-card-content>
+                    <div class="cita-header">
+                      <a [routerLink]="['/citas', cita.id]" style="text-decoration: none; color: inherit;">
+                        <h3 style="margin: 0; color: #1e3a8a; cursor: pointer;">{{ cita.servicio?.nombre }}</h3>
                       </a>
+                      <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+                    </div>
+
+                    <p class="profesional-line">
+                      <mat-icon>school</mat-icon>
+                      {{ nombreProfesional(cita) }}
+                    </p>
+
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
+                      </div>
+                      <div class="info-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
+                      </div>
+                      <div class="info-item">
+                        <mat-icon>sell</mat-icon>
+                        <span>₡{{ cita.montoEstimado }}</span>
+                      </div>
+                    </div>
+
+                    @if (puedeCancelar(cita)) {
+                      <div class="cita-actions">
+                        <button
+                          mat-stroked-button
+                          color="warn"
+                          [disabled]="actualizandoId() === cita.id"
+                          (click)="cancelar(cita)"
+                        >
+                          @if (actualizandoId() === cita.id) {
+                            <span class="button-label"><mat-icon>hourglass_top</mat-icon> Cancelando...</span>
+                          } @else {
+                            <span class="button-label"><mat-icon>event_busy</mat-icon> Cancelar cita</span>
+                          }
+                        </button>
+                      </div>
                     }
-                  </div>
-                }
-              </div>
-
-              <p class="profesional-line">
-                <mat-icon>school</mat-icon>
-                {{ nombreProfesional(cita) }}
-              </p>
-
-              <div class="info-grid">
-                <div class="info-item">
-                  <mat-icon>calendar_today</mat-icon>
-                  <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
-                </div>
-                <div class="info-item">
-                  <mat-icon>schedule</mat-icon>
-                  <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
-                </div>
-                <div class="info-item">
-                  <mat-icon>sell</mat-icon>
-                  <span>₡{{ cita.montoEstimado }}</span>
-                </div>
-              </div>
-            </mat-card-content>
-          </mat-card>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          </section>
         }
-      </div>
-    </section>
-  }
+
+        @if (anteriores().length > 0) {
+          <section class="grupo-citas">
+            <h2><mat-icon>history</mat-icon> Historial</h2>
+            <div class="citas-grid">
+              @for (cita of anteriores(); track cita.id) {
+                <mat-card class="cita-card glass-card" [class]="cita.estado.toLowerCase()">
+                  <div class="status-bar" [class]="cita.estado.toLowerCase()"></div>
+                  <mat-card-content>
+                    <div class="cita-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <a [routerLink]="['/citas', cita.id]" style="text-decoration: none; color: inherit;">
+                          <h3 style="margin: 0; color: #1e3a8a; cursor: pointer;">{{ cita.servicio?.nombre }}</h3>
+                        </a>
+                        <span class="status-badge" [class]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+                      </div>
+                      
+                      @if (cita.estado === 'COMPLETADA') {
+                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                          @if (cita.resenas && cita.resenas.length > 0) {
+                            <span class="badge-resena calificada" style="background-color: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                              <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #10b981; margin-right: 0;">star</mat-icon> 
+                              Calificada ({{ cita.resenas[0].puntuacion }} ★)
+                            </span>
+                          } @else {
+                            <span class="badge-resena pendiente" style="background-color: #fff7ed; color: #c2410c; border: 1px solid #ffedd5; padding: 2px 6px; border-radius: 4px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                              <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #f97316; margin-right: 0;">star_border</mat-icon> 
+                              Sin calificar
+                            </span>
+                            <a mat-button color="accent" [routerLink]="['/citas', cita.id]" style="font-size: 11px; height: 24px; line-height: 24px; padding: 0 8px; min-width: auto;">
+                              Calificar ahora
+                            </a>
+                          }
+                        </div>
+                      }
+                    </div>
+
+                    <p class="profesional-line">
+                      <mat-icon>school</mat-icon>
+                      {{ nombreProfesional(cita) }}
+                    </p>
+
+                    <div class="info-grid">
+                      <div class="info-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ cita.fechaCita | date:'mediumDate':'UTC' }}</span>
+                      </div>
+                      <div class="info-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ cita.horaInicio }} - {{ cita.horaFin }}</span>
+                      </div>
+                      <div class="info-item">
+                        <mat-icon>sell</mat-icon>
+                        <span>₡{{ cita.montoEstimado }}</span>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          </section>
+        }
+      }
+    </main>
+  </div>
 }

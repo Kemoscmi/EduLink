@@ -7,6 +7,8 @@ import { ProfesionalForm } from '../../../shared/components/profesional-form/pro
 import { ProfesionalService } from '../../../core/services/profesional';
 import { Profesional } from '../../../core/models/profesional.model';
 import { NotificationService } from '../../../core/services/notification.service';
+import { EspecialidadService } from '../../../core/services/especialidad';
+import { Especialidad } from '../../../core/models/especialidad.model';
 
 @Component({
   selector: 'app-profesional-edit-page',
@@ -23,17 +25,31 @@ export class ProfesionalEditPage {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly profesionalService = inject(ProfesionalService);
+  private readonly especialidadService = inject(EspecialidadService);
   private readonly notification = inject(NotificationService);
 
   private readonly id = Number(this.route.snapshot.paramMap.get('id'));
 
   profesional = signal<Profesional | null>(null);
+  especialidades = signal<Especialidad[]>([]);
   loading = signal(true);
   saving = signal(false);
   error = signal<string | null>(null);
 
   constructor() {
+    this.cargarEspecialidades();
     this.cargarProfesional();
+  }
+
+  cargarEspecialidades(): void {
+    this.especialidadService.listar().subscribe({
+      next: (res) => {
+        this.especialidades.set((res.data ?? []).filter(e => e.activo));
+      },
+      error: (err) => {
+        console.error('Error al cargar especialidades:', err);
+      }
+    });
   }
 
   cargarProfesional(): void {

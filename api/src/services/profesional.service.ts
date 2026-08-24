@@ -162,6 +162,8 @@ export const profesionalService = {
 
         await this.validateEmail(data.email);
 
+        const uniqueSpecs = data.especialidadesIds ? Array.from(new Set(data.especialidadesIds)) : [];
+
         return prisma.perfilTutor.create({
             data: {
 
@@ -194,11 +196,22 @@ export const profesionalService = {
 
                 imagenPerfil:
                     data.imagenPerfil ??
-                    "image-not-found.jpg"
+                    "image-not-found.jpg",
+
+                tutorEspecialidads: uniqueSpecs.length > 0
+                  ? {
+                      create: uniqueSpecs.map((especialidadId) => ({ especialidadId })),
+                    }
+                  : undefined
             },
 
             include: {
-                usuario: true
+                usuario: true,
+                tutorEspecialidads: {
+                    include: {
+                        especialidad: true
+                    }
+                }
             }
         });
     },
@@ -240,6 +253,8 @@ export const profesionalService = {
             }
         });
 
+        const uniqueSpecs = data.especialidadesIds ? Array.from(new Set(data.especialidadesIds)) : [];
+
         return prisma.perfilTutor.update({
             where: { id },
             data: {
@@ -250,10 +265,21 @@ export const profesionalService = {
                 ubicacion: data.ubicacion,
                 tarifaBase: data.tarifaBase,
                 disponible: data.disponible,
-                imagenPerfil: data.imagenPerfil
+                imagenPerfil: data.imagenPerfil,
+                tutorEspecialidads: data.especialidadesIds !== undefined
+                  ? {
+                      deleteMany: {},
+                      create: uniqueSpecs.map((especialidadId) => ({ especialidadId })),
+                    }
+                  : undefined
             },
             include: {
-                usuario: true
+                usuario: true,
+                tutorEspecialidads: {
+                    include: {
+                        especialidad: true
+                    }
+                }
             }
         });
     },

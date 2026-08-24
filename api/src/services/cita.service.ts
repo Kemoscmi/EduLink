@@ -235,12 +235,22 @@ export const citaService = {
 
         const servicio = await this.validateServicio(data.servicioId);
 
+        // Validar que profesional y servicio estén relacionados
+        if (servicio.tutorId !== tutor.id) {
+            throw AppError.badRequest("El servicio seleccionado no pertenece al profesional especificado");
+        }
+
         if (!servicio.activo) {
             throw AppError.badRequest("El servicio seleccionado no está activo");
         }
 
         if (!tutor.disponible) {
             throw AppError.badRequest("El profesional seleccionado no está disponible");
+        }
+
+        // Validar que la modalidad sea válida para el servicio
+        if (servicio.modalidad && servicio.modalidad !== "MIXTA" && data.modalidad !== servicio.modalidad) {
+            throw AppError.badRequest(`La modalidad seleccionada debe ser ${servicio.modalidad}`);
         }
 
         const inicioSolicitado = this.combinarFechaHora(data.fechaCita, data.horaInicio);

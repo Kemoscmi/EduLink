@@ -216,7 +216,7 @@
                                             </div>
                                         </div>
 
-                                        @if (!isAdminMode()) {
+                                        @if (!isAdminMode() && esCliente()) {
                                             <div class="service-booking-action">
                                                 @if (p.disponible) {
                                                     <a mat-flat-button color="primary" [routerLink]="['/solicitar-cita']" [queryParams]="{ tutorId: p.id, servicioId: s.id }">

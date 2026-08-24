@@ -5,6 +5,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 import { CitaService } from '../../../core/services/cita-service';
 import { Cita } from '../../../core/models/cita.model';
@@ -14,7 +17,17 @@ import { MotivoDialogService } from '../../../core/services/motivo-dialog.servic
 @Component({
   selector: 'app-mis-citas',
   standalone: true,
-  imports: [RouterLink, DatePipe, MatCardModule, MatIconModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [
+    RouterLink,
+    DatePipe,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule
+  ],
   templateUrl: './mis-citas.html',
   styleUrl: './mis-citas.css',
 })
@@ -28,20 +41,49 @@ export class MisCitas {
   error = signal<string | null>(null);
   actualizandoId = signal<number | null>(null);
 
+  // Filtros
+  estado = signal<string | null>(null);
+  fechaInicio = signal<string | null>(null);
+  fechaFin = signal<string | null>(null);
+
+  citasFiltradas = computed(() => {
+    const estadoSel = this.estado();
+    const fechaIni = this.fechaInicio();
+    const fechaFin = this.fechaFin();
+
+    return this.citas().filter((cita) => {
+      const coincideEstado = !estadoSel || cita.estado === estadoSel;
+
+      const citaFechaStr = cita.fechaCita ? cita.fechaCita.substring(0, 10) : '';
+      const coincideFecha =
+        (!fechaIni || citaFechaStr >= fechaIni) &&
+        (!fechaFin || citaFechaStr <= fechaFin);
+
+      return coincideEstado && coincideFecha;
+    });
+  });
+
   proximas = computed(() =>
-    this.citas()
+    this.citasFiltradas()
       .filter((c) => (c.estado === 'PENDIENTE' || c.estado === 'ACEPTADA') && this.esFutura(c))
       .sort((a, b) => this.ordenPorFechaHora(a) - this.ordenPorFechaHora(b))
   );
 
   anteriores = computed(() => {
     const idsProximas = new Set(this.proximas().map((c) => c.id));
-    return this.citas()
+    return this.citasFiltradas()
       .filter((c) => !idsProximas.has(c.id))
       .sort((a, b) => this.ordenPorFechaHora(b) - this.ordenPorFechaHora(a));
   });
 
   totalCitas = computed(() => this.citas().length);
+  totalFiltradas = computed(() => this.citasFiltradas().length);
+
+  clearFilters(): void {
+    this.estado.set(null);
+    this.fechaInicio.set(null);
+    this.fechaFin.set(null);
+  }
 
   ngOnInit(): void {
     this.cargarCitas();

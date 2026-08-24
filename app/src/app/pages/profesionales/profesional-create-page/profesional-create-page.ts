@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { ProfesionalForm } from '../../../shared/components/profesional-form/profesional-form';
 import { ProfesionalService } from '../../../core/services/profesional';
 import { NotificationService } from '../../../core/services/notification.service';
+import { EspecialidadService } from '../../../core/services/especialidad';
+import { Especialidad } from '../../../core/models/especialidad.model';
 
 @Component({
   selector: 'app-profesional-create-page',
@@ -21,10 +23,27 @@ import { NotificationService } from '../../../core/services/notification.service
 export class ProfesionalCreatePage {
   private readonly router = inject(Router);
   private readonly profesionalService = inject(ProfesionalService);
+  private readonly especialidadService = inject(EspecialidadService);
   private readonly notification = inject(NotificationService);
 
+  especialidades = signal<Especialidad[]>([]);
   saving = signal(false);
   error = signal<string | null>(null);
+
+  constructor() {
+    this.cargarEspecialidades();
+  }
+
+  cargarEspecialidades(): void {
+    this.especialidadService.listar().subscribe({
+      next: (res) => {
+        this.especialidades.set((res.data ?? []).filter(e => e.activo));
+      },
+      error: (err) => {
+        console.error('Error al cargar especialidades:', err);
+      }
+    });
+  }
 
   guardar(data: any): void {
     this.saving.set(true);

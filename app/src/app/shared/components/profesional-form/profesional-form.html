@@ -98,8 +98,11 @@
         <div class="form-grid">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Ubicación / Sede</mat-label>
-            <input matInput type="text" [formField]="profesionalForm.ubicacion"
-              placeholder="Ej: San José, Costa Rica" />
+            <mat-select [formField]="profesionalForm.ubicacion">
+              @for (provincia of provincias; track provincia) {
+                <mat-option [value]="provincia">{{ provincia }}</mat-option>
+              }
+            </mat-select>
             <mat-icon matSuffix>place</mat-icon>
             @if (profesionalForm.ubicacion().touched() && profesionalForm.ubicacion().invalid()) {
             <mat-error>{{ profesionalForm.ubicacion().errors()[0].message }}</mat-error>
@@ -155,6 +158,27 @@
         </div>
       </div>
     </section>
+
+      <!-- Especialidades del Profesional -->
+      <section class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">school</mat-icon>
+          <h3>Especialidades</h3>
+        </div>
+        <p class="section-desc">Seleccione las especialidades asociadas a este profesional (opcional).</p>
+
+        <div class="tags-grid">
+          @for (especialidad of especialidades(); track especialidad.id) {
+            <mat-checkbox
+              class="tag-check"
+              [checked]="isEspecialidadSelected(especialidad.id)"
+              (change)="toggleEspecialidad(especialidad.id, $event.checked)"
+            >
+              {{ especialidad.nombre }}
+            </mat-checkbox>
+          }
+        </div>
+      </section>
 
       <!-- Disponibilidad del Profesional -->
       <section class="form-section availability-section">

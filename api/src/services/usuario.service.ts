@@ -43,6 +43,19 @@ export const usuarioService = {
             throw AppError.notFound("Usuario no encontrado");
         }
 
+        // Evitar dejar el sistema sin al menos un administrador activo
+        if (usuario.role === Role.ADMIN && usuario.activo) {
+            const adminsActivos = await prisma.usuario.count({
+                where: {
+                    role: Role.ADMIN,
+                    activo: true,
+                },
+            });
+            if (adminsActivos <= 1) {
+                throw AppError.badRequest("No se puede desactivar al único administrador activo del sistema");
+            }
+        }
+
         return await prisma.usuario.update({
             where: { id },
             data: {
@@ -122,6 +135,19 @@ export const usuarioService = {
 
         if (!usuario) {
             throw AppError.notFound("Usuario no encontrado");
+        }
+
+        // Evitar dejar el sistema sin al menos un administrador activo al cambiar el rol
+        if (usuario.role === Role.ADMIN && datos.role !== Role.ADMIN) {
+            const adminsActivos = await prisma.usuario.count({
+                where: {
+                    role: Role.ADMIN,
+                    activo: true,
+                },
+            });
+            if (adminsActivos <= 1) {
+                throw AppError.badRequest("No se puede cambiar el rol del único administrador activo del sistema");
+            }
         }
 
         return await prisma.usuario.update({
