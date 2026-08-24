@@ -83,7 +83,7 @@ export class AgendaProfesional {
 
   totalCitas = computed(() => this.citas().length);
 
-  private eventosCalendario = computed<EventInput[]>(() =>
+  eventosCalendario = computed<EventInput[]>(() =>
     this.citasFiltradas().map((cita) => ({
       id: String(cita.id),
       title: `${cita.servicio?.nombre ?? 'Servicio'} · ${this.nombreCliente(cita)}`,
@@ -109,7 +109,6 @@ export class AgendaProfesional {
     height: 'auto',
     slotMinTime: '07:00:00',
     slotMaxTime: '21:00:00',
-    events: this.eventosCalendario(),
     eventClick: (arg: EventClickArg) => this.seleccionarPorId(Number(arg.event.id)),
   }));
 
@@ -175,11 +174,11 @@ export class AgendaProfesional {
 
   puedeCompletar(cita: Cita): boolean {
     if (cita.estado !== 'ACEPTADA') return false;
-    return this.combinarFechaHora(cita.fechaCita, cita.horaFin).getTime() <= Date.now();
+    return new Date(this.combinarFechaHora(cita.fechaCita, cita.horaFin)).getTime() <= Date.now();
   }
 
   yaPaso(cita: Cita): boolean {
-    return this.combinarFechaHora(cita.fechaCita, cita.horaFin).getTime() <= Date.now();
+    return new Date(this.combinarFechaHora(cita.fechaCita, cita.horaFin)).getTime() <= Date.now();
   }
 
   aceptar(cita: Cita): void {
@@ -268,11 +267,12 @@ export class AgendaProfesional {
     this.filtroEstado.set(null);
   }
 
-  private combinarFechaHora(fecha: string, hora: string): Date {
-    const [horas, minutos] = hora.split(':').map(Number);
+  private combinarFechaHora(fecha: string, hora: string): string {
+    const [horas, minutos] = hora.split(':');
     const base = new Date(fecha);
-    return new Date(
-      Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate(), horas || 0, minutos || 0)
-    );
+    const yyyy = base.getUTCFullYear();
+    const mm = String(base.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(base.getUTCDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}T${horas}:${minutos}:00`;
   }
 }
