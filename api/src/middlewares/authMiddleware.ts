@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { AppError } from "../utils/app-error";
 import { Role } from "../../generated/prisma/enums";
 
+const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me-in-production";
+
 interface JwtPayload {
     id: number;
     email: string;
@@ -19,7 +21,7 @@ export function authMiddleware(request: Request, _response: Response, next: Next
     const token = authHeader.split(" ")[1];
 
     try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+        const payload = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
         request.user = {
             id: payload.id,

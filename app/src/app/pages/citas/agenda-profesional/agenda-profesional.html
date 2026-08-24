@@ -18,7 +18,21 @@
         </mat-select>
       </mat-form-field>
 
-      @if (filtroEstado()) {
+      @if (esAdmin()) {
+        <mat-form-field appearance="outline" class="filtro-estado">
+          <mat-label>Filtrar por profesional</mat-label>
+          <mat-select [value]="filtroProfesional()" (selectionChange)="filtroProfesional.set($event.value)">
+            <mat-option [value]="null">Todos los profesionales</mat-option>
+            @for (profesional of profesionales(); track profesional.id) {
+              <mat-option [value]="profesional.id">
+                {{ profesional.usuario?.nombre }} {{ profesional.usuario?.apellidos }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+
+      @if (filtroEstado() || filtroProfesional()) {
         <button mat-stroked-button class="clear-filter-btn" (click)="clearFiltro()">
           <mat-icon>filter_alt_off</mat-icon>
           Limpiar filtro
@@ -84,11 +98,11 @@
           </div>
           <div class="info-item">
             <mat-icon>laptop_mac</mat-icon>
-            <span>{{ cita.modalidad }}</span>
+            <span>{{ modalidadCita(cita) }}</span>
           </div>
           <div class="info-item">
             <mat-icon>sell</mat-icon>
-            <span>₡{{ cita.montoEstimado }}</span>
+            <span>{{ precioCita(cita) }}</span>
           </div>
         </div>
 

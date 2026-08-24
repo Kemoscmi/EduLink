@@ -152,6 +152,22 @@
                                         <span class="info-value">{{ cita.horaInicio }} - {{ cita.horaFin || '--:--' }}</span>
                                     </div>
                                 </div>
+
+                                <div class="info-item">
+                                    <mat-icon>laptop_mac</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Modalidad</span>
+                                        <span class="info-value">{{ cita.modalidad }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="info-item">
+                                    <mat-icon>payments</mat-icon>
+                                    <div class="info-text">
+                                        <span class="info-label">Precio</span>
+                                        <span class="info-value">₡{{ cita.montoEstimado | number:'1.0-0' }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </mat-card-content>
 
